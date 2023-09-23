@@ -17,8 +17,8 @@ interface Char { // 기록하는 지표 형식
   code: number, // 험체 코드
   grades: Array<Array<Array<number>>> // 무기별 -> 그룹별 -> [등수-1] 수 9등은 탈출
   scores: Array<Array<Array<number>>> // 무기별 -> 그룹별 -> / [0] -> 점수 먹은 판수 [1] -> 점수 변동폭(단위p)
-  avgdeal: Array<Array<number>> // 무기별 -> 그룹별 평딜 
-  tk: Array<Array<number>> // 무기별 -> 그룹별 평균팀킬 
+  avgdeal: Array<Array<Array<number>>> // 무기별 -> 그룹별 -> 등수 별 평딜 
+  tk: Array<Array<Array<number>>> // 무기별 -> 그룹별 -> 등수 별 평균팀킬 
 }
 
 function append(args: string) {
@@ -105,7 +105,7 @@ export default function Home() { // 내 유저코드 314853
             onClick={() => {
               append(start + '부터 ' + count + '회 크롤링');
 
-              sendAsyncRequests(); // 동기식 For문 자체를 Function화시킴
+              sendSyncRequests(start, count, 3); // 동기식 For문 자체를 Function화시킴
             }
             }>게임 파싱</button>
           <button
@@ -158,12 +158,14 @@ function getGameData(gameCode: number) {
 
 function UpdateFunc(response: any) {
   var game: Array<any> = response.data.userGames;
-  console.log(game);
+  // console.log(game);
   // matchingMode = 2 일반 3 랭크
   // matchingTeamMod = 3 스쿼드
   if (game[0].matchingMode === 3) {
     game.map((user, p) => {
       // 이하 각 유저에 대해 수집하는 지표들
+      // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)
+
       // 1. 등수
       if (user.escapeState === 0) { // 탈출인지 구분
         UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1]++;
@@ -178,22 +180,28 @@ function UpdateFunc(response: any) {
       // 점수 먹었던 안먹었던 총 점수변동 반영
       UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][1] += user.mmrGain;
 
-      // 3. 평딜
-      var targetGameCount: number = 0; // 해당 구간(티어그룹별, 무기별) 판수 카운트
-      var beforeVal: number = UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1];
+      // 가독성 위해 if문 두번 씀 그냥
+      if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
+        // 3. 평딜
+        var targetGameCount: number = UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1];
+        // 해당 구간(티어그룹별, 무기별) 판수 카운트
 
-      UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1].forEach(element => {
-        targetGameCount += element;
-      });
+        var beforeAvgDeal: number = UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1];
 
-      UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1]
-        = (beforeVal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
+        UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1]
+          = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
 
-      // 4. TK(팀 킬수)
+        // 4. TK(팀 킬수)
+        var beforeAvgTK: number = UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1];
 
-      // Q. 평딜이랑 TK를 등수별로 수집해야 하는가?
-      // 예상 가능한 사용처 - 전적검색 이후 우승시 평딜 , 우승시 팀킬 등으로 캐리력 등 계산
-      // A. ?
+        UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1]
+          = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
+      }
+
+      // Q. 평딜이랑 TK 지표를 등수별로 수집해야 하는가?
+      // 예상 가능한 사용처 - 전적검색 이후 우승시 평딜 , 우승시 팀킬 등으로 캐리력 등 계산,
+      //                     티어산출 시 같은 딜러그룹(평원딜, 메이지, 브루저 등) 내에서 비교 반영
+      // A. 일단 할 수 있으면 구체적으로 수집해보자
     })
     append("..완료!");
     rankcount++;
@@ -215,12 +223,19 @@ function getWeaponNum(charCode: number, firstWeaponCode: number) {
   }
 }
 
-async function sendAsyncRequests() {
-  for (let i = 0; i <= count; i++) {
+function sendSyncRequests(startpoint: number, repeats: number, parallels: number) { // 병렬 실행화. 비동기 함수를 병렬로 임의만큼 동시호출하여 스피드업
+  for (let p = 1; p <= parallels; p++) {
+    asyncParser(startpoint,repeats,parallels,p);
+  }
+}
+
+async function asyncParser(startpoint: number, repeats: number, parallels: number, p : number) { // 이 함수는 비동기(순차)처리됨
+  for (let i = p; i <= repeats; i += parallels) {
     try {
       console.log(i + " 드갈게");
-      await getGameData(start + i);
+      await getGameData(startpoint + i);
     } catch (err) {
+      if(err)
       console.log('파싱간 에러로 rejected');
     }
   }
