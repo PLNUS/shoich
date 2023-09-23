@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply flex flex-col items-center bg-stone-200;
+  }
+  div {
+    @apply font-ml;
+  }
+  h1 {
+    @apply font-mb tracking-tight;
+  }
+  .tiericon {
+    @apply flex justify-end h-full aspect-square mt-1;
+  }
+  .charicon {
+    @apply -translate-y-1 scale-105;
+  }
+  .charicon_dir {
+    @apply relative overflow-hidden rounded-full h-full aspect-square;
+  }
+  .charicon_tier {
+    @apply flex items-center justify-center absolute rounded-full text-white;
+  }
+  .page_wrap {
+    @apply flex flex-row bg-slate-50 lg:w-[1400px] h-screen p-4;
+  }
+  .main_grid {
+    @apply grid grid-flow-row lg:grid-cols-2 sm:grid-cols-1 w-full h-[200px] gap-4 mb-4;
+  }
+  .main_grid_block {
+    @apply flex flex-col rounded-xl shadow-lg bg-stone-200 w-full h-full p-4 gap-y-2;
+  }
+  .main_grid_block_title {
+    @apply text-3xl text-stone-700 border-b-2 pb-2 border-stone-700;
+  }
+  .main_grid_block_item {
+    @apply flex flex-row w-full h-[114px];
+  }
+}
+
+@font-face {
+  font-family: 'SUIT-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-Black';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
