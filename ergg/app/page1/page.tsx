@@ -6,16 +6,24 @@ import { initData } from "../datas/refactor";
 import { gameData } from "../datas/refactor";
 
 export default function Home() {
-  const [tempDatas, setTempDatas] = useState([{ code: 0, name: 'null', WR: 0, PR: 0, SR: 0, tier: 0 }]);
+  const [tempDatas, setTempDatas] = useState([{ code: 0, name: 'null', WR: 0, PR: 0, SR: 0, tier: 0, nadjapoint : 0 }]);
 
   interface Data {
     code: number; // 험체 코드
     name: string; // 험체 이름 + 무기
+    // tiergroup: number; // 티어그룹 - 1 : 이 데 미 , 2 : 다 , 3 : 플 , 4 : 골 , 0 오류
+
     WR: number; // WinRate
     PR: number; // PickRate
-    SR: number; // 순방Rate
-    tier: number; // 티어
-  };
+    SR: number; // 점수+Rate
+    SbScore: number; // 총 변동점수
+    SbCount: number; // 점수+ 수
+    TK: number; // 팀킬 
+    avgdeal: number; // 평딜
+
+    tier: number; //임시, 삭제예정
+    nadjapoint: number; // 나쟈 포인트, 각종 지표로 산출된 정수로 티어 산출시 사용
+};
 
   useEffect(() => {
     setTempDatas(initData);
@@ -204,7 +212,7 @@ export default function Home() {
         </div>
         <div class="w-[12%] text-center text-sm">{data.WR}%</div>
         <div class="w-[12%] text-center text-sm">{data.PR}%</div>
-        <div class="w-[12%] text-center text-sm">{data.SR}%</div>
+        <div class="w-[12%] text-center text-sm">{Math.floor(data.nadjapoint)}점</div>
         <div class="w-[12%] px-2">
           <p class={`rounded-xl text-center text-md font-mb text-white ` + color}>{data.tier}</p>
         </div>
@@ -226,9 +234,9 @@ export default function Home() {
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>픽률</div>
         <div id="sort_by_sr" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => y.SR - x.SR);
+          var sortedData = [...tempDatas].sort((x, y) => y.nadjapoint - x.nadjapoint);
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
-        }}>순방률</div>
+        }}>나쟈P</div>
         <div id="sort_by_tier" class="w-[12%] text-center text-sm" onClick={() => {
           var sortedData = [...tempDatas].sort((x, y) => x.tier - y.tier);
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);

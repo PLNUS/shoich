@@ -35,14 +35,14 @@ function getTierTitle(tier: number) {
     return '엄';
 }
 
-export function getTierGroup(mmr: number) {
-    if (mmr >= 6000) {
+export function getTierGroup(mmr: number, eterCut: number) {
+    if (mmr >= eterCut) {
         return 1; // 이 데 미
-    } else if (mmr >= 5000 && mmr < 6000) {
+    } else if (mmr >= 6000) {
         return 2; // 다
-    } else if (mmr >= 4000 && mmr < 5000) {
+    } else if (mmr >= 5000 && mmr < 6000) {
         return 3; // 플
-    } else if (mmr >= 3000 && mmr < 4000) {
+    } else if (mmr >= 4000 && mmr < 5000) {
         return 4; // 골
     } else {
         return 0; // 광물

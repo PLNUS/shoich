@@ -10,7 +10,7 @@ import { getTier, getTierCut, getTierGroup, writeData } from "./ertool";
 
 export const API_KEY = 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0';
 
-var rankcount = 0;
+let rankcount = 0;
 
 interface Char { // 기록하는 지표 형식
   name: string, // 험체 이름
@@ -41,18 +41,18 @@ function appendAnalysis(args: string) {
   document.getElementById('analysis')!.scrollTop = document.getElementById('status')!.scrollTop + document.getElementById('status')!.scrollHeight;
 }
 
-var UpdatedData: Array<Char> = CharacterData;
-var tierCut = [10000, 10000];
+let UpdatedData: Array<Char> = CharacterData;
+let tierCut = [10000, 10000];
 
-var start = 0, count = 0;
+let start = 0, count = 0;
 
 export default function Home() { // 내 유저코드 314853
   axios.get('https://open-api.bser.io/v1/rank/top/19/3', {
     params: {},
     headers: { 'x-api-key': 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0' }
   }).then(function (response) {
-    var eterCut = response.data.topRanks.find(e => e.rank === 200).mmr;
-    var demiCut = response.data.topRanks.find(e => e.rank === 700).mmr;
+    let eterCut = response.data.topRanks.find(e => e.rank === 200).mmr;
+    let demiCut = response.data.topRanks.find(e => e.rank === 700).mmr;
     append('티어컷 계산완료');
     tierCut = [eterCut, demiCut];
   }).catch(function (e) {
@@ -99,22 +99,22 @@ export default function Home() { // 내 유저코드 314853
             } >내보내기</button>
           <input type="number" onChange={onChange} placeholder="시작할 게임 ID" id="start" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required></input>
           <input type="number" onChange={onChange} placeholder="크롤링할 게임 수" id="count" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required></input>
-
+          
           <button
             class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
               append(start + '부터 ' + count + '회 크롤링');
 
-              sendSyncRequests(start, count, 3); // 동기식 For문 자체를 Function화시킴
+              sendSyncRequests(start, count, 7); // 동기식 For문 자체를 Function화시킴
             }
             }>게임 파싱</button>
           <button
             class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
               // appendAnalysis();
-              var EntireTargets = 0;
-              var EntireTargetsG1 = 0;
-              var G1Picks56: number = 0;
+              let EntireTargets = 0;
+              let EntireTargetsG1 = 0;
+              let G1Picks56: number = 0;
               CharData2.map((char, p1) => {
                 char.grades.map((weapon, p2) => {
                   weapon[0].forEach(g1 => {
@@ -130,7 +130,7 @@ export default function Home() { // 내 유저코드 314853
               CharData2[55].grades[0][1].forEach(element => {
                 G1Picks56 += element;
               });
-              var G1PR56 = G1Picks56 / EntireTargetsG1 * 100;
+              let G1PR56 = G1Picks56 / EntireTargetsG1 * 100;
               appendAnalysis(`전체 판수는  ${EntireTargets} 피올로의 픽수는 ${G1Picks56} 그룹1 판수는 ${EntireTargetsG1} 픽률은 ${G1PR56} %`);
             }
             }>통계 계산</button>
@@ -150,14 +150,14 @@ function getGameData(gameCode: number) {
         UpdateFunc(response);
         resolve("성공")
       }).catch(function (error) {
-        console.log(error);
+        //console.log(error);
         rejects("응않되")
       });
   })
 }
 
 function UpdateFunc(response: any) {
-  var game: Array<any> = response.data.userGames;
+  let game: Array<any> = response.data.userGames;
   // console.log(game);
   // matchingMode = 2 일반 3 랭크
   // matchingTeamMod = 3 스쿼드
@@ -168,33 +168,33 @@ function UpdateFunc(response: any) {
 
       // 1. 등수
       if (user.escapeState === 0) { // 탈출인지 구분
-        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1]++;
+        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1]++;
       } else {
-        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][8]++;
+        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][8]++;
       }
 
       // 2. 점수
       if (user.mmrGain > 0) { // 점수 먹었을 경우
-        UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][0]++;
+        UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][0]++;
       }
       // 점수 먹었던 안먹었던 총 점수변동 반영
-      UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][1] += user.mmrGain;
+      UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][1] += user.mmrGain;
 
       // 가독성 위해 if문 두번 씀 그냥
       if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
         // 3. 평딜
-        var targetGameCount: number = UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1];
+        let targetGameCount: number = UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1];
         // 해당 구간(티어그룹별, 무기별) 판수 카운트
 
-        var beforeAvgDeal: number = UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1];
+        let beforeAvgDeal: number = UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1];
 
-        UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1]
+        UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1]
           = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
 
         // 4. TK(팀 킬수)
-        var beforeAvgTK: number = UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1];
+        let beforeAvgTK: number = UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1];
 
-        UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore) - 1][user.gameRank - 1]
+        UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1]
           = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
       }
 
@@ -203,15 +203,14 @@ function UpdateFunc(response: any) {
       //                     티어산출 시 같은 딜러그룹(평원딜, 메이지, 브루저 등) 내에서 비교 반영
       // A. 일단 할 수 있으면 구체적으로 수집해보자
     })
-    append("..완료!");
     rankcount++;
     appendCount('현재 파싱한 랭겜 수 : ' + rankcount);
     appendJSON(JSON.stringify(UpdatedData, null, ''));
-  } else if (game[0].matchingMode === 2) { console.log('잇츠일겜'); }
+  } else if (game[0].matchingMode === 2) {}
 }
 
 function getWeaponNum(charCode: number, firstWeaponCode: number) {
-  var WeaponType: string = WeaponData.find(e => e.code === firstWeaponCode)!.weaponType!
+  let WeaponType: string = WeaponData.find(e => e.code === firstWeaponCode)!.weaponType!
   if (CharMastery[charCode].weapon1 == WeaponType) {
     return 0;
   } else if (CharMastery[charCode].weapon2 == WeaponType) {
@@ -224,19 +223,20 @@ function getWeaponNum(charCode: number, firstWeaponCode: number) {
 }
 
 function sendSyncRequests(startpoint: number, repeats: number, parallels: number) { // 병렬 실행화. 비동기 함수를 병렬로 임의만큼 동시호출하여 스피드업
-  for (let p = 1; p <= parallels; p++) {
-    asyncParser(startpoint,repeats,parallels,p);
+  for (let repeatstart = 1; repeatstart <= parallels; repeatstart++) {
+    asyncParser(startpoint, repeats, parallels, repeatstart);
   }
 }
 
-async function asyncParser(startpoint: number, repeats: number, parallels: number, p : number) { // 이 함수는 비동기(순차)처리됨
-  for (let i = p; i <= repeats; i += parallels) {
+async function asyncParser(startpoint: number, repeats: number, parallels: number, repeatstart: number) { // 이 함수는 비동기(순차)처리됨
+  for (let i = repeatstart; i <= repeats; i += parallels) {
     try {
-      console.log(i + " 드갈게");
+      if(i%1000 === 0) {
+        append(i+'회 진행중')
+      }
       await getGameData(startpoint + i);
     } catch (err) {
-      if(err)
-      console.log('파싱간 에러로 rejected');
+      //console.log('파싱간 에러로 rejected');
     }
   }
 }
