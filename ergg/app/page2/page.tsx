@@ -1,5 +1,8 @@
 'use client'
 
+// 전적검색 이후 개인지표 보여주는 화면.
+// 6각형 그래프로 각 등수에 따른 AvgDeal 
+
 import React, { forwardRef, useRef, useEffect } from 'react';
 import {
   Chart as ChartJS,

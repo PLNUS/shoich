@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import CharacterData from "./charData.json";
 import CharMastery from "./charMastery.json";
 import CharData2 from "./charData2.json";
+import CharData3 from "./charData3.json";
+import CharData4 from "./charData4.json";
 import WeaponData from "../datas/weaponData.json";
 import { getTier, getTierCut, getTierGroup, writeData } from "./ertool";
 
@@ -110,38 +112,48 @@ export default function Home() { // 내 유저코드 314853
             }>게임 파싱</button>
           <button
             class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
-            onClick={() => {
-              // appendAnalysis();
-              let EntireTargets = 0;
-              let EntireTargetsG1 = 0;
-              let G1Picks56: number = 0;
-              CharData2.map((char, p1) => {
-                char.grades.map((weapon, p2) => {
-                  weapon[0].forEach(g1 => {
-                    EntireTargetsG1 += g1;
-                  });
-                  weapon.map((tier, p3) => {
-                    tier.forEach(grades => {
-                      EntireTargets += grades;
-                    });
-                  });
-                });
-              });
-              CharData2[55].grades[0][1].forEach(element => {
-                G1Picks56 += element;
-              });
-              let G1PR56 = G1Picks56 / EntireTargetsG1 * 100;
-              appendAnalysis(`전체 판수는  ${EntireTargets} 피올로의 픽수는 ${G1Picks56} 그룹1 판수는 ${EntireTargetsG1} 픽률은 ${G1PR56} %`);
-            }
-            }>통계 계산</button>
+            onClick={() => {}}>통계 계산</button>
         </div>
       </div>
     </div>
   )
 }
 
-function mergeJSON() {
+function mergeJSON(a1: Array<Char> , a2: Array<Char>) {
   // TODO : 파싱 데이터 병합 함수 작성 필요
+  let mergedList: Array<Char> = a1;
+  mergedList.map((char, cp)=> {
+    char.grades.map((weapon , wp) => {
+      weapon.map((tg , tp) => {
+        tg.map((grade, gp) => {
+          grade += a2[cp].grades[wp][tp][gp];
+        });;
+      });
+    });
+    char.scores.map((weapon, wp) => {
+      weapon.map((tg, tp) => {
+        tg.map((scores, sp) => {
+          scores += a2[cp].grades[wp][tp][sp];
+        });;
+      })
+    }); 
+    char.tk.map((weapon, wp) => {
+      weapon.map((tg, tp) => {
+        tg.map((tks, p) => {
+          tks = (tks * char.grades[wp][tp][p]) + (a2[cp].tk[wp][tp][p] * a2[cp].grades[wp][tp][p]) 
+          / (char.grades[wp][tp][p] + a2[cp].grades[wp][tp][p]); // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
+        });
+      });
+    });
+    char.avgdeal.map((weapon, wp) => {
+      weapon.map((tg, tp) => {
+        tg.map((deals, p) => {
+          deals = (deals * char.grades[wp][tp][p]) + (a2[cp].avgdeal[wp][tp][p] * a2[cp].grades[wp][tp][p]) 
+          / (char.grades[wp][tp][p] + a2[cp].grades[wp][tp][p]); // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
+        });
+      });
+    });
+  });
 }
 
 function getGameData(gameCode: number) {
@@ -165,7 +177,7 @@ function UpdateFunc(response: any) {
   // console.log(game);
   // matchingMode = 2 일반 3 랭크
   // matchingTeamMod = 3 스쿼드
-  if (game[0].matchingMode === 3 && game[0].serverName === "Seoul" && game[0].versionMajor === "4") { // 랭겜, 서버, 버전 세팅
+  if (game[0].matchingMode === 3 && game[0].serverName === "Seoul") { // 랭겜, 서버, 버전 세팅
     game.map((user, p) => {
       // 이하 각 유저에 대해 수집하는 지표들
       // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)
