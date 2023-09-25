@@ -2,16 +2,15 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { initData } from "../datas/refactor";
-import { gameData } from "../datas/refactor";
+import { getListforTiergroup } from "../datas/refactor";
 
 export default function Home() {
   const [tempDatas, setTempDatas] = useState([{ code: 0, name: 'null', WR: 0, PR: 0, SR: 0, tier: 0, nadjapoint : 0 }]);
-
+  const [tiergroup, setTiergroup] = useState(0);
   interface Data {
     code: number; // 험체 코드
     name: string; // 험체 이름 + 무기
-    // tiergroup: number; // 티어그룹 - 1 : 이 데 미 , 2 : 다 , 3 : 플 , 4 : 골 , 0 오류
+    // tiergroup: number; // 티어그룹 - 1 : 이 , 2 : 미+ , 3 : 다 , 4 : 플+ , 0 전체
 
     WR: number; // WinRate
     PR: number; // PickRate
@@ -26,8 +25,8 @@ export default function Home() {
 };
 
   useEffect(() => {
-    setTempDatas(initData);
-    gameData();
+    setTempDatas(getListforTiergroup(tiergroup));
+    
   }, [])
 
   return ( // 아래 두개 블록 Grid 종속화 하면 일단 프론트쪽은마무리. ExpressJS MongoDB 연동 / 통계데이터 가공 해야함ㄴ 티어표 초상화이미지 안나오는 버그걸림 확인필요
@@ -192,12 +191,13 @@ export default function Home() {
 
     function getColor(tier: number) {
       switch (tier) {
+        case 0: return `bg-stone-500`
         case 1: return `bg-sky-400`
         case 2: return `bg-emerald-400`
         case 3: return `bg-amber-400`
         case 4: return `bg-orange-400`
         case 5: return `bg-rose-400`
-        default: return `bg-stone-100`;
+        default: return `bg-stone-100`
       }
     }
 
@@ -212,9 +212,9 @@ export default function Home() {
         </div>
         <div class="w-[12%] text-center text-sm">{data.WR}%</div>
         <div class="w-[12%] text-center text-sm">{data.PR}%</div>
-        <div class="w-[12%] text-center text-sm">{Math.floor(data.nadjapoint)}점</div>
+        <div class="w-[12%] text-center text-sm">{data.SR}%</div>
         <div class="w-[12%] px-2">
-          <p class={`rounded-xl text-center text-md font-mb text-white ` + color}>{data.tier}</p>
+          <p class={`rounded-xl text-center text-md font-mb text-white ` + color}>{data.tier === 0 ? 'OP' : data.tier}</p>
         </div>
       </div>
     );
@@ -234,11 +234,11 @@ export default function Home() {
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>픽률</div>
         <div id="sort_by_sr" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => y.nadjapoint - x.nadjapoint);
+          var sortedData = [...tempDatas].sort((x, y) => y.SR - x.SR);
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
-        }}>나쟈P</div>
+        }}>순방률</div>
         <div id="sort_by_tier" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => x.tier - y.tier);
+          var sortedData = [...tempDatas].sort((x, y) => y.nadjapoint - x.nadjapoint);
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>티어</div>
       </div>

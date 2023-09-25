@@ -140,6 +140,10 @@ export default function Home() { // 내 유저코드 314853
   )
 }
 
+function mergeJSON() {
+  // TODO : 파싱 데이터 병합 함수 작성 필요
+}
+
 function getGameData(gameCode: number) {
   return new Promise((resolve, rejects) => {
     axios.get('https://open-api.bser.io/v1/games/' + gameCode, { // 동기식 순차진행 안됨
@@ -161,7 +165,7 @@ function UpdateFunc(response: any) {
   // console.log(game);
   // matchingMode = 2 일반 3 랭크
   // matchingTeamMod = 3 스쿼드
-  if (game[0].matchingMode === 3) {
+  if (game[0].matchingMode === 3 && game[0].serverName === "Seoul" && game[0].versionMajor === "4") { // 랭겜, 서버, 버전 세팅
     game.map((user, p) => {
       // 이하 각 유저에 대해 수집하는 지표들
       // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)

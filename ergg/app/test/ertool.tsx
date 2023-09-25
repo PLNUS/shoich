@@ -37,13 +37,13 @@ function getTierTitle(tier: number) {
 
 export function getTierGroup(mmr: number, eterCut: number) {
     if (mmr >= eterCut) {
-        return 1; // 이 데 미
+        return 1; // 이+
     } else if (mmr >= 6000) {
-        return 2; // 다
+        return 2; // 미+
     } else if (mmr >= 5000 && mmr < 6000) {
-        return 3; // 플
+        return 3; // 다
     } else if (mmr >= 4000 && mmr < 5000) {
-        return 4; // 골
+        return 4; // 플
     } else {
         return 0; // 광물
     }
