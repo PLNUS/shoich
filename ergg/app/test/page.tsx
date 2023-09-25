@@ -4,9 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import CharacterData from "./charData.json";
 import CharMastery from "./charMastery.json";
-import CharData2 from "./charData2.json";
 import CharData3 from "./charData3.json";
-import CharData4 from "./charData4.json";
 import WeaponData from "../datas/weaponData.json";
 import { getTier, getTierCut, getTierGroup, writeData } from "./ertool";
 
@@ -112,48 +110,58 @@ export default function Home() { // 내 유저코드 314853
             }>게임 파싱</button>
           <button
             class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
-            onClick={() => {}}>통계 계산</button>
+            onClick={() => {
+              // mergeJSON(CharData2,CharData5);
+            }}>Merge JSON</button>
         </div>
       </div>
     </div>
   )
 }
 
-function mergeJSON(a1: Array<Char> , a2: Array<Char>) {
+async function mergeJSON(a1: Array<Char> , a2: Array<Char>) {
   // TODO : 파싱 데이터 병합 함수 작성 필요
   let mergedList: Array<Char> = a1;
+
   mergedList.map((char, cp)=> {
     char.grades.map((weapon , wp) => {
       weapon.map((tg , tp) => {
         tg.map((grade, gp) => {
-          grade += a2[cp].grades[wp][tp][gp];
+          mergedList[cp].grades[wp][tp][gp] += a2[cp].grades[wp][tp][gp];
         });;
       });
     });
     char.scores.map((weapon, wp) => {
       weapon.map((tg, tp) => {
         tg.map((scores, sp) => {
-          scores += a2[cp].grades[wp][tp][sp];
+          mergedList[cp].scores[wp][tp][sp] += a2[cp].grades[wp][tp][sp];
         });;
       })
     }); 
+  });
+  mergedList.map((char, cp) => {
     char.tk.map((weapon, wp) => {
       weapon.map((tg, tp) => {
         tg.map((tks, p) => {
-          tks = (tks * char.grades[wp][tp][p]) + (a2[cp].tk[wp][tp][p] * a2[cp].grades[wp][tp][p]) 
-          / (char.grades[wp][tp][p] + a2[cp].grades[wp][tp][p]); // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
+          let a1befval = a1[cp].tk[wp][tp][p] * a1[cp].grades[wp][tp][p];
+          let a2befval = a2[cp].tk[wp][tp][p] * a2[cp].grades[wp][tp][p];
+          let a12grade:number = a1[cp].grades[wp][tp][p] + a2[cp].grades[wp][tp][p]
+          mergedList[cp].tk[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
         });
       });
     });
     char.avgdeal.map((weapon, wp) => {
       weapon.map((tg, tp) => {
         tg.map((deals, p) => {
-          deals = (deals * char.grades[wp][tp][p]) + (a2[cp].avgdeal[wp][tp][p] * a2[cp].grades[wp][tp][p]) 
-          / (char.grades[wp][tp][p] + a2[cp].grades[wp][tp][p]); // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
+          let a1befval = a1[cp].avgdeal[wp][tp][p] * a1[cp].grades[wp][tp][p];
+          let a2befval = a2[cp].avgdeal[wp][tp][p] * a2[cp].grades[wp][tp][p];
+          let a12grade:number = a1[cp].grades[wp][tp][p] + a2[cp].grades[wp][tp][p]
+          mergedList[cp].avgdeal[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
         });
       });
     });
   });
+  appendJSON(JSON.stringify(mergedList));
 }
 
 function getGameData(gameCode: number) {

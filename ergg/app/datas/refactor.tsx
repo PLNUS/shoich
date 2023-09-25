@@ -1,6 +1,5 @@
 import Character from '../test/charData.json';
 import CharMastery from '../test/charMastery.json';
-import Data1 from '../test/charData2.json';
 import Data2 from '../test/charData3.json';
 
 interface Data {
@@ -26,12 +25,13 @@ export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어�
 }
 
 function getNadjaPoint(char: Data) { // 티어 산출 밸런싱 필요
-    let var1: number = char.SbCount * char.PR; // 
-    let var2: number = (char.SbScore * char.PR);
+    let var1: number = char.SbCount ; // 
+    let var2: number = char.SbScore;
     let var3: number = char.TK;
     let var4: number = char.WR;
     let var5: number = char.avggrade;
-    return (var1) / 1200 + (var2) / 1000 + var3 * 5 + var4 * 8 - (var5-3) * 40;
+    let var6: number = char.PR;
+    return (var2 / var1 + var3 * 5 + var4 * 8 - (var5-3) * 40) * var6;
 }
 
 function getCharTier(np: number) {
@@ -306,7 +306,7 @@ export function getListforTiergroup(tiergroup:number) { // 함수 가독성 및 
                 TK: getAvgTK(char.code, 3, tiergroup, 0),
                 avgdeal: Math.floor(getAvgdeal(char.code, 3, tiergroup, 0)),
                 SbScore: getSbScore(char.code, 3, tiergroup),
-                SbCount: getSbCount(char.code, 3, tiergroup, 0),
+                SbCount: getSbCount(char.code, 3, tiergroup),
                 avggrade: getAvgGrade(char.code, 3, 0),
 
                 nadjapoint: 0,
