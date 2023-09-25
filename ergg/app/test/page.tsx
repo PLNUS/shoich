@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import CharacterData from "./charData.json";
 import CharMastery from "./charMastery.json";
 import CharData3 from "./charData3.json";
+import CharData2 from "./charData2.json";
 import WeaponData from "../datas/weaponData.json";
 import { getTier, getTierCut, getTierGroup, writeData } from "./ertool";
 
@@ -111,7 +112,7 @@ export default function Home() { // 내 유저코드 314853
           <button
             class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
-              // mergeJSON(CharData2,CharData5);
+              mergeJSON(CharData2,CharData3);
             }}>Merge JSON</button>
         </div>
       </div>

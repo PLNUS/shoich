@@ -2,38 +2,30 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getListforTiergroup } from "../datas/refactor";
+import { Data, PrimaryData, getListforTiergroup } from "../datas/refactor";
 
 export default function Home() {
-  const [tempDatas, setTempDatas] = useState([{ code: 0, name: 'null', WR: 0, PR: 0, SR: 0, tier: 0, nadjapoint : 0 }]);
-  const [tiergroup, setTiergroup] = useState(0);
-  interface Data {
-    code: number; // 험체 코드
-    name: string; // 험체 이름 + 무기
-    // tiergroup: number; // 티어그룹 - 1 : 이 , 2 : 미+ , 3 : 다 , 4 : 플+ , 0 전체
-
-    WR: number; // WinRate
-    PR: number; // PickRate
-    SR: number; // 점수+Rate
-    SbScore: number; // 총 변동점수
-    SbCount: number; // 점수+ 수
-    TK: number; // 팀킬 
-    avgdeal: number; // 평딜
-
-    tier: number; //임시, 삭제예정
-    nadjapoint: number; // 나쟈 포인트, 각종 지표로 산출된 정수로 티어 산출시 사용
-};
+  const [tempDatas, setTempDatas] = useState<Array<Data>>([{
+    code:0,
+    name:"null",
+    WR:0,
+    PR:0,
+    SR: 0,
+    data:undefined,
+    tier:0,
+    nadjapoint:0
+  }]);
+  const [tiergroup, setTiergroup] = useState(2);
 
   useEffect(() => {
     setTempDatas(getListforTiergroup(tiergroup));
-    
   }, [])
 
   return ( // 아래 두개 블록 Grid 종속화 하면 일단 프론트쪽은마무리. ExpressJS MongoDB 연동 / 통계데이터 가공 해야함ㄴ 티어표 초상화이미지 안나오는 버그걸림 확인필요
     // 해결, 매칭 표본설정 기준 다시 잡아야함. 매치평균 인1000 or 미스릴+ 으로 가자.
     <div class="page_wrap">
       <div class="flex flex-col p-4 w-3/5 h-full gap-y-4">
-        <span class="text-xl font-mb pl-2 text-stone-700">지금 루미아섬에서..</span>
+        <span class="text-xl font-mb pl-2 text-stone-700">{tempDatas[0].data?.entiregamecount} 개 표본의 통계</span>
         <div class="main_grid">
           <div class="main_grid_block">
             <h1 class="main_grid_block_title">가장 핫한 실험체는?</h1>
@@ -226,24 +218,46 @@ export default function Home() {
         <div class="w-[12%] text-center text-md">순위</div>
         <div id="sort_by_abc" class="w-[42%] text-center text-sm">구분</div>
         <div id="sort_by_wr" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => y.WR - x.WR);
+          var sortedData = [...tempDatas!].sort((x, y) => {
+            if (x.WR !== y.WR) return y.WR - x.WR;
+
+            if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+
+            if (x.code !== y.code) return y.code - x.code;
+          });
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>승률</div>
         <div id="sort_by_pr" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => y.PR - x.PR);
+          var sortedData = [...tempDatas!].sort((x, y) => {
+            if (x.PR !== y.PR) return y.PR - x.PR;
+
+            if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+
+            if (x.code !== y.code) return y.code - x.code;
+          });
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>픽률</div>
         <div id="sort_by_sr" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => y.SR - x.SR);
+          var sortedData = [...tempDatas!].sort((x, y) => {
+            if (x.SR !== y.SR) return y.SR - x.SR;
+
+            if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+
+            if (x.code !== y.code) return y.code - x.code;
+          });
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>순방률</div>
         <div id="sort_by_tier" class="w-[12%] text-center text-sm" onClick={() => {
-          var sortedData = [...tempDatas].sort((x, y) => y.nadjapoint - x.nadjapoint);
+          var sortedData = [...tempDatas!].sort((x, y) => {
+            if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+
+            if (x.PR !== y.PR) return y.PR - x.PR;
+
+            if (x.code !== y.code) return y.code - x.code;
+          });
           JSON.stringify(sortedData) === JSON.stringify(tempDatas) ? setTempDatas(sortedData.reverse()) : setTempDatas(sortedData);
         }}>티어</div>
       </div>
     );
   }
 }
-
-

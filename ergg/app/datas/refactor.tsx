@@ -2,36 +2,33 @@ import Character from '../test/charData.json';
 import CharMastery from '../test/charMastery.json';
 import Data2 from '../test/charData3.json';
 
-interface Data {
-    code: number; // 험체 코드
-    name: string; // 험체 이름 + 무기
-    // tiergroup: number; // 티어그룹 - 1 : 이 데 미 , 2 : 다 , 3 : 플 , 4 : 골 , 0 오류
-
-    WR: number; // WinRate
-    PR: number; // PickRate
-    SR: number; // 점수+Rate
-    SbScore: number; // 총 변동점수
-    SbCount: number; // 점수+ 수
-    TK: number; // 팀킬 
-    avgdeal: number; // 평딜
-    avggrade: number; // 평순
-
-    tier: number; //임시, 삭제예정
-    nadjapoint: number; // 나쟈 포인트, 각종 지표로 산출된 정수로 티어 산출시 사용
-};
-
 export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어가면 한국 무기이름 반환..
-    return weapon;
-}
-
-function getNadjaPoint(char: Data) { // 티어 산출 밸런싱 필요
-    let var1: number = char.SbCount ; // 
-    let var2: number = char.SbScore;
-    let var3: number = char.TK;
-    let var4: number = char.WR;
-    let var5: number = char.avggrade;
-    let var6: number = char.PR;
-    return (var2 / var1 + var3 * 5 + var4 * 8 - (var5-3) * 40) * var6;
+    switch(weapon) {
+        case "OneHandSword": return "단검";
+        case "TwoHandSword": return "양손검";
+        case "Axe": return "도끼";
+        case "DualSword": return "쌍검";
+        case "Pistol": return "권총";
+        case "AssaultRifle": return "돌격소총";
+        case "SniperRifle": return "저격총";
+        case "Rapier": return "레이피어";
+        case "Spear": return "창";
+        case "Hammer": return "망치";
+        case "Bat": return "방망이";
+        case "HighAngleFire": return "투척";
+        case "DirectFire": return "암기";
+        case "Bow": return "활";
+        case "CrossBow": return "석궁";
+        case "Glove": return "글러브";
+        case "Tonfa": return "돈파";
+        case "Guitar": return "기타";
+        case "Nunchaku": return "쌍절곤";
+        case "Whip": return "채찍";
+        case "Arcana": return "아르카나";
+        case "Camera": return "카메라";
+        case "VFArm": return "VF 의수";
+        default : return weapon;
+    }
 }
 
 function getCharTier(np: number) {
@@ -51,15 +48,15 @@ function getCharTier(np: number) {
 }
 
 function getAvgGrade(code: number, weapon: number, tiergroup: number) {
-    return (getGameCount([], code, weapon, tiergroup, 1) 
-    + getGameCount([], code, weapon, tiergroup, 2)*2 
-    + getGameCount([], code, weapon, tiergroup, 3)*3 
-    + getGameCount([], code, weapon, tiergroup, 4)*4 
-    + getGameCount([], code, weapon, tiergroup, 5)*5 
-    + getGameCount([], code, weapon, tiergroup, 6)*6 
-    + getGameCount([], code, weapon, tiergroup, 7)*7 
-    + getGameCount([], code, weapon, tiergroup, 8)*8 
-    + getGameCount([], code, weapon, tiergroup, 9)*4) / getGameCount([], code, weapon, tiergroup, 0)
+    return (getGameCount([], code, weapon, tiergroup, 1)
+        + getGameCount([], code, weapon, tiergroup, 2) * 2
+        + getGameCount([], code, weapon, tiergroup, 3) * 3
+        + getGameCount([], code, weapon, tiergroup, 4) * 4
+        + getGameCount([], code, weapon, tiergroup, 5) * 5
+        + getGameCount([], code, weapon, tiergroup, 6) * 6
+        + getGameCount([], code, weapon, tiergroup, 7) * 7
+        + getGameCount([], code, weapon, tiergroup, 8) * 8
+        + getGameCount([], code, weapon, tiergroup, 9) * 4) / getGameCount([], code, weapon, tiergroup, 0)
 }
 
 function getGameCount(dataA: Array<any>, code: number, weapon: number, tiergroup: number, grade: number) {
@@ -254,89 +251,96 @@ function getSbScore(code: number, weapon: number, tiergroup: number) {
     return score;
 } // 나중에 이 데이터에서 뽑아내는 함수 싹 다른 파일로 넘기고 전역Data 하나 param으로 받아서 계산하게 해야됨
 
-export function getListforTiergroup(tiergroup:number) { // 함수 가독성 및 효율 개선 필요, 티어그룹 플레+ 다이아+ 릴+ 추가 필요.
+
+export interface Data {
+    code: number; // 험체 코드
+    name: string; // 험체 이름 + 무기
+
+    WR: number; // WinRate
+    PR: number; // PickRate
+    SR: number; // 점수+Rate
+
+    data: PrimaryData | undefined;
+
+    tier: number; //임시, 삭제예정
+    nadjapoint: number; // 나쟈 포인트, 각종 지표로 산출된 정수로 티어 산출시 사용
+};
+
+export interface PrimaryData { // 원시타입, 소숫점 두자리 내림 되지 않은 데이터들
+    entiregamecount: number;
+    entiregamecountbytier: number;
+    gamecountbygrade: Array<number>;  // 각 등수 count 0은 전체
+    sbcount: number;
+    sbscore: number;
+    tk: number;
+    avgdeal: number;
+    avggrade: number;
+};
+
+function getNadjaPoint(char: Data) { // 티어 산출 밸런싱 필요
+    let var1: number = char.data!.sbcount; // 
+    let var2: number = char.data!.sbscore;
+    let var3: number = char.data!.tk;
+    let var4: number = char.WR;
+    let var5: number = char.data!.avggrade;
+    let var6: number = char.PR;
+    return (var2 / var1 + var3 * 4 + var4 * 6 - (var5 - 3) * 30) * var6;
+}
+
+export function getListforTiergroup(tiergroup: number) { // 우선순위 1 함수 가독성 및 효율 개선 필요, 
+    // 티어그룹 플레+ 다이아+ 릴+ 추가 필요. function(startTierGroup, endTierGroup) 이런식으로 function(1, 0) 하면 이터 + function(2, 0) 하면 릴+ function (4, 3) 하면 플레만
+    // 표본 수 확인가능하게 표시하기
     let newCharList: Array<Data> = [];
 
     Data2.map((char, p) => {
-        let newData: Data = {
-            code: char.code,
-            name: CharMastery[p].weapon1 + ' ' + char.name,
-            WR: Math.floor(getGameCount([], char.code, 1, tiergroup, 1) / getGameCount([], char.code, 1, tiergroup, 0) * 10000) / 100,
-            PR: Math.floor(getGameCount([], char.code, 1, tiergroup, 0) / getGameCount([], 0, 0, tiergroup, 0) * 10000) / 100,
-            SR: Math.floor(getSbCount(char.code, 1, tiergroup) / getGameCount([], char.code, 1, tiergroup, 0) * 10000) / 100,
-            TK: getAvgTK(char.code, 1, tiergroup, 0),
-            avgdeal: Math.floor(getAvgdeal(char.code, 1, tiergroup, 0)),
-            SbScore: getSbScore(char.code, 1, tiergroup),
-            SbCount: getSbCount(char.code, 1, tiergroup),
-            avggrade: getAvgGrade(char.code, 1, 0),
+        let weaponData = Object.values(CharMastery[p]);
+        weaponData.shift(); // 첫 항목 (캐릭코드)날리고
 
-            nadjapoint: 0,
-            tier: 0
-        };
-        newData.nadjapoint = getNadjaPoint(newData);
-        newData.tier = getCharTier(newData.nadjapoint);
-        newCharList.push(newData);
-        if (CharMastery[p].weapon2 !== "None") {
-            let newData: Data = {
-                code: char.code,
-                name: CharMastery[p].weapon2 + ' ' + char.name,
-                WR: Math.floor(getGameCount([], char.code, 2, tiergroup, 1) / getGameCount([], char.code, 2, tiergroup, 0) * 10000) / 100,
-                PR: Math.floor(getGameCount([], char.code, 2, tiergroup, 0) / getGameCount([], 0, 0, tiergroup, 0) * 10000) / 100,
-                SR: Math.floor(getSbCount(char.code, 2, tiergroup) / getGameCount([], char.code, 2, tiergroup, 0) * 10000) / 100,
-                TK: getAvgTK(char.code, 2, tiergroup, 0),
-                avgdeal: Math.floor(getAvgdeal(char.code, 2, tiergroup, 0)),
-                SbScore: getSbScore(char.code, 2, tiergroup),
-                SbCount: getSbCount(char.code, 2, tiergroup),
-                avggrade: getAvgGrade(char.code, 2, 0),
+        weaponData.map((weapon, wcode) => {
+            if (weapon !== "None") {
+                let properties: PrimaryData = {
+                    entiregamecount: getGameCount([], 0, 0, 0, 0), // 전체 표본 수
+                    entiregamecountbytier: getGameCount([], 0, 0, tiergroup, 0), // 해당 티어그룹 내 전체 표본 수
+                    gamecountbygrade: [
+                        getGameCount([], char.code, wcode + 1, tiergroup, 0),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 1),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 2),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 3),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 4),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 5),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 6),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 7),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 8),
+                        getGameCount([], char.code, wcode + 1, tiergroup, 9)],
+                    sbcount: getSbCount(char.code, wcode + 1, tiergroup),
+                    sbscore: getSbCount(char.code, wcode + 1, tiergroup),
+                    avgdeal: getAvgdeal(char.code, wcode + 1, tiergroup, 0),
+                    avggrade: getAvgGrade(char.code, wcode + 1, 0),
+                    tk: getAvgTK(char.code, wcode + 1, tiergroup, 0)
+                }
 
-                nadjapoint: 0,
-                tier: 0
-            };
-            newData.nadjapoint = getNadjaPoint(newData);
-            newData.tier = getCharTier(newData.nadjapoint);
-            newCharList.push(newData);
-        }
-        if (CharMastery[p].weapon3 !== "None") {
-            let newData: Data = {
-                code: char.code,
-                name: CharMastery[p].weapon3 + ' ' + char.name,
-                WR: Math.floor(getGameCount([], char.code, 3, tiergroup, 1) / getGameCount([], char.code, 3, tiergroup, 0) * 10000) / 100,
-                PR: Math.floor(getGameCount([], char.code, 3, tiergroup, 0) / getGameCount([], 0, 0, tiergroup, 0) * 10000) / 100,
-                SR: Math.floor(getSbCount(char.code, 3, tiergroup) / getGameCount([], char.code, 3, tiergroup, 0) * 10000) / 100,
-                TK: getAvgTK(char.code, 3, tiergroup, 0),
-                avgdeal: Math.floor(getAvgdeal(char.code, 3, tiergroup, 0)),
-                SbScore: getSbScore(char.code, 3, tiergroup),
-                SbCount: getSbCount(char.code, 3, tiergroup),
-                avggrade: getAvgGrade(char.code, 3, 0),
+                let newData: Data = {
+                    code: char.code,
+                    name: getKoreanWeapon(weapon.toString()) + ' ' + char.name,
 
-                nadjapoint: 0,
-                tier: 0
-            };
-            newData.nadjapoint = getNadjaPoint(newData);
-            newData.tier = getCharTier(newData.nadjapoint);
-            newCharList.push(newData);
-        }
-        if (CharMastery[p].weapon4 !== "None") {
-            let newData: Data = {
-                code: char.code,
-                name: CharMastery[p].weapon4 + ' ' + char.name,
-                WR: Math.floor(getGameCount([], char.code, 4, tiergroup, 1) / getGameCount([], char.code, 4, tiergroup, 0) * 10000) / 100,
-                PR: Math.floor(getGameCount([], char.code, 4, tiergroup, 0) / getGameCount([], 0, 0, tiergroup, 0) * 10000) / 100,
-                SR: Math.floor(getSbCount(char.code, 4, tiergroup) / getGameCount([], char.code, 4, tiergroup, 0) * 10000) / 100,
-                TK: getAvgTK(char.code, 4, tiergroup, 0),
-                avgdeal: Math.floor(getAvgdeal(char.code, 4, tiergroup, 0)),
-                SbScore: getSbScore(char.code, 4, tiergroup),
-                SbCount: getSbCount(char.code, 4, tiergroup),
-                avggrade: getAvgGrade(char.code, 4, 0),
+                    WR: properties.gamecountbygrade[0] === 0 ? 0 :
+                        Math.floor(properties.gamecountbygrade[1] / properties.gamecountbygrade[0] * 10000) / 100,
+                    PR: properties.entiregamecount === 0 ? 0 :
+                        Math.floor(properties.gamecountbygrade[0] / properties.entiregamecountbytier * 10000) / 100,
+                    SR: properties.gamecountbygrade[0] === 0 ? 0 :
+                        Math.floor(properties.sbcount / properties.gamecountbygrade[0] * 10000) / 100,
 
-                nadjapoint: 0,
-                tier: 0
-            };
-            newData.nadjapoint = getNadjaPoint(newData);
-            newData.tier = getCharTier(newData.nadjapoint);
-            newCharList.push(newData);
-        }
-    })
+                    nadjapoint: 0,
+                    tier: 0,
+
+                    data: properties
+                };
+                newData.nadjapoint = getNadjaPoint(newData);
+                newData.tier = getCharTier(newData.nadjapoint);
+                newCharList.push(newData);
+            }
+        });
+    });
 
     return newCharList;
 }
