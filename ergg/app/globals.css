@@ -39,6 +39,9 @@
   .main_grid_block_item {
     @apply flex flex-row w-full h-[114px];
   }
+  .tierselector_label {
+    @apply flex flex-row items-center gap-x-2;
+  }
 }
 
 @font-face {

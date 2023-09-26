@@ -3,7 +3,7 @@ import CharMastery from '../test/charMastery.json';
 import Data2 from '../test/charData3.json';
 
 export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어가면 한국 무기이름 반환..
-    switch(weapon) {
+    switch (weapon) {
         case "OneHandSword": return "단검";
         case "TwoHandSword": return "양손검";
         case "Axe": return "도끼";
@@ -27,7 +27,7 @@ export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어�
         case "Arcana": return "아르카나";
         case "Camera": return "카메라";
         case "VFArm": return "VF 의수";
-        default : return weapon;
+        default: return weapon;
     }
 }
 
@@ -47,70 +47,55 @@ function getCharTier(np: number) {
     }
 }
 
-function getAvgGrade(code: number, weapon: number, tiergroup: number) {
-    return (getGameCount([], code, weapon, tiergroup, 1)
-        + getGameCount([], code, weapon, tiergroup, 2) * 2
-        + getGameCount([], code, weapon, tiergroup, 3) * 3
-        + getGameCount([], code, weapon, tiergroup, 4) * 4
-        + getGameCount([], code, weapon, tiergroup, 5) * 5
-        + getGameCount([], code, weapon, tiergroup, 6) * 6
-        + getGameCount([], code, weapon, tiergroup, 7) * 7
-        + getGameCount([], code, weapon, tiergroup, 8) * 8
-        + getGameCount([], code, weapon, tiergroup, 9) * 4) / getGameCount([], code, weapon, tiergroup, 0)
+function getAvgGrade(code: number, weapon: number, starttiergroup: number, endtiergroup: number) {
+    return (getGameCount([], code, weapon, starttiergroup, endtiergroup, 1)
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 2) * 2
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 3) * 3
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 4) * 4
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 5) * 5
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 6) * 6
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 7) * 7
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 8) * 8
+        + getGameCount([], code, weapon, starttiergroup, endtiergroup, 9) * 4) / getGameCount([], code, weapon, starttiergroup, endtiergroup, 0)
 }
 
-function getGameCount(dataA: Array<any>, code: number, weapon: number, tiergroup: number, grade: number) {
+function getGameCount(dataA: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
     // 5차원 배열 분해코드라 난잡함
     // code parameter : 각 험체 코드, 0 : 전체
     // weapon parameter : 각 무기코드(순서), 0 : 전체
     // tiergroup parameter : 각 티어그룹, 0 : 전체
     // grade parameter : 1 ~ 8 : 1 ~ 8 등, 9 : 탈출 , 0 : 전체(탈출 포함)
+    // 시발 좃댓다 티어구간 나누기 해야함
     let count = 0;
 
     if (code === 0) {
         if (weapon === 0) {
             Data2.map((char, cp) => {
                 char.grades.map((weapon, wp) => {
-                    if (tiergroup === 0) {
-                        weapon.map((tg, tp) => {
+                    if (starttiergroup > endtiergroup) {
+                        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
                             if (grade === 0) {
-                                tg.forEach(element => {
+                                weapon[starttiergroup - i - 1].forEach(element => {
                                     count += element;
                                 });
                             } else {
-                                count += tg[grade - 1];
+                                count += weapon[starttiergroup - i - 1][grade - 1];
                             }
-                        });
-                    } else {
-                        if (grade === 0) {
-                            weapon[tiergroup - 1].forEach(element => {
-                                count += element;
-                            });
-                        } else {
-                            count += weapon[tiergroup - 1][grade - 1];
                         }
                     }
                 });
             });
         } else {
             Data2.map((char, p) => {
-                if (tiergroup === 0) {
-                    char.grades[weapon - 1].map((tg, gp) => {
+                if (starttiergroup > endtiergroup) {
+                    for (let i = 0; i < starttiergroup - endtiergroup; i++) {
                         if (grade === 0) {
-                            tg.forEach(element => {
+                            char.grades[weapon - 1][starttiergroup - i - 1].forEach(element => {
                                 count += element;
                             });
                         } else {
-                            count += tg[grade - 1];
+                            count += char.grades[weapon - 1][starttiergroup - i - 1][grade - 1];
                         }
-                    })
-                } else {
-                    if (grade === 0) {
-                        char.grades[weapon - 1][tiergroup - 1].forEach(element => {
-                            count += element;
-                        });
-                    } else {
-                        count += char.grades[weapon - 1][tiergroup - 1][grade - 1];
                     }
                 }
             });
@@ -118,44 +103,28 @@ function getGameCount(dataA: Array<any>, code: number, weapon: number, tiergroup
     } else {
         if (weapon === 0) {
             Data2[code - 1].grades.map((weapon, wp) => {
-                if (tiergroup === 0) {
-                    weapon.map((tg, tp) => {
+                if (starttiergroup > endtiergroup) {
+                    for (let i = 0; i < starttiergroup - endtiergroup; i++) {
                         if (grade === 0) {
-                            tg.forEach(element => {
+                            weapon[starttiergroup - i - 1].forEach(element => {
                                 count += element;
                             });
                         } else {
-                            count += tg[grade - 1];
+                            count += weapon[starttiergroup - i - 1][grade - 1];
                         }
-                    });
-                } else {
-                    if (grade === 0) {
-                        weapon[tiergroup - 1].forEach(element => {
-                            count += element;
-                        });
-                    } else {
-                        count += weapon[tiergroup - 1][grade - 1];
                     }
                 }
             });
         } else {
-            if (tiergroup === 0) {
-                Data2[code - 1].grades[weapon - 1].map((tg, tp) => {
+            if (starttiergroup > endtiergroup) {
+                for (let i = 0; i < starttiergroup - endtiergroup; i++) {
                     if (grade === 0) {
-                        tg.forEach(element => {
-                            count += element;
+                        Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1].forEach(e => {
+                            count += e;
                         });
                     } else {
-                        count += tg[grade - 1];
+                        count += Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
                     }
-                });
-            } else {
-                if (grade === 0) {
-                    Data2[code - 1].grades[weapon - 1][tiergroup - 1].forEach(e => {
-                        count += e;
-                    });
-                } else {
-                    count += Data2[code - 1].grades[weapon - 1][tiergroup - 1][grade - 1];
                 }
             }
         }
@@ -163,63 +132,43 @@ function getGameCount(dataA: Array<any>, code: number, weapon: number, tiergroup
     return count;
 }
 
-function getAvgdeal(code: number, weapon: number, tiergroup: number, grade: number) {
+function getAvgdeal(code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
     // code, weapon 은 0일 수 없음
     let deal = 0;
     let targetgrades = 0;
 
-    if (tiergroup === 0) {
-        Data2[code - 1].avgdeal[weapon - 1].map((tg, tp) => {
+    if (starttiergroup > endtiergroup) {
+        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
             if (grade === 0) {
-                tg.map((avgdealByGrade, gp) => {
-                    deal += avgdealByGrade * Data2[code -1].grades[weapon-1][tp][gp];
-                    targetgrades += Data2[code -1].grades[weapon-1][tp][gp];
+                Data2[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1].map((avgdealByGrade, gp) => {
+                    deal += avgdealByGrade * Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
+                    targetgrades += Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
                 });
             } else {
-                deal += tg[grade - 1];
-                targetgrades = Data2[code -1].grades[weapon-1][tp][grade -1];
+                deal += Data2[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1][grade - 1];
+                targetgrades = Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
             }
-        });
-    } else {
-        if (grade === 0) {
-            Data2[code - 1].avgdeal[weapon - 1][tiergroup - 1].map((avgdealByGrade, gp) => {
-                deal += avgdealByGrade * Data2[code -1].grades[weapon-1][tiergroup - 1][gp];
-                targetgrades += Data2[code -1].grades[weapon-1][tiergroup -1][gp];
-            });
-        } else {
-            deal += Data2[code - 1].avgdeal[weapon - 1][tiergroup - 1][grade - 1];
-            targetgrades = Data2[code -1].grades[weapon-1][tiergroup - 1][grade -1];
         }
     }
     return targetgrades !== 0 ? deal / targetgrades : 0;
 }
 
-function getAvgTK(code: number, weapon: number, tiergroup: number, grade: number) {
+function getAvgTK(code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
     // code, weapon 은 0일 수 없음
     let tk = 0;
     let targetgrades = 0;
 
-    if (tiergroup === 0) {
-        Data2[code - 1].tk[weapon - 1].map((tg, tp) => {
+    if (starttiergroup > endtiergroup) {
+        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
             if (grade === 0) {
-                tg.map((tkByGrade, gp) => {
-                    tk += tkByGrade * Data2[code -1].grades[weapon-1][tp][gp];
-                    targetgrades += Data2[code -1].grades[weapon-1][tp][gp];
+                Data2[code - 1].tk[weapon - 1][starttiergroup - i  - 1].map((tkByGrade, gp) => {
+                    tk += tkByGrade * Data2[code - 1].grades[weapon - 1][starttiergroup - i  - 1][gp];
+                    targetgrades += Data2[code - 1].grades[weapon - 1][starttiergroup - i  - 1][gp];
                 });
             } else {
-                tk += tg[grade - 1];
-                targetgrades = Data2[code -1].grades[weapon-1][tp][grade -1];
+                tk += Data2[code - 1].tk[weapon - 1][starttiergroup - i  - 1][grade - 1];
+                targetgrades = Data2[code - 1].grades[weapon - 1][starttiergroup - i  - 1][grade - 1];
             }
-        });
-    } else {
-        if (grade === 0) {
-            Data2[code - 1].tk[weapon - 1][tiergroup - 1].map((tkByGrade, gp) => {
-                tk += tkByGrade * Data2[code -1].grades[weapon-1][tiergroup - 1][gp];
-                targetgrades += Data2[code -1].grades[weapon-1][tiergroup -1][gp];
-            });
-        } else {
-            tk += Data2[code - 1].tk[weapon - 1][tiergroup - 1][grade - 1];
-            targetgrades = Data2[code -1].grades[weapon-1][tiergroup - 1][grade -1];
         }
     }
     return targetgrades !== 0 ? tk / targetgrades : 0;
@@ -274,7 +223,7 @@ export interface PrimaryData { // 원시타입, 소숫점 두자리 내림 되�
     entiregamecount: number;
     entiregamecountbytier: number;
     gamecountbygrade: Array<number>;  // 각 등수 count 0은 전체
-    tkbygrade:  Array<number>;
+    tkbygrade: Array<number>;
     avgdealbygrade: Array<number>;
 
     sbcount: number;
@@ -304,42 +253,42 @@ export function getListforTiergroup(startTierGroup: number, endTierGroup: number
         weaponData.map((weapon, wcode) => {
             if (weapon !== "None") {
                 let properties: PrimaryData = {
-                    entiregamecount: getGameCount([], 0, 0, 0, 0), // 전체 표본 수
-                    entiregamecountbytier: getGameCount([], 0, 0, startTierGroup, 0), // 해당 티어그룹 내 전체 표본 수
+                    entiregamecount: getGameCount([], 0, 0, 4, 0, 0), // 전체 표본 수
+                    entiregamecountbytier: getGameCount([], 0, 0, startTierGroup, endTierGroup, 0), // 해당 티어그룹 내 전체 표본 수
                     gamecountbygrade: [
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 0),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 1),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 2),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 3),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 4),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 5),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 6),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 7),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 8),
-                        getGameCount([], char.code, wcode + 1, startTierGroup, 9)],
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 0),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 1),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 2),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 3),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 4),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 5),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 6),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 7),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 8),
+                        getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 9)],
                     sbcount: getSbCount(char.code, wcode + 1, startTierGroup),
                     sbscore: getSbCount(char.code, wcode + 1, startTierGroup),
                     avgdealbygrade: [
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 0),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 1),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 2),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 3),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 4),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 5),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 6),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 7),
-                        getAvgdeal(char.code, wcode + 1, startTierGroup, 8),],
-                    avggrade: getAvgGrade(char.code, wcode + 1, 0),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 0),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 1),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 2),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 3),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 4),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 5),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 6),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 7),
+                        getAvgdeal(char.code, wcode + 1, startTierGroup, endTierGroup, 8),],
+                    avggrade: getAvgGrade(char.code, wcode + 1, startTierGroup, endTierGroup),
                     tkbygrade: [
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 0),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 1),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 2),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 3),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 4),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 5),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 6),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 7),
-                        getAvgTK(char.code, wcode + 1, startTierGroup, 8),],
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 0),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 1),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 2),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 3),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 4),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 5),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 6),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 7),
+                        getAvgTK(char.code, wcode + 1, startTierGroup, endTierGroup, 8),],
                 }
 
                 let newData: Data = {
