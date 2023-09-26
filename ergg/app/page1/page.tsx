@@ -5,47 +5,75 @@ import Select from "react-select";
 import { Data, PrimaryData, getListforTiergroup } from "../datas/refactor";
 import React from "react";
 
-const options = [
+const startOptions = [
   {
-    key: 'platinum',
     text: '플래티넘',
     value: 4,
+    isDisabled: false,
     label: <div className="tierselector_label"><img src="/tiericons/플래티넘.png" className="h-[25px] object-cover" />플래티넘</div>,
   },
   {
-    key: 'diamond',
     text: '다이아몬드',
     value: 3,
+    isDisabled: false,
     label: <div className="tierselector_label"><img src="/tiericons/다이아몬드.png" className="h-[25px] object-cover" />다이아몬드</div>,
   },
   {
-    key: 'mithril',
     text: '미스릴',
     value: 2,
+    isDisabled: false,
     label: <div className="tierselector_label"><img src="/tiericons/미스릴.png" className="h-[25px] object-cover" />미스릴</div>,
   },
   {
-    key: 'eternity',
     text: '이터니티',
     value: 1,
+    isDisabled: false,
     label: <div className="tierselector_label"><img src="/tiericons/이터니티.png" className="h-[25px] object-cover" />이터니티</div>,
   },
 ];
-let sortStandard = (x, y) => {
+const endOptions = [
+  {
+    text: '플래티넘',
+    value: 4,
+    isDisabled: false,
+    label: <div className="tierselector_label"><img src="/tiericons/플래티넘.png" className="h-[25px] object-cover" />플래티넘</div>,
+  },
+  {
+    text: '다이아몬드',
+    value: 3,
+    isDisabled: false,
+    label: <div className="tierselector_label"><img src="/tiericons/다이아몬드.png" className="h-[25px] object-cover" />다이아몬드</div>,
+  },
+  {
+    text: '미스릴',
+    value: 2,
+    isDisabled: false,
+    label: <div className="tierselector_label"><img src="/tiericons/미스릴.png" className="h-[25px] object-cover" />미스릴</div>,
+  },
+  {
+    text: '이터니티',
+    value: 1,
+    isDisabled: false,
+    label: <div className="tierselector_label"><img src="/tiericons/이터니티.png" className="h-[25px] object-cover" />이터니티</div>,
+  },
+];
+
+let sortStandard = ["nadjapoint",(x:Data, y:Data) => {
   if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
   if (x.PR !== y.PR) return y.PR - x.PR;
   if (x.code !== y.code) return y.code - x.code;
-};
+  return undefined;
+}];
 
 export default function Home() {
   const [tempDatas, setTempDatas] = useState<Array<Data>>([{ code: 0,name: "null",WR: 0,PR: 0,SR: 0,data: undefined,tier: 0,nadjapoint: 0}]);
   
   let startTierGroup = 4;
-  let endTierGroup = 0;
+  let endTierGroup = 1;
   // 정렬기준 useState화 시켜서 초깃값 지정 필요
 
   useEffect(() => {
-    setTempDatas(getListforTiergroup(startTierGroup, endTierGroup).sort(sortStandard));
+    setTempDatas(getListforTiergroup(startTierGroup, endTierGroup).sort(sortStandard[1]));
   }, [])
 
   return ( // 아래 두개 블록 Grid 종속화 하면 일단 프론트쪽은마무리. ExpressJS MongoDB 연동 / 통계데이터 가공 해야함ㄴ 티어표 초상화이미지 안나오는 버그걸림 확인필요
@@ -194,28 +222,44 @@ export default function Home() {
       </div>
       <div className="flex flex-col items-center px-4 w-2/5 h-full gap-y-2">
         <div className="flex flex-row w-full justify-between p-2">
-          <div className="flex flex-row gap-x-4 items-end">
+          <div className="flex flex-row gap-x-4 items-center">
           <Select
             className="w-[160px]"
-            options={options}
-            onChange={(e) => {
-              setTempDatas(getListforTiergroup(e?.value!, endTierGroup).sort(sortStandard));
-              startTierGroup = e?.value!;
-            }} //값이 바뀌면 setState되게
-            defaultValue={options[0]} />
+            isSearchable={false}
+            options={startOptions}
+            onChange={(e) => { // 이상한 조건일때 ex) 이터부터 다이아까지 안되게 해야함
+              setTempDatas(getListforTiergroup(e!.value!, endTierGroup).sort(sortStandard[1]));
+              startTierGroup = e!.value!;
+              endOptions.map((options, p) => {
+                if(options.value > startTierGroup){
+                  endOptions[p].isDisabled = true;
+                } else {
+                  endOptions[p].isDisabled = false;
+                }
+              })
+            }}
+            defaultValue={startOptions[0]} />
           <div className="text-md font-ml">
             부터
           </div>
           </div>
-          <div className="flex flex-row gap-x-4 items-end">
+          <div className="flex flex-row gap-x-4 items-center">
           <Select
             className="w-[160px]"
-            options={options}
+            isSearchable={false}
+            options={endOptions}
             onChange={(e) => {
-              setTempDatas(getListforTiergroup(startTierGroup, e?.value!).sort(sortStandard));
-              endTierGroup = e?.value!;
-            }} //값이 바뀌면 setState되게
-            defaultValue={options[3]} />
+              setTempDatas(getListforTiergroup(startTierGroup, e!.value!).sort(sortStandard[1]));
+              endTierGroup = e!.value!;
+              startOptions.map((options, p) => {
+                if(options.value < endTierGroup){
+                  startOptions[p].isDisabled = true;
+                } else {
+                  startOptions[p].isDisabled = false;
+                }
+              })
+            }}
+            defaultValue={endOptions[3]} />
           <div className="text-md font-ml">
             까지
           </div>
@@ -273,47 +317,47 @@ export default function Home() {
         <div className="w-[12%] text-center font-ml text-sm">순위</div>
         <div id="sort_by_abc" className="w-[42%] text-center text-sm">구분</div>
         <div id="sort_by_wr" className="w-[12%] text-center text-sm" onClick={() => {
-          let newst = (x, y) => {
+          let newst = ["wr",(x:Data, y:Data) => {
             if (x.WR !== y.WR) return y.WR - x.WR;
             if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
             if (x.code !== y.code) return y.code - x.code;
-          };
+          }];
           compareAndSort(newst);
         }}>승률</div>
         <div id="sort_by_pr" className="w-[12%] text-center text-sm" onClick={() => {
-          let newst = (x, y) => {
+          let newst = ["pr", (x:Data, y:Data) => {
             if (x.PR !== y.PR) return y.PR - x.PR;
             if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
             if (x.code !== y.code) return y.code - x.code;
-          };
+          }];
           compareAndSort(newst);
         }}>픽률</div>
         <div id="sort_by_sr" className="w-[12%] text-center text-sm" onClick={() => {
-          let newst = (x, y) => {
+          let newst =  ["sr",(x:Data, y:Data) => {
             if (x.SR !== y.SR) return y.SR - x.SR;
             if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
             if (x.code !== y.code) return y.code - x.code;
-          };
+          }];
           compareAndSort(newst);
         }}>순방률</div>
         <div id="sort_by_tier" className="w-[12%] text-center text-sm" onClick={() => {
-          let newst = (x, y) => {
+          let newst =  ["nadjapoint",(x:Data, y:Data) => {
             if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
             if (x.PR !== y.PR) return y.PR - x.PR;
             if (x.code !== y.code) return y.code - x.code;
-          };
+          }];
           compareAndSort(newst);
         }}>티어</div>
       </div>
     );
   }
   
-  function compareAndSort(newStandard:(x:any,y:any) => number) {
-    if(sortStandard === newStandard) {
-      setTempDatas(tempDatas.reverse())
+  function compareAndSort(newStandard) {
+    if(sortStandard[0] == newStandard[0]) {
+      setTempDatas([...tempDatas].reverse())
     } else {
       sortStandard = newStandard;
-      setTempDatas([...tempDatas].sort(newStandard))
+      setTempDatas([...tempDatas].sort(newStandard[1]))
     }
   }
 }
