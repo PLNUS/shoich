@@ -15,10 +15,11 @@ export default function Home() {
     tier:0,
     nadjapoint:0
   }]);
-  const [tiergroup, setTiergroup] = useState(2);
+  const [startTierGroup, setStartTierGroup] = useState(0);
+  const [endTierGroup, setEndTierGroup] = useState(0);
 
   useEffect(() => {
-    setTempDatas(getListforTiergroup(tiergroup));
+    setTempDatas(getListforTiergroup(startTierGroup, endTierGroup));
   }, [])
 
   return ( // 아래 두개 블록 Grid 종속화 하면 일단 프론트쪽은마무리. ExpressJS MongoDB 연동 / 통계데이터 가공 해야함ㄴ 티어표 초상화이미지 안나오는 버그걸림 확인필요

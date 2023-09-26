@@ -106,7 +106,7 @@ export default function Home() { // 내 유저코드 314853
             onClick={() => {
               append(start + '부터 ' + count + '회 크롤링');
 
-              sendSyncRequests(start, count, 7); // 동기식 For문 자체를 Function화시킴
+              sendSyncRequests(start, count, 7); // axios 요청 parallels 인자만큼 병렬실행
             }
             }>게임 파싱</button>
           <button
@@ -120,8 +120,7 @@ export default function Home() { // 내 유저코드 314853
   )
 }
 
-async function mergeJSON(a1: Array<Char> , a2: Array<Char>) {
-  // TODO : 파싱 데이터 병합 함수 작성 필요
+async function mergeJSON(a1: Array<Char> , a2: Array<Char>) { // 파싱 데이터 병합 함수
   let mergedList: Array<Char> = a1;
 
   mergedList.map((char, cp)=> {
@@ -147,7 +146,8 @@ async function mergeJSON(a1: Array<Char> , a2: Array<Char>) {
           let a1befval = a1[cp].tk[wp][tp][p] * a1[cp].grades[wp][tp][p];
           let a2befval = a2[cp].tk[wp][tp][p] * a2[cp].grades[wp][tp][p];
           let a12grade:number = a1[cp].grades[wp][tp][p] + a2[cp].grades[wp][tp][p]
-          mergedList[cp].tk[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
+          mergedList[cp].tk[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; 
+          // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
         });
       });
     });
@@ -157,7 +157,8 @@ async function mergeJSON(a1: Array<Char> , a2: Array<Char>) {
           let a1befval = a1[cp].avgdeal[wp][tp][p] * a1[cp].grades[wp][tp][p];
           let a2befval = a2[cp].avgdeal[wp][tp][p] * a2[cp].grades[wp][tp][p];
           let a12grade:number = a1[cp].grades[wp][tp][p] + a2[cp].grades[wp][tp][p]
-          mergedList[cp].avgdeal[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
+          mergedList[cp].avgdeal[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; 
+          // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
         });
       });
     });
