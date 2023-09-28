@@ -73,113 +73,105 @@ export default function Home() { // 내 유저코드 314853
   }, []);
 
   return (
-    <div class="flex justify-center w-screen h-screen">
-      <div class="flex flex-col bg-stone-100 p-8 w-[1400px] h-screen">
-        <div class="flex flex-row w-full h-[400px] mb-4 gap-x-4">
-          <div id="status" class="bg-stone-300 tracking-wide w-1/3 h-full overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
-          <div id="json" class="bg-stone-300 tracking-wide w-1/3 h-full overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
-          <div class="flex flex-col w-1/3 gap-y-4">
-            <div id="count" class="bg-stone-300 tracking-wide grow overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
-            <div id="analysis" class="bg-stone-300 tracking-wide grow overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
+    <div className="flex justify-center w-screen h-screen">
+      <div className="flex flex-col bg-stone-100 p-8 w-[1400px] h-screen">
+        <div className="flex flex-row w-full h-[400px] mb-4 gap-x-4">
+          <div id="status" className="bg-stone-300 tracking-wide w-1/3 h-full overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
+          <div id="json" className="bg-stone-300 tracking-wide w-1/3 h-full overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
+          <div className="flex flex-col w-1/3 gap-y-4">
+            <div id="count" className="bg-stone-300 tracking-wide grow overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
+            <div id="analysis" className="bg-stone-300 tracking-wide grow overflow-x-hidden overflow-y-auto overscroll-auto p-2"></div>
           </div>
         </div>
-        <div class="flex flex-row w-full h-[50px] justify-between gap-x-4">
+        <div className="flex flex-row w-full h-[50px] justify-between gap-x-4">
           <button
-            class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
+            className="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={(e) => {
               UpdatedData = CharacterData;
               append("... 초기화 완료!");
             }
             }>데이터 초기화</button>
           <button
-            class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
+            className="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
-              writeData(UpdatedData);
-
+              let parsepoint: number;
+              axios.get(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/recent`
+              ).then((response) => {
+                parsepoint = response.data.lastGameNum;
+                console.log(parsepoint)
+                sendSyncRequests(parsepoint, 7); // axios 요청 parallels 인자만큼 병렬실행
+              })
             }
-            } >내보내기</button>
-          <input type="number" onChange={onChange} placeholder="시작할 게임 ID" id="start" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required></input>
-          <input type="number" onChange={onChange} placeholder="크롤링할 게임 수" id="count" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required></input>
-          
-          <button
-            class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
-            onClick={() => {
-              append(start + '부터 ' + count + '회 크롤링');
+            } >파싱지점 구하고 파싱하기</button>
+          <input type="number" onChange={onChange} placeholder="시작할 게임 ID" id="start" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required></input>
+          <input type="number" onChange={onChange} placeholder="크롤링할 게임 수" id="count" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required></input>
 
-              sendSyncRequests(start, count, 7); // axios 요청 parallels 인자만큼 병렬실행
+          <button
+            className="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
+            onClick={() => {
+              append(start + '부터 최신 게임까지 크롤링');
+
+              sendSyncRequests(start, 7); // axios 요청 parallels 인자만큼 병렬실행
             }
             }>게임 파싱</button>
           <button
-            class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
+            className="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
-              mergeJSON(CharData2,CharData5);
-            }}>Merge JSON</button>
+
+            }}>JSON Upload</button>
         </div>
       </div>
     </div>
   )
 }
 
-async function mergeJSON(a1: Array<Char> , a2: Array<Char>) { // 파싱 데이터 병합 함수
-  let mergedList: Array<Char> = a1;
+export async function mergeJSON(lists: Array<Array<Char>>) { // 파싱 데이터 병합 함수
+  let mergedList: Array<Char> = lists[0];
+  lists.shift();
 
-  mergedList.map((char, cp)=> {
-    char.grades.map((weapon , wp) => {
-      weapon.map((tg , tp) => {
-        tg.map((grade, gp) => {
-          mergedList[cp].grades[wp][tp][gp] += a2[cp].grades[wp][tp][gp];
-        });;
-      });
-    });
-    char.scores.map((weapon, wp) => {
-      weapon.map((tg, tp) => {
-        tg.map((scores, sp) => {
-          mergedList[cp].scores[wp][tp][sp] += a2[cp].grades[wp][tp][sp];
-        });;
-      })
-    }); 
-  });
-  mergedList.map((char, cp) => {
-    char.tk.map((weapon, wp) => {
-      weapon.map((tg, tp) => {
-        tg.map((tks, p) => {
-          let a1befval = a1[cp].tk[wp][tp][p] * a1[cp].grades[wp][tp][p];
-          let a2befval = a2[cp].tk[wp][tp][p] * a2[cp].grades[wp][tp][p];
-          let a12grade:number = a1[cp].grades[wp][tp][p] + a2[cp].grades[wp][tp][p]
-          mergedList[cp].tk[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; 
-          // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
+  lists.map((list, lp) => {
+    mergedList.map((char, cp) => {
+      char.grades.map((weapon, wp) => {
+        weapon.map((tg, tp) => {
+          tg.map((grade, gp) => {
+            mergedList[cp].grades[wp][tp][gp] += list[cp].grades[wp][tp][gp];
+          });;
         });
       });
+      char.scores.map((weapon, wp) => {
+        weapon.map((tg, tp) => {
+          tg.map((scores, sp) => {
+            mergedList[cp].scores[wp][tp][sp] += list[cp].grades[wp][tp][sp];
+          });;
+        })
+      });
     });
-    char.avgdeal.map((weapon, wp) => {
-      weapon.map((tg, tp) => {
-        tg.map((deals, p) => {
-          let a1befval = a1[cp].avgdeal[wp][tp][p] * a1[cp].grades[wp][tp][p];
-          let a2befval = a2[cp].avgdeal[wp][tp][p] * a2[cp].grades[wp][tp][p];
-          let a12grade:number = a1[cp].grades[wp][tp][p] + a2[cp].grades[wp][tp][p]
-          mergedList[cp].avgdeal[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade; 
-          // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
+    mergedList.map((char, cp) => {
+      char.tk.map((weapon, wp) => {
+        weapon.map((tg, tp) => {
+          tg.map((tks, p) => {
+            let a1befval = mergedList[cp].tk[wp][tp][p] * mergedList[cp].grades[wp][tp][p];
+            let a2befval = list[cp].tk[wp][tp][p] * list[cp].grades[wp][tp][p];
+            let a12grade: number = mergedList[cp].grades[wp][tp][p] + list[cp].grades[wp][tp][p]
+            mergedList[cp].tk[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade;
+            // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
+          });
+        });
+      });
+      char.avgdeal.map((weapon, wp) => {
+        weapon.map((tg, tp) => {
+          tg.map((deals, p) => {
+            let a1befval = mergedList[cp].avgdeal[wp][tp][p] * mergedList[cp].grades[wp][tp][p];
+            let a2befval = list[cp].avgdeal[wp][tp][p] * list[cp].grades[wp][tp][p];
+            let a12grade: number = mergedList[cp].grades[wp][tp][p] + list[cp].grades[wp][tp][p]
+            mergedList[cp].avgdeal[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade;
+            // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
+          });
         });
       });
     });
   });
   appendJSON(JSON.stringify(mergedList));
-}
-
-function getGameData(gameCode: number) {
-  return new Promise((resolve, rejects) => {
-    axios.get('https://open-api.bser.io/v1/games/' + gameCode, { // 동기식 순차진행 안됨
-      params: {},
-      headers: { 'x-api-key': API_KEY }
-    })
-      .then(function (response) {
-        UpdateFunc(response);
-        resolve("성공")
-      }).catch(function (error) {
-        //console.log(error);
-        rejects("응않되")
-      });
-  })
 }
 
 function UpdateFunc(response: any) {
@@ -232,7 +224,7 @@ function UpdateFunc(response: any) {
     rankcount++;
     appendCount('현재 파싱한 랭겜 수 : ' + rankcount);
     appendJSON(JSON.stringify(UpdatedData, null, ''));
-  } else if (game[0].matchingMode === 2) {}
+  } else if (game[0].matchingMode === 2) { }
 }
 
 function getWeaponNum(charCode: number, firstWeaponCode: number) {
@@ -248,21 +240,60 @@ function getWeaponNum(charCode: number, firstWeaponCode: number) {
   }
 }
 
-function sendSyncRequests(startpoint: number, repeats: number, parallels: number) { // 병렬 실행화. 비동기 함수를 병렬로 임의만큼 동시호출하여 스피드업
+let versionMajor = 0;
+let versionMinor = 0;
+
+let lastOrdinaryGame = 0;
+let errorCount = 0;
+
+function sendSyncRequests(startpoint: number, parallels: number) { // 병렬 실행화. 비동기 함수를 병렬로 임의만큼 동시호출하여 스피드업
+  lastOrdinaryGame = startpoint;
   for (let repeatstart = 1; repeatstart <= parallels; repeatstart++) {
-    asyncParser(startpoint, repeats, parallels, repeatstart);
+    asyncParser(startpoint, parallels, repeatstart);
+  }
+}
+async function asyncParser(startpoint: number, parallels: number, repeatstart: number) { // 이 함수는 비동기(순차)처리됨
+  let i = repeatstart;
+  while (errorCount < 100) {
+    try {
+      if (i % 1000 === 0) {
+        append(i + '회 진행중')
+      }
+      await getGameData(startpoint + i);
+    } catch (err) { }
+    i += parallels;
+  }
+  if (repeatstart === parallels) {
+    axios.post(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/upload`, {
+      // Body 부분
+      "lastGameNum": lastOrdinaryGame,
+      "versionMajor": versionMajor,
+      "versionMinor": 0,
+      "data": UpdatedData
+    }, {
+      // headers
+    }
+    ).then((response) => {
+      console.log(lastOrdinaryGame + "에서 끝, 푸시 완료")
+    })
   }
 }
 
-async function asyncParser(startpoint: number, repeats: number, parallels: number, repeatstart: number) { // 이 함수는 비동기(순차)처리됨
-  for (let i = repeatstart; i <= repeats; i += parallels) {
-    try {
-      if(i%1000 === 0) {
-        append(i+'회 진행중')
-      }
-      await getGameData(startpoint + i);
-    } catch (err) {
-      //console.log('파싱간 에러로 rejected');
-    }
-  }
+function getGameData(gameCode: number) {
+  return new Promise((resolve, rejects) => {
+    axios.get('https://open-api.bser.io/v1/games/' + gameCode, {
+      params: {},
+      headers: { 'x-api-key': API_KEY }
+    })
+      .then(function (response) {
+        UpdateFunc(response);
+        lastOrdinaryGame = gameCode;
+        versionMajor = response.data.userGames[0].versionMajor;
+        errorCount = 0;
+        resolve("성공")
+      }).catch(function (error) {
+        errorCount++;
+        rejects(error);
+      });
+  })
 }

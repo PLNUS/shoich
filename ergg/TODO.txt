@@ -85,3 +85,8 @@ https://codegear.tistory.com/62 참고
 그 한 뭉탱이마다 변화하는 통계로 메인화면 카드 제작.
 
 PAGE2(험체 클릭하면 뜨는 분석화면) / 해상도별 대응 코드 작성하기
+
+몽고디비
+erdev / gvB8hZr0EUXeNYMV
+
+server js 폴더로 test 페이지에 있는 기능들 옯겨야함 (파싱 리팩터링)

@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion"
 import Select from "react-select";
-import { Data, PrimaryData, getListforTiergroup } from "../datas/refactor";
-import { startOptions, endOptions, getColor, HoveredDesc, scrollbarStyles } from "./builder";
+import { Data, PrimaryData } from "../datas/refactor";
+import { Refacter } from "../datas/refactor";
+import { startOptions, endOptions, getColor, scrollbarStyles } from "./builder";
 import React from "react";
 import Link from "next/link";
+import axios from "axios";
 
 let sortStandard = ["nadjapoint", (x: Data, y: Data) => {
   if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
@@ -18,11 +20,17 @@ let sortStandard = ["nadjapoint", (x: Data, y: Data) => {
 export default function Home() {
   const startTierGroup = useRef(5);
   const endTierGroup = useRef(1);
-
+  const refacter = new Refacter();
+  
   const [tempDatas, setTempDatas] = useState<Array<Data>>([{ code: 0, name: "null", weapon: "", WR: 0, PR: 0, SR: 0, data: undefined, tier: 0, nadjapoint: 0 }]);
 
   useEffect(() => {
-    setTempDatas(getListforTiergroup(startTierGroup.current, endTierGroup.current).sort(sortStandard[1]));
+    axios.post(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/games`,
+      { "versionMajor": 5, "versionMinor": 0 }, {}
+    ).then((response) => {
+      console.log(response.data);
+      setTempDatas(refacter.getListforTiergroup(startTierGroup.current, endTierGroup.current).sort(sortStandard[1]));
+    })
     updateStartDisable();
     updateEndDisable();
   }, [])
@@ -368,4 +376,3 @@ export default function Home() {
     }
   }
 }
-
