@@ -35,17 +35,25 @@ function getTierTitle(tier: number) {
     return '엄';
 }
 
-export function getTierGroup(mmr: number, eterCut: number) {
+export function getTierGroup(mmr: number, eterCut: number, demiCut:number) {
     if (mmr >= eterCut) {
         return 1; // 이+
+    } else if (mmr >= demiCut) {
+        return 2; // 데
     } else if (mmr >= 6000) {
-        return 2; // 미+
+        return 3; // 미
     } else if (mmr >= 5000 && mmr < 6000) {
-        return 3; // 다
+        return 4; // 다
     } else if (mmr >= 4000 && mmr < 5000) {
-        return 4; // 플
+        return 5; // 플
+    } else if (mmr >= 3000 && mmr < 4000) {
+        return 6; // 골
+    } else if (mmr >= 2000 && mmr < 3000) {
+        return 7; // 실
+    } else if (mmr >= 1000 && mmr < 2000) {
+        return 8; // 브
     } else {
-        return 0; // 광물
+        return 0;
     }
 }
 

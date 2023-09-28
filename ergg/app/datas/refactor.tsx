@@ -1,6 +1,6 @@
 import Character from '../test/charData.json';
 import CharMastery from '../test/charMastery.json';
-import Data2 from '../test/charData3.json';
+import Data2 from '../test/charData5.json';
 
 export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어가면 한국 무기이름 반환..
     switch (weapon) {
@@ -20,7 +20,7 @@ export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어�
         case "Bow": return "활";
         case "CrossBow": return "석궁";
         case "Glove": return "글러브";
-        case "Tonfa": return "돈파";
+        case "Tonfa": return "톤파";
         case "Guitar": return "기타";
         case "Nunchaku": return "쌍절곤";
         case "Whip": return "채찍";
@@ -72,7 +72,7 @@ function getGameCount(dataA: Array<any>, code: number, weapon: number, starttier
             Data2.map((char, cp) => {
                 char.grades.map((weapon, wp) => {
                     if (starttiergroup > endtiergroup) {
-                        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+                        for (let i = 0; i <= (starttiergroup - endtiergroup); i++) { // 포문은 조건비교보다 i++이 먼저
                             if (grade === 0) {
                                 weapon[starttiergroup - i - 1].forEach(element => {
                                     count += element;
@@ -96,7 +96,7 @@ function getGameCount(dataA: Array<any>, code: number, weapon: number, starttier
         } else {
             Data2.map((char, p) => {
                 if (starttiergroup > endtiergroup) {
-                    for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+                    for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
                         if (grade === 0) {
                             char.grades[weapon - 1][starttiergroup - i - 1].forEach(element => {
                                 count += element;
@@ -120,7 +120,7 @@ function getGameCount(dataA: Array<any>, code: number, weapon: number, starttier
         if (weapon === 0) {
             Data2[code - 1].grades.map((weapon, wp) => {
                 if (starttiergroup > endtiergroup) {
-                    for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+                    for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
                         if (grade === 0) {
                             weapon[starttiergroup - i - 1].forEach(element => {
                                 count += element;
@@ -141,7 +141,7 @@ function getGameCount(dataA: Array<any>, code: number, weapon: number, starttier
             });
         } else {
             if (starttiergroup > endtiergroup) {
-                for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+                for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
                     if (grade === 0) {
                         Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1].forEach(e => {
                             count += e;
@@ -170,7 +170,7 @@ function getAvgdeal(code: number, weapon: number, starttiergroup: number, endtie
     let targetgrades = 0;
 
     if (starttiergroup > endtiergroup) {
-        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+        for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
             if (grade === 0) {
                 Data2[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1].map((avgdealByGrade, gp) => {
                     deal += avgdealByGrade * Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
@@ -201,7 +201,7 @@ function getAvgTK(code: number, weapon: number, starttiergroup: number, endtierg
     let targetgrades = 0;
 
     if (starttiergroup > endtiergroup) {
-        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+        for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
             if (grade === 0) {
                 Data2[code - 1].tk[weapon - 1][starttiergroup - i - 1].map((tkByGrade, gp) => {
                     tk += tkByGrade * Data2[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
@@ -232,7 +232,7 @@ function getSbCount(code: number, weapon: number, starttiergroup: number, endtie
     let count = 0;
 
     if (starttiergroup > endtiergroup) {
-        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+        for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
             count += Data2[code - 1].scores[weapon - 1][starttiergroup - i - 1][0];
         }
     } else if (starttiergroup === endtiergroup) {
@@ -247,7 +247,7 @@ function getSbScore(code: number, weapon: number, starttiergroup: number, endtie
     let score = 0;
 
     if (starttiergroup > endtiergroup) {
-        for (let i = 0; i < starttiergroup - endtiergroup; i++) {
+        for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
             score += Data2[code - 1].scores[weapon - 1][starttiergroup - i - 1][1];
         }
     } else if (starttiergroup === endtiergroup) {
@@ -260,6 +260,7 @@ function getSbScore(code: number, weapon: number, starttiergroup: number, endtie
 export interface Data {
     code: number; // 험체 코드
     name: string; // 험체 이름 + 무기
+    weapon: string;
 
     WR: number; // WinRate
     PR: number; // PickRate
@@ -305,7 +306,7 @@ export function getListforTiergroup(startTierGroup: number, endTierGroup: number
         weaponData.map((weapon, wcode) => {
             if (weapon !== "None") {
                 let properties: PrimaryData = {
-                    entiregamecount: getGameCount([], 0, 0, 4, 1, 0), // 전체 표본 수
+                    entiregamecount: getGameCount([], 0, 0, 8, 1, 0), // 전체 표본 수
                     entiregamecountbytier: getGameCount([], 0, 0, startTierGroup, endTierGroup, 0), // 해당 티어그룹 내 전체 표본 수
                     gamecountbygrade: [
                         getGameCount([], char.code, wcode + 1, startTierGroup, endTierGroup, 0),
@@ -345,7 +346,8 @@ export function getListforTiergroup(startTierGroup: number, endTierGroup: number
 
                 let newData: Data = {
                     code: char.code,
-                    name: getKoreanWeapon(weapon.toString()) + ' ' + char.name,
+                    name: char.name,
+                    weapon: getKoreanWeapon(weapon.toString()),
 
                     WR: properties.gamecountbygrade[0] === 0 ? 0 :
                         Math.floor(properties.gamecountbygrade[1] / properties.gamecountbygrade[0] * 10000) / 100,

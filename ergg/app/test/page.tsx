@@ -4,10 +4,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import CharacterData from "./charData.json";
 import CharMastery from "./charMastery.json";
-import CharData3 from "./charData3.json";
-import CharData2 from "./charData2.json";
 import WeaponData from "../datas/weaponData.json";
 import { getTier, getTierCut, getTierGroup, writeData } from "./ertool";
+import CharData2 from "./charData2.json";
+import CharData5 from "./charData5.json";
 
 export const API_KEY = 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0';
 
@@ -112,7 +112,7 @@ export default function Home() { // 내 유저코드 314853
           <button
             class="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
-              mergeJSON(CharData2,CharData3);
+              mergeJSON(CharData2,CharData5);
             }}>Merge JSON</button>
         </div>
       </div>
@@ -187,40 +187,40 @@ function UpdateFunc(response: any) {
   // console.log(game);
   // matchingMode = 2 일반 3 랭크
   // matchingTeamMod = 3 스쿼드
-  if (game[0].matchingMode === 3 && game[0].serverName === "Seoul") { // 랭겜, 서버, 버전 세팅
+  if (game[0].matchingMode === 3 && game[0].serverName === "Seoul" && game[0].versionMajor == 5) { // 랭겜, 서버, 버전 세팅
     game.map((user, p) => {
       // 이하 각 유저에 대해 수집하는 지표들
       // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)
 
       // 1. 등수
       if (user.escapeState === 0) { // 탈출인지 구분
-        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1]++;
+        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1]++;
       } else {
-        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][8]++;
+        UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][8]++;
       }
 
       // 2. 점수
       if (user.mmrGain > 0) { // 점수 먹었을 경우
-        UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][0]++;
+        UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][0]++;
       }
       // 점수 먹었던 안먹었던 총 점수변동 반영
-      UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][1] += user.mmrGain;
+      UpdatedData[user.characterNum - 1].scores[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][1] += user.mmrGain;
 
       // 가독성 위해 if문 두번 씀 그냥
       if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
         // 3. 평딜
-        let targetGameCount: number = UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1];
+        let targetGameCount: number = UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1];
         // 해당 구간(티어그룹별, 무기별) 판수 카운트
 
-        let beforeAvgDeal: number = UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1];
+        let beforeAvgDeal: number = UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1];
 
-        UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1]
+        UpdatedData[user.characterNum - 1].avgdeal[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1]
           = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
 
         // 4. TK(팀 킬수)
-        let beforeAvgTK: number = UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1];
+        let beforeAvgTK: number = UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1];
 
-        UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0]) - 1][user.gameRank - 1]
+        UpdatedData[user.characterNum - 1].tk[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1]
           = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
       }
 
