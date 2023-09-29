@@ -32,12 +32,8 @@ export interface PrimaryData { // 원시타입, 소숫점 두자리 내림 되�
 let parsedData: Array<any> = Character;
 
 export class Refacter {
-    constructor() { // new 선언 시 게임데이터 파싱 후 병합
-        axios.post(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/games`,
-            { "versionMajor": 5, "versionMinor": 0 }, {}
-        ).then((response) => {
-            parsedData = this.mergeJSON(response.data);
-        })
+    constructor(data:Array<any>) { // new 선언 시 게임데이터 파싱 후 병합
+        parsedData = this.mergeJSON(data);
     }
 
     public mergeJSON(lists: Array<Array<any>>) { // 파싱 데이터 병합 함수

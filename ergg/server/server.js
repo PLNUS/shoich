@@ -62,6 +62,7 @@ app.get('/recent', function (req, res) {
 });
 
 app.post('/games', function (req, res) { // 순수하게 게임 데이터들만 보냄
+    console.log('games 요청 받음');
     Game.find({versionMajor : req.body.versionMajor, versionMinor : req.body.versionMinor})
         .sort({_id:-1,}).then((docs) => {
         let datalist = [];

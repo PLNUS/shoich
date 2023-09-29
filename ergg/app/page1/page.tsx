@@ -9,6 +9,7 @@ import { startOptions, endOptions, getColor, scrollbarStyles } from "./builder";
 import React from "react";
 import Link from "next/link";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 let sortStandard = ["nadjapoint", (x: Data, y: Data) => {
   if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
@@ -17,22 +18,49 @@ let sortStandard = ["nadjapoint", (x: Data, y: Data) => {
   return undefined;
 }];
 
+
 export default function Home() {
+  const getGames = () => {
+    async function parseGames() {
+      return await axios.get(`/api/dbapi`
+       // { "versionMajor": 5, "versionMinor": 0 }, {}
+      );
+    }
+    const res = useQuery(['games'], () => parseGames(), {
+      staleTime: 1000 * 1000,
+      refetchOnMount: false
+    });
+    if (res.isLoading) {
+      return (
+        <div className="flex h-full w-full justify-center items-center">
+            <div>Loading...</div>
+        </div>
+      )
+    }
+    // 결과값이 전달되었을 경우
+    if (res.data) {
+      console.log(res.data.data);
+      const refacter = new Refacter(res.data.data);
+      updateStartDisable();
+      updateEndDisable();
+
+      return (
+        <div className="flex flex-col h-fill w-full overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
+          {refacter.getListforTiergroup(startTierGroup.current, endTierGroup.current).sort(sortStandard[1]).map((data, p) => (
+            <TierList data={data} p={p}></TierList>
+          ))}
+        </div>
+      )
+    }
+  };
+
   const startTierGroup = useRef(5);
   const endTierGroup = useRef(1);
-  const refacter = new Refacter();
-  
+  let refacter: any;
+
   const [tempDatas, setTempDatas] = useState<Array<Data>>([{ code: 0, name: "null", weapon: "", WR: 0, PR: 0, SR: 0, data: undefined, tier: 0, nadjapoint: 0 }]);
 
   useEffect(() => {
-    axios.post(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/games`,
-      { "versionMajor": 5, "versionMinor": 0 }, {}
-    ).then((response) => {
-      console.log(response.data);
-      setTempDatas(refacter.getListforTiergroup(startTierGroup.current, endTierGroup.current).sort(sortStandard[1]));
-    })
-    updateStartDisable();
-    updateEndDisable();
   }, [])
 
   return ( // 아래 두개 블록 Grid 종속화 하면 일단 프론트쪽은마무리. ExpressJS MongoDB 연동 / 통계데이터 가공 해야함ㄴ 티어표 초상화이미지 안나오는 버그걸림 확인필요
@@ -191,7 +219,7 @@ export default function Home() {
               styles={scrollbarStyles}
               defaultValue={startOptions[3]}
               onChange={(e) => { // 이상한 조건일때 ex) 이터부터 다이아까지 안되게 해야함
-                setTempDatas(getListforTiergroup(e!.value!, endTierGroup.current).sort(sortStandard[1]));
+                setTempDatas(refacter.getListforTiergroup(e!.value!, endTierGroup.current).sort(sortStandard[1]));
                 startTierGroup.current = e!.value!;
                 updateEndDisable();
               }} />
@@ -207,7 +235,7 @@ export default function Home() {
               styles={scrollbarStyles}
               defaultValue={endOptions[7]}
               onChange={(e) => {
-                setTempDatas(getListforTiergroup(startTierGroup.current, e!.value!).sort(sortStandard[1]));
+                setTempDatas(refacter.getListforTiergroup(startTierGroup.current, e!.value!).sort(sortStandard[1]));
                 endTierGroup.current = e!.value!;
                 updateStartDisable();
               }} />
@@ -217,11 +245,7 @@ export default function Home() {
           </div>
         </div>
         <TierHead />
-        <div className="flex flex-col h-fill w-full overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
-          {tempDatas.map((data, p) => (
-            <TierList data={data} p={p}></TierList>
-          ))}
-        </div>
+        {getGames()}
       </div>
     </div>
   )
@@ -248,7 +272,10 @@ export default function Home() {
 
   function TierList(props: any) {
     const [animate, setAnimate] = useState('hidden');
-
+    const res = useQuery(['games'], () => parseGames(), {
+      staleTime: 1000 * 1000,
+      refetchOnMount: false
+    });
     const data = props.data; // 받아온 값들
     const p = props.p; // 번호임 그냥
 
