@@ -29,11 +29,11 @@ export interface PrimaryData { // 원시타입, 소숫점 두자리 내림 되�
     avggrade: number;
 };
 
-let parsedData: Array<any> = Character;
+let parsedData: Array<any>;
 
 export class Refacter {
-    constructor(data:Array<any>) { // new 선언 시 게임데이터 파싱 후 병합
-        parsedData = this.mergeJSON(data);
+    constructor(data?:Array<any>) { // new 선언 시 게임데이터 파싱 후 병합
+        parsedData = data === undefined ? [Character] : this.mergeJSON(data!);
     }
 
     public mergeJSON(lists: Array<Array<any>>) { // 파싱 데이터 병합 함수

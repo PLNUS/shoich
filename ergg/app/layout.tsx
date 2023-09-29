@@ -4,6 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
 import Providers from './Provider'
+import { Refacter } from './datas/refactor'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 
 const inter = Inter({ subsets: ['latin'] })
 

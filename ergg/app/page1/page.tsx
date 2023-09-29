@@ -10,6 +10,7 @@ import React from "react";
 import Link from "next/link";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { GetStaticProps } from "next";
 
 let sortStandard = ["nadjapoint", (x: Data, y: Data) => {
   if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
@@ -19,40 +20,7 @@ let sortStandard = ["nadjapoint", (x: Data, y: Data) => {
 }];
 
 
-export default function Home() {
-  const getGames = () => {
-    async function parseGames() {
-      return await axios.get(`/api/dbapi`
-       // { "versionMajor": 5, "versionMinor": 0 }, {}
-      );
-    }
-    const res = useQuery(['games'], () => parseGames(), {
-      staleTime: 1000 * 1000,
-      refetchOnMount: false
-    });
-    if (res.isLoading) {
-      return (
-        <div className="flex h-full w-full justify-center items-center">
-            <div>Loading...</div>
-        </div>
-      )
-    }
-    // 결과값이 전달되었을 경우
-    if (res.data) {
-      console.log(res.data.data);
-      const refacter = new Refacter(res.data.data);
-      updateStartDisable();
-      updateEndDisable();
-
-      return (
-        <div className="flex flex-col h-fill w-full overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
-          {refacter.getListforTiergroup(startTierGroup.current, endTierGroup.current).sort(sortStandard[1]).map((data, p) => (
-            <TierList data={data} p={p}></TierList>
-          ))}
-        </div>
-      )
-    }
-  };
+export default function Home({ games }) {
 
   const startTierGroup = useRef(5);
   const endTierGroup = useRef(1);
@@ -61,6 +29,10 @@ export default function Home() {
   const [tempDatas, setTempDatas] = useState<Array<Data>>([{ code: 0, name: "null", weapon: "", WR: 0, PR: 0, SR: 0, data: undefined, tier: 0, nadjapoint: 0 }]);
 
   useEffect(() => {
+    const refacter = new Refacter(games);
+    setTempDatas(refacter.getListforTiergroup(startTierGroup.current, endTierGroup.current).sort(sort));
+    updateStartDisable();
+    updateEndDisable();
   }, [])
 
   return ( // 아래 두개 블록 Grid 종속화 하면 일단 프론트쪽은마무리. ExpressJS MongoDB 연동 / 통계데이터 가공 해야함ㄴ 티어표 초상화이미지 안나오는 버그걸림 확인필요
@@ -245,7 +217,11 @@ export default function Home() {
           </div>
         </div>
         <TierHead />
-        {getGames()}
+        <div className="flex flex-col h-fill w-full overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
+          {tempDatas.sort(sortStandard[1]).map((data, p) => (
+            <TierList data={data} p={p}></TierList>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -272,10 +248,6 @@ export default function Home() {
 
   function TierList(props: any) {
     const [animate, setAnimate] = useState('hidden');
-    const res = useQuery(['games'], () => parseGames(), {
-      staleTime: 1000 * 1000,
-      refetchOnMount: false
-    });
     const data = props.data; // 받아온 값들
     const p = props.p; // 번호임 그냥
 
@@ -403,3 +375,12 @@ export default function Home() {
     }
   }
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  const res = await axios.get("/api/dbapi"
+    // { "versionMajor": 5, "versionMinor": 0 }, {}
+  );
+  return {
+    props: { games: res.data.data },
+  };
+};
