@@ -3,10 +3,6 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
-import Providers from './Provider'
-import { Refacter } from './datas/refactor'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,7 +33,7 @@ export default function RootLayout({
             <Link href="/test" className="text-xl px-4 py-2 transition duration-150 ease-in-out hover:text-rose-400">TEST</Link>
           </div>
         </div>
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   )

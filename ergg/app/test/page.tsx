@@ -7,7 +7,6 @@ import CharMastery from "./charMastery.json";
 import WeaponData from "../datas/weaponData.json";
 import { getTier, getTierCut, getTierGroup, writeData } from "./ertool";
 import CharData2 from "./charData2.json";
-import CharData5 from "./charData5.json";
 
 export const API_KEY = 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0';
 
@@ -95,7 +94,7 @@ export default function Home() { // 내 유저코드 314853
             className="rounded p-4 grow h-full bg-blue-400 text-center font-mr text-white"
             onClick={() => {
               let parsepoint: number;
-              axios.get(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/recent`
+              axios.get(`https://silver-disco-q96qwg9xrj526wpx-8010.app.github.dev/recent`
               ).then((response) => {
                 parsepoint = response.data.lastGameNum;
                 console.log(parsepoint)
@@ -264,7 +263,7 @@ async function asyncParser(startpoint: number, parallels: number, repeatstart: n
     i += parallels;
   }
   if (repeatstart === parallels) {
-    axios.post(`https://obscure-space-pancake-g56qgw5pgwj39rxg-8010.app.github.dev/upload`, {
+    axios.post(`https://silver-disco-q96qwg9xrj526wpx-8010.app.github.dev/upload`, {
       // Body 부분
       "lastGameNum": lastOrdinaryGame,
       "versionMajor": versionMajor,

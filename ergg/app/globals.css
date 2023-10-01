@@ -16,6 +16,9 @@
   h1 {
     @apply font-mb tracking-tight;
   }
+  .trend_wrap {
+    @apply flex flex-col p-4 w-3/5 h-full gap-y-4;
+  }
   .tiericon {
     @apply flex justify-end h-full aspect-square mt-1;
   }

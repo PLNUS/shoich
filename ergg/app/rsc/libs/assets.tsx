@@ -1,5 +1,4 @@
-import { motion } from "framer-motion"
-import { Data } from "../datas/refactor";
+import { Data } from "./refactor";
 
 export const startOptions = [
   {
@@ -51,6 +50,7 @@ export const startOptions = [
     label: <div className="tierselector_label"><img src="/tiericons/이터니티.png" className="h-[25px] object-cover" />이터니티</div>,
   },
 ];
+
 export const endOptions = [
   {
     text: '브론즈',
@@ -102,6 +102,26 @@ export const endOptions = [
   },
 ];
 
+export function updateEndDisable(startTierGroup:number) {
+  endOptions.map((options, p) => {
+    if (options.value > startTierGroup) {
+      endOptions[p].isDisabled = true;
+    } else {
+      endOptions[p].isDisabled = false;
+    }
+  });
+}
+
+export function updateStartDisable(endTierGroup:number) {
+  startOptions.map((options, p) => {
+    if (options.value < endTierGroup) {
+      startOptions[p].isDisabled = true;
+    } else {
+      startOptions[p].isDisabled = false;
+    }
+  });
+}
+
 export function getColor(tier: number) {
   switch (tier) {
     case 0: return `bg-stone-500`
@@ -114,12 +134,8 @@ export function getColor(tier: number) {
   }
 }
 
-export function TierSelector(props) {
-  return;
-}
-
 export const scrollbarStyles = {
-  menuList: (base) => ({
+  menuList: (base: any) => ({
     ...base,
     height: "auto",
 
@@ -139,3 +155,34 @@ export const scrollbarStyles = {
     }
   })
 };
+
+interface Standard {
+  wr : (x: Data, y: Data) => number,
+  pr : (x: Data, y: Data) => number,
+  sr : (x: Data, y: Data) => number,
+  np : (x: Data, y: Data) => number,
+  current? : (x: Data, y: Data) => number,
+}
+
+export const sortStandard:Standard = {
+  wr : (x: Data, y: Data) => {
+    if (x.WR !== y.WR) return y.WR - x.WR;
+    if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+    return y.code - x.code;
+  },
+  pr : (x: Data, y: Data) => {
+    if (x.PR !== y.PR) return y.PR - x.PR;
+    if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+    return y.code - x.code;
+  },
+  sr : (x: Data, y: Data) => {
+    if (x.SR !== y.SR) return y.SR - x.SR;
+    if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+    return y.code - x.code;
+  },
+  np : (x: Data, y: Data) => {
+    if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+    if (x.PR !== y.PR) return y.PR - x.PR;
+    return y.code - x.code;
+  }
+}
