@@ -11,6 +11,7 @@ const config: Config = {
       fontFamily: {
         ml: ["SUIT-Regular"],
         mb: ["Pretendard-Black"],
+        msb: ["Pretendard-Bold"],
         mr: ["Pretendard-Regular"],
       },
       backgroundImage: {

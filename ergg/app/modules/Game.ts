@@ -1,4 +1,6 @@
-import mongoose, { Schema, models } from "mongoose";
+import mongoose from "mongoose";
+import { models } from "mongoose";
+import { Schema } from "mongoose";
 
 const gameSchema = new Schema({
     lastGameNum: {
@@ -19,6 +21,6 @@ const gameSchema = new Schema({
     }
 });
 
-const Game = models.game || mongoose.model('game', gameSchema);
+const Game = models.game ||  mongoose.model('game', gameSchema);
 
 export default Game;

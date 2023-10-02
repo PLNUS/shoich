@@ -1,6 +1,4 @@
-import axios from "axios";
-
-export function getTier(mmr: number, tierCut: Array<number>) {
+function getTier(mmr, tierCut) {
     if (mmr >= tierCut[0]) {
         return getTierTitle(1);
     } else if (mmr >= tierCut[1]) {
@@ -12,7 +10,7 @@ export function getTier(mmr: number, tierCut: Array<number>) {
     }
 }
 
-function getTierTitle(tier: number) {
+function getTierTitle(tier) {
     if (tier === 1) {
         return '이터니티';
     } else if (tier === 2) {
@@ -35,7 +33,7 @@ function getTierTitle(tier: number) {
     return '엄';
 }
 
-export function getTierGroup(mmr: number, eterCut: number, demiCut:number) {
+function getTierGroup(mmr, eterCut, demiCut) {
     if (mmr >= eterCut) {
         return 1; // 이+
     } else if (mmr >= demiCut) {
@@ -55,26 +53,4 @@ export function getTierGroup(mmr: number, eterCut: number, demiCut:number) {
     } else {
         return 0;
     }
-}
-
-export async function getTierCut() {
-    var eterCut = 0;
-    var demiCut = 0;
-    const data = await axios.get('https://open-api.bser.io/v1/rank/top/19/3', {
-        params: {},
-        headers: { 'x-api-key': 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0' }
-    }).then(function (response) {
-        eterCut = response.data.topRanks.find(e => e.rank === 200).mmr;
-        demiCut = response.data.topRanks.find(e => e.rank === 700).mmr;
-        console.log('티어컷 계산완료');
-        return ([eterCut, demiCut])
-    }).catch(function (e) {
-        return ([100000, 100000]);
-    }).finally(function () {
-        return [10000, 10000];
-    });
-}
-
-export function writeData(json: object) {
-
 }

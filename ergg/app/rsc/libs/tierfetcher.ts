@@ -1,15 +1,25 @@
 import Game from "@/app/modules/Game";
+import Version from "@/app/modules/Version";
 import dbConnect from "@/app/modules/dbManager";
 
-export default async function getTierList(versionMajor:number, versionMinor:number) {
+export default async function getTierListForAll() {  // 버전별로 각각 List 따로 병합하기..
     dbConnect();
     const games = Game;
-    const allGames = await games.find({versionMajor : versionMajor, versionMinor : versionMinor}).sort({_id:-1,});
-    let mergedGames = mergeJSON(allGames);
-    return mergedGames;
+    const vers = Version;
+
+    const versions:Array<any> = await vers.find({},{ versionMajor: 1, versionMinor: 1, _id: 0 }).lean();
+
+    let mergedGames = new Array(versions.length);
+
+    for(let i = 0; i < versions.length; i++){
+      const allGames = await games.find({versionMajor:versions[i].versionMajor, versionMinor:versions[i].versionMinor}).lean();
+      mergedGames[i] = mergeJSON(allGames);
+    }
+
+    return {versions : versions, data : mergedGames};
   }
   
-  async function mergeJSON(lists: Array<any>) { // 파싱 데이터 병합 함수
+  function mergeJSON(lists: Array<any>) { // 파싱 데이터 병합 함수
     let formattedData: Array<any> = [];
     lists.map((data, p) => {
       formattedData.push(data.data);
@@ -20,15 +30,15 @@ export default async function getTierList(versionMajor:number, versionMinor:numb
       formattedData.shift();
   
       formattedData.map((list, lp) => {
-        mergedList.map((char, cp) => {
-          char.grades.map((weapon, wp) => {
+        mergedList.map((char:any, cp:number) => {
+          char.grades.map((weapon:Array<Array<Array<number>>>, wp:number) => {
             weapon.map((tg, tp) => {
               tg.map((grade, gp) => {
                 mergedList[cp].grades[wp][tp][gp] += list[cp].grades[wp][tp][gp];
               });;
             });
           });
-          char.scores.map((weapon, wp) => {
+          char.scores.map((weapon:Array<Array<Array<number>>>, wp:number) => {
             weapon.map((tg, tp) => {
               tg.map((scores, sp) => {
                 mergedList[cp].scores[wp][tp][sp] += list[cp].grades[wp][tp][sp];
@@ -36,8 +46,8 @@ export default async function getTierList(versionMajor:number, versionMinor:numb
             })
           });
         });
-        mergedList.map((char, cp) => {
-          char.tk.map((weapon, wp) => {
+        mergedList.map((char:any, cp:number) => {
+          char.tk.map((weapon:Array<Array<Array<number>>>, wp:number) => {
             weapon.map((tg, tp) => {
               tg.map((tks, p) => {
                 let a1befval = mergedList[cp].tk[wp][tp][p] * mergedList[cp].grades[wp][tp][p];
@@ -48,7 +58,7 @@ export default async function getTierList(versionMajor:number, versionMinor:numb
               });
             });
           });
-          char.avgdeal.map((weapon, wp) => {
+          char.avgdeal.map((weapon:Array<Array<Array<number>>>, wp:number) => {
             weapon.map((tg, tp) => {
               tg.map((deals, p) => {
                 let a1befval = mergedList[cp].avgdeal[wp][tp][p] * mergedList[cp].grades[wp][tp][p];
