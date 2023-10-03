@@ -28,7 +28,24 @@ const gameSchema = new Schema({
     }
 });
 
-const Game = mongoose.model('game', gameSchema)
+const synergySchema = new Schema({
+    lastGameNum: {
+        required: true,
+        type: Number,
+    },
+    versionMajor: {
+        required: true,
+        type: Number,
+    },
+    versionMinor: {
+        required: true,
+        type: Number,
+    },
+    data: {
+        required: true,
+        type: Object,
+    }
+});
 
 const verSchema = new Schema({
     versionMajor: {
@@ -42,6 +59,8 @@ const verSchema = new Schema({
 });
 
 const Version = mongoose.model('versions', verSchema)
+const Synergy = mongoose.model('synergys', synergySchema);
+const Game = mongoose.model('games', gameSchema);
 
 const CharMastery = require("./charMastery.json");
 const CharacterData = require("./charData.json");
@@ -223,6 +242,12 @@ async function getGameData(gameCode) {
                             versionMinor: versionMinor,
                             data: UpdatedData
                         });
+                        Synergy.create({
+                            lastGameNum: lastOrdinaryGame + 1,
+                            versionMajor: versionMajor,
+                            versionMinor: versionMinor,
+                            data: UpdatedSynergyData
+                        });
 
                         versionMajor = response.data.userGames[0].versionMajor;
                         versionMinor = response.data.userGames[0].versionMinor;
@@ -258,6 +283,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
         i += parallels;
     }
     if (repeatstart === parallels) {
+        console.log("최종점 확인으로 종료.");
         setTimeout(() => {
             Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
@@ -265,8 +291,13 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
                 versionMinor: versionMinor,
                 data: UpdatedData
             });
+            Synergy.create({
+                lastGameNum: lastOrdinaryGame + 1,
+                versionMajor: versionMajor,
+                versionMinor: versionMinor,
+                data: UpdatedSynergyData
+            });
         }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
-        console.log("최종점 확인으로 종료.");
     }
 }
 
