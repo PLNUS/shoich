@@ -93,12 +93,12 @@ export interface Data {
   
     if (code === 0) {
       if (weapon === 0) {
-        parsedData.map((char, cp) => {
+        parsedData.map((char:any, cp:number) => {
           char.grades.map((weapon, wp) => {
             if (starttiergroup > endtiergroup) {
               for (let i = 0; i <= (starttiergroup - endtiergroup); i++) { // 포문은 조건비교보다 i++이 먼저
                 if (grade === 0) {
-                  weapon[starttiergroup - i - 1].forEach(element => { // 여기서부터 탈출판수 중복안되게 바꿔야함
+                    weapon[starttiergroup - i - 1].pop().forEach(element => { // 탈출수 중복 안되도록 모든 등수 리턴할때는 POP();
                     count += element;
                   });
                 } else {
@@ -108,7 +108,7 @@ export interface Data {
             }
             else if (starttiergroup === endtiergroup) {
               if (grade === 0) {
-                weapon[starttiergroup - 1].forEach(element => {
+                weapon[starttiergroup - 1].pop().forEach(element => {
                   count += element;
                 });
               } else {
@@ -122,7 +122,7 @@ export interface Data {
           if (starttiergroup > endtiergroup) {
             for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
               if (grade === 0) {
-                char.grades[weapon - 1][starttiergroup - i - 1].forEach(element => {
+                  char.grades[weapon - 1][starttiergroup - i - 1].pop().forEach(element => {
                   count += element;
                 });
               } else {
@@ -131,7 +131,7 @@ export interface Data {
             }
           } else if (starttiergroup === endtiergroup) {
             if (grade === 0) {
-              char.grades[weapon - 1][starttiergroup - 1].forEach(element => {
+                char.grades[weapon - 1][starttiergroup - 1].pop().forEach(element => {
                 count += element;
               });
             } else {
@@ -146,7 +146,7 @@ export interface Data {
           if (starttiergroup > endtiergroup) {
             for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
               if (grade === 0) {
-                weapon[starttiergroup - i - 1].forEach(element => {
+                  weapon[starttiergroup - i - 1].pop().forEach(element => {
                   count += element;
                 });
               } else {
@@ -155,7 +155,7 @@ export interface Data {
             }
           } else if (starttiergroup === endtiergroup) {
             if (grade === 0) {
-              weapon[starttiergroup - 1].forEach(element => {
+              weapon[starttiergroup - 1].pop().forEach(element => {
                 count += element;
               });
             } else {
@@ -167,7 +167,7 @@ export interface Data {
         if (starttiergroup > endtiergroup) {
           for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
             if (grade === 0) {
-              parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1].forEach(e => {
+              parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1].pop().forEach(e => {
                 count += e;
               });
             } else {
@@ -176,7 +176,7 @@ export interface Data {
           }
         } else if (starttiergroup === endtiergroup) {
           if (grade === 0) {
-            parsedData[code - 1].grades[weapon - 1][starttiergroup - 1].forEach(e => {
+            parsedData[code - 1].grades[weapon - 1][starttiergroup - 1].pop().forEach(e => {
               count += e;
             });
           } else {
@@ -278,10 +278,9 @@ export interface Data {
       score += parsedData[code - 1].scores[weapon - 1][starttiergroup - 1][1];
     }
     return score;
-  } // 나중에 이 데이터에서 뽑아내는 함수 싹 다른 파일로 넘기고 전역Data 하나 param으로 받아서 계산하게 해야됨
+  }
   
-  
-  
+
   
   export function getNadjaPoint(char: Data) { // 티어 산출 밸런싱 필요
     let var1: number = char.data!.sbcount; // 
