@@ -19,7 +19,6 @@ export default function TierList({ data, verOptions }: any) { // data >> refacto
 
   return (
     <div className="flex flex-col h-fill w-full overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
-
       <div className="flex flex-row w-full justify-between p-2">
         <div className="flex flex-row gap-x-2 items-center">
           <ReactSelect
@@ -45,7 +44,7 @@ export default function TierList({ data, verOptions }: any) { // data >> refacto
               tierGroups.current[0] = e!.value!;
               updateEndDisable(tierGroups.current[0]);
             }} />
-          <div className="text-sm font-ml">
+          <div className="text-base font-ml">
             부터
           </div>
         </div>
@@ -61,32 +60,34 @@ export default function TierList({ data, verOptions }: any) { // data >> refacto
               tierGroups.current[1] = e!.value!;
               updateStartDisable(tierGroups.current[1]);
             }} />
-          <div className="text-sm font-ml">
+          <div className="text-base font-ml">
             까지
           </div>
         </div>
       </div>
       <TierHead />
+      <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
       {charList.map((char, p) => (
         <TierItem key={p} char={char} position={p} />))}
+        </div>
     </div>
   )
 
   function TierHead() {
     return (
-      <div className="flex flex-row relative min-w-full min-h-[40px] items-center rounded-xl py-1">
-        <div className="w-[12%] text-center text-sm border-r border-stone-400">순위</div>
-        <div id="sort_by_abc" className="w-[42%] text-center border-r text-sm border-stone-400">구분</div>
-        <div id="sort_by_wr" className="w-[12%] text-center border-r text-sm border-stone-400" onClick={() => {
+      <div className="flex flex-row relative min-w-full min-h-[40px] items-center rounded py-1 bg-neutral-600">
+        <div className="w-[12%] text-center text-base border-r border-white text-white font-msb">순위</div>
+        <div id="sort_by_abc" className="w-[42%] text-center border-r text-base border-white text-white font-msb">구분</div>
+        <div id="sort_by_wr" className="w-[12%] text-center border-r text-base border-white text-white font-msb" onClick={() => {
           compareAndSort(sortStandard.wr);
         }}>승률</div>
-        <div id="sort_by_pr" className="w-[12%] text-center border-r text-sm border-stone-400" onClick={() => {
+        <div id="sort_by_pr" className="w-[12%] text-center border-r text-base border-white text-white font-msb" onClick={() => {
           compareAndSort(sortStandard.pr);
         }}>픽률</div>
-        <div id="sort_by_sr" className="w-[12%] text-center border-r text-sm border-stone-400" onClick={() => {
+        <div id="sort_by_sr" className="w-[12%] text-center border-r text-base border-white text-white font-msb" onClick={() => {
           compareAndSort(sortStandard.sr);
         }}>순방률</div>
-        <div id="sort_by_tier" className="w-[12%] text-center text-sm" onClick={() => {
+        <div id="sort_by_tier" className="w-[12%] text-center text-base text-white font-msb" onClick={() => {
           compareAndSort(sortStandard.np);
         }}>티어</div>
       </div>

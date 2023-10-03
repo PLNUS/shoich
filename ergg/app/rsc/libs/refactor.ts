@@ -80,8 +80,7 @@ export interface Data {
       + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 5) * 5
       + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 6) * 6
       + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 7) * 7
-      + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 8) * 8
-      + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 9) * 4) / getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 0)
+      + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 8) * 8) / getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 0)
   }
   
   export function getGameCount(parsedData: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
@@ -99,7 +98,7 @@ export interface Data {
             if (starttiergroup > endtiergroup) {
               for (let i = 0; i <= (starttiergroup - endtiergroup); i++) { // 포문은 조건비교보다 i++이 먼저
                 if (grade === 0) {
-                  weapon[starttiergroup - i - 1].forEach(element => {
+                  weapon[starttiergroup - i - 1].forEach(element => { // 여기서부터 탈출판수 중복안되게 바꿔야함
                     count += element;
                   });
                 } else {

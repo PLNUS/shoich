@@ -12,15 +12,15 @@ const axios = require('axios');
 const gameSchema = new Schema({
     lastGameNum: {
         required: true,
-        type : Number,
+        type: Number,
     },
     versionMajor: {
         required: true,
-        type : Number,
+        type: Number,
     },
     versionMinor: {
         required: true,
-        type : Number,
+        type: Number,
     },
     data: {
         required: true,
@@ -33,11 +33,11 @@ const Game = mongoose.model('game', gameSchema)
 const verSchema = new Schema({
     versionMajor: {
         required: true,
-        type : Number,
+        type: Number,
     },
     versionMinor: {
         required: true,
-        type : Number,
+        type: Number,
     }
 });
 
@@ -136,7 +136,7 @@ app.listen(SCHEDULE_PORT, () => {
         Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
             console.log(docs[0].lastGameNum);
             UpdatedData = CharacterData; // 초기화
-            sendSyncRequests(docs[0].lastGameNum, 7);            
+            sendSyncRequests(docs[0].lastGameNum, 7);
         })
     })
 }) // 타입스크립트로 전환 해야함
@@ -199,7 +199,7 @@ async function getGameData(gameCode) {
                             versionMinor: versionMinor,
                             data: UpdatedData
                         });
-                         
+
                         versionMajor = response.data.userGames[0].versionMajor;
                         versionMinor = response.data.userGames[0].versionMinor;
                         UpdatedData = CharacterData; // 초기화
@@ -207,7 +207,7 @@ async function getGameData(gameCode) {
                             versionMajor: versionMajor,
                             versionMinor: versionMinor
                         });
-                        
+
                         let point = verChangedPoint;
                         verChangedPoint = Infinity; // 초기화
                         sendSyncRequests(point, 7);
@@ -233,7 +233,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
         } catch (err) { }
         i += parallels;
     }
-    if(repeatstart === parallels) {
+    if (repeatstart === parallels) {
         setTimeout(() => {
             Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
@@ -257,9 +257,9 @@ function UpdateFunc(response) {
             // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)
 
             // 1. 등수
-            if (user.escapeState === 0) { // 탈출인지 구분
-                UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1]++;
-            } else {
+            UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][user.gameRank - 1]++;
+
+            if (user.escapeState === 1) { // 탈출인지 구분
                 UpdatedData[user.characterNum - 1].grades[getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])][getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][8]++;
             }
 

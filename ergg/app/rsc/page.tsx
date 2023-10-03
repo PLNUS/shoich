@@ -19,7 +19,7 @@ export default async function Home() {
 
   return (
     <div className="page_wrap">
-      <div className="trend-wrap">
+      <div className="trend_wrap">
         <span className="text-xl font-mb pl-2 text-stone-700">{getGameCount(tierlists.data[0], 0, 0, 8, 1, 0)} 개 표본의 통계</span>
         <div className="main_grid">
           <TrendGrid />
@@ -28,7 +28,8 @@ export default async function Home() {
           <TrendGrid />
         </div>
       </div>
-      <div className="flex flex-col items-center px-4 w-[600px] h-full gap-y-2">
+      <div 
+        className="flex flex-col items-center px-4 min-w-[600px] h-full gap-y-2">
         <TierList data={tierlists.data} verOptions={verOptions}></TierList>
       </div>
     </div>
