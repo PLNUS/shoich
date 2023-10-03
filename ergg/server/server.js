@@ -47,7 +47,28 @@ const CharMastery = require("./charMastery.json");
 const CharacterData = require("./charData.json");
 const SynergyData = require("./synergyData.json");
 const WeaponData = require("./weaponData.json");
-const { getTierGroup } = require("./ertool");
+
+function getTierGroup(mmr, eterCut, demiCut) {
+    if (mmr >= eterCut) {
+        return 1; // 이+
+    } else if (mmr >= demiCut) {
+        return 2; // 데
+    } else if (mmr >= 6000) {
+        return 3; // 미
+    } else if (mmr >= 5000 && mmr < 6000) {
+        return 4; // 다
+    } else if (mmr >= 4000 && mmr < 5000) {
+        return 5; // 플
+    } else if (mmr >= 3000 && mmr < 4000) {
+        return 6; // 골
+    } else if (mmr >= 2000 && mmr < 3000) {
+        return 7; // 실
+    } else if (mmr >= 1000 && mmr < 2000) {
+        return 8; // 브
+    } else {
+        return 0;
+    }
+}
 
 let tierCut = [,];
 
@@ -146,8 +167,8 @@ app.listen(SCHEDULE_PORT, () => {
 
 const API_KEY = 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0';
 
-function getWeaponNum(charCode, firstWeaponCod) {
-    let WeaponType = WeaponData.find(e => e.code === firstWeaponCode).weaponType
+function getWeaponNum(charCode, firstWeaponCode) {
+    let WeaponType = WeaponData.find(e => e.code == firstWeaponCode).weaponType
     if (CharMastery[charCode].weapon1 == WeaponType) {
         return 0;
     } else if (CharMastery[charCode].weapon2 == WeaponType) {
@@ -308,7 +329,7 @@ function UpdateFunc(response) {
                         const isExist = (element) => element[0] == [teamUser.characterNum, getWeaponNum(teamUser.characterNum - 1, teamUser.equipFirstItemForLog[0][0])];
                         const index = UpdatedSynergyData[user.characterNum - 1].synergy.win[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist);
 
-                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                        if (index == -1) { // 이미 시너지 데이터가 존재하는지
                             UpdatedSynergyData[user.characterNum - 1].synergy.win[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
                                 .push([[user.characterNum, getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
                         } else {
@@ -325,7 +346,7 @@ function UpdateFunc(response) {
                         const isExist = (element) => element[0] == [teamUser.characterNum, getWeaponNum(teamUser.characterNum - 1, teamUser.equipFirstItemForLog[0][0])];
                         const index = UpdatedSynergyData[user.characterNum - 1].synergy.sb[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist);
 
-                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                        if (index == -1) { // 이미 시너지 데이터가 존재하는지
                             UpdatedSynergyData[user.characterNum - 1].synergy.sb[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
                                 .push([[user.characterNum, getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
                         } else {
@@ -350,23 +371,23 @@ function UpdateFunc(response) {
                         const killerWeaponCode = getWeaponNumByName(getCharCodeByName(user[`killerCharacter${i}`]) - 1, user[`killerWeapon${i}`]);
 
                         const isExist = (element) => element[0] == [killerCharCode, killerWeaponCode];
-                        const index = UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist)
+                        const index = UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist);
 
-                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                        if (index == -1) { // 이미 시너지 데이터가 존재하는지
                             UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
                                 .push([[killerCharCode, killerWeaponCode], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
                         } else {
                             UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][index][1]++;
                         }
-                        
+
                     } else {
                         const killerCharCode = getCharCodeByName(user.killerCharacter);
                         const killerWeaponCode = getWeaponNumByName(getCharCodeByName(user.killerCharacter) - 1, user.killerWeapon);
 
                         const isExist = (element) => element[0] == [killerCharCode, killerWeaponCode];
-                        const index = UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist)
+                        const index = UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist);
 
-                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                        if (index == -1) { // 이미 시너지 데이터가 존재하는지
                             UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
                                 .push([[killerCharCode, killerWeaponCode], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
                         } else {
@@ -379,7 +400,7 @@ function UpdateFunc(response) {
 
 
         rankcount++;
-        
+
         console.log(UpdatedSynergyData);
         // appendCount('현재 파싱한 랭겜 수 : ' + rankcount);
         // appendJSON(JSON.stringify(UpdatedData, null, ''));
@@ -393,5 +414,7 @@ function getCharCodeByName(name) {
 }
 
 function getWeaponNumByName(code, wpname) {
-    return Object.values(CharMastery[code]).pop().findIndex(x => x == wpname);
+    let list = Object.values(CharMastery[code]);
+    list.pop();
+    return list.findIndex(x => x == wpname);
 }
