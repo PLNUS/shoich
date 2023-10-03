@@ -45,6 +45,7 @@ const Version = mongoose.model('versions', verSchema)
 
 const CharMastery = require("./charMastery.json");
 const CharacterData = require("./charData.json");
+const SynergyData = require("./synergyData.json");
 const WeaponData = require("./weaponData.json");
 const { getTierGroup } = require("./ertool");
 
@@ -131,6 +132,7 @@ app.post('/uploadver', function (req, res) {
 })
 
 app.listen(SCHEDULE_PORT, () => {
+    getGameData(28149510);
     //매 5초마다 수행!
     schedule.scheduleJob('0 0 21 * * *', function () {
         Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
@@ -158,6 +160,7 @@ function getWeaponNum(charCode, firstWeaponCod) {
 }
 
 let UpdatedData = CharacterData;
+let UpdatedSynergyData = SynergyData;
 let rankcount = 0;
 let verChangedPoint = Infinity;
 
@@ -248,7 +251,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
 
 function UpdateFunc(response) {
     let game = response.data.userGames;
-    // console.log(game);
+
     // matchingMode = 2 일반 3 랭크
     // matchingTeamMod = 3 스쿼드
     if (game[0].matchingMode === 3 && game[0].serverName === "Seoul") { // 랭겜, 서버 세팅
@@ -292,9 +295,103 @@ function UpdateFunc(response) {
             // 예상 가능한 사용처 - 전적검색 이후 우승시 평딜 , 우승시 팀킬 등으로 캐리력 등 계산,
             //                     티어산출 시 같은 딜러그룹(평원딜, 메이지, 브루저 등) 내에서 비교 반영
             // A. 일단 할 수 있으면 구체적으로 수집해보자
+
+
+            /* =============================================  이하 synergyData  =============================================================== */
+
+            if (user.gameRank === 1) {
+                // 1. 같이 1등을 한 캐릭터 기록
+                // 가장 하위 차원의 객체에 [[캐릭 코드, 무기 index(0~3)], 승리 수] 로 기록됨.
+
+                game.map((teamUser, up) => {
+                    if (user.teamNumber === teamUser.teamNumber && user.nickname !== teamUser.nickname) { // 팀원일 경우
+                        const isExist = (element) => element[0] == [teamUser.characterNum, getWeaponNum(teamUser.characterNum - 1, teamUser.equipFirstItemForLog[0][0])];
+                        const index = UpdatedSynergyData[user.characterNum - 1].synergy.win[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist);
+
+                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                            UpdatedSynergyData[user.characterNum - 1].synergy.win[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
+                                .push([[user.characterNum, getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
+                        } else {
+                            UpdatedSynergyData[user.characterNum - 1].synergy.win[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][index][1]++;
+                        }
+                    }
+                });
+            } else if (user.mmrGain > 0) {
+                // 2. 같이 점수+를 한 캐릭터 기록
+                // 가장 하위 차원의 객체에 [[캐릭 코드, 무기 index(0~3)], 승리 수] 로 기록됨.
+
+                game.map((teamUser, up) => {
+                    if (user.teamNumber === teamUser.teamNumber && user.nickname !== teamUser.nickname) { // 팀원일 경우
+                        const isExist = (element) => element[0] == [teamUser.characterNum, getWeaponNum(teamUser.characterNum - 1, teamUser.equipFirstItemForLog[0][0])];
+                        const index = UpdatedSynergyData[user.characterNum - 1].synergy.sb[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist);
+
+                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                            UpdatedSynergyData[user.characterNum - 1].synergy.sb[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
+                                .push([[user.characterNum, getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0])], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
+                        } else {
+                            UpdatedSynergyData[user.characterNum - 1].synergy.sb[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][index][1]++;
+                        }
+                    }
+                });
+            }
+
+            // 3. 나를 죽인 캐릭터 기록
+
+            let deathDetails = JSON.parse(user.deathDetails);
+            if (Object.values(deathDetails).length > 0) { // 1데스 이상일 경우
+                let deathCount = 0;
+                Object.values(deathDetails).forEach((d) => {
+                    deathCount += d; // 데스 수 총합
+                })
+
+                for (let i = 1; i <= deathCount; i++) { // 데스 수 만큼 반복
+                    if (i !== i) {
+                        const killerCharCode = getCharCodeByName(user[`killerCharacter${i}`]);
+                        const killerWeaponCode = getWeaponNumByName(getCharCodeByName(user[`killerCharacter${i}`]) - 1, user[`killerWeapon${i}`]);
+
+                        const isExist = (element) => element[0] == [killerCharCode, killerWeaponCode];
+                        const index = UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist)
+
+                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                            UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
+                                .push([[killerCharCode, killerWeaponCode], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
+                        } else {
+                            UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][index][1]++;
+                        }
+                        
+                    } else {
+                        const killerCharCode = getCharCodeByName(user.killerCharacter);
+                        const killerWeaponCode = getWeaponNumByName(getCharCodeByName(user.killerCharacter) - 1, user.killerWeapon);
+
+                        const isExist = (element) => element[0] == [killerCharCode, killerWeaponCode];
+                        const index = UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1].findIndex(isExist)
+
+                        if (isExist === undefined) { // 이미 시너지 데이터가 존재하는지
+                            UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1]
+                                .push([[killerCharCode, killerWeaponCode], 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
+                        } else {
+                            UpdatedSynergyData[user.characterNum - 1].counter[getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1][index][1]++;
+                        }
+                    }
+                }
+            }
         })
+
+
         rankcount++;
+        
+        console.log(UpdatedSynergyData);
         // appendCount('현재 파싱한 랭겜 수 : ' + rankcount);
         // appendJSON(JSON.stringify(UpdatedData, null, ''));
     } else if (game[0].matchingMode === 2) { }
+}
+
+const CharBaseData = require('./character.json');
+
+function getCharCodeByName(name) {
+    return CharBaseData.findIndex(x => x.name == name) + 1;
+}
+
+function getWeaponNumByName(code, wpname) {
+    return Object.values(CharMastery[code]).pop().findIndex(x => x == wpname);
 }
