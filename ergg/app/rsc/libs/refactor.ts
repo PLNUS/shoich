@@ -98,9 +98,10 @@ export interface Data {
             if (starttiergroup > endtiergroup) {
               for (let i = 0; i <= (starttiergroup - endtiergroup); i++) { // 포문은 조건비교보다 i++이 먼저
                 if (grade === 0) {
-                    weapon[starttiergroup - i - 1].pop().forEach(element => { // 탈출수 중복 안되도록 모든 등수 리턴할때는 POP();
+                    weapon[starttiergroup - i - 1].forEach(element => { // 탈출수 중복 안되도록 모든 등수 리턴할때는 POP();
                     count += element;
                   });
+                  count -= weapon[starttiergroup - i - 1][8];
                 } else {
                   count += weapon[starttiergroup - i - 1][grade - 1];
                 }
@@ -108,9 +109,10 @@ export interface Data {
             }
             else if (starttiergroup === endtiergroup) {
               if (grade === 0) {
-                weapon[starttiergroup - 1].pop().forEach(element => {
+                weapon[starttiergroup - 1].forEach(element => {
                   count += element;
                 });
+                count -= weapon[starttiergroup - 1][8];
               } else {
                 count += weapon[starttiergroup - 1][grade - 1];
               }
@@ -122,18 +124,20 @@ export interface Data {
           if (starttiergroup > endtiergroup) {
             for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
               if (grade === 0) {
-                  char.grades[weapon - 1][starttiergroup - i - 1].pop().forEach(element => {
+                  char.grades[weapon - 1][starttiergroup - i - 1].forEach(element => {
                   count += element;
                 });
+                count -= char.grades[weapon - 1][starttiergroup - i - 1][8];
               } else {
                 count += char.grades[weapon - 1][starttiergroup - i - 1][grade - 1];
               }
             }
           } else if (starttiergroup === endtiergroup) {
             if (grade === 0) {
-                char.grades[weapon - 1][starttiergroup - 1].pop().forEach(element => {
+                char.grades[weapon - 1][starttiergroup - 1].forEach(element => {
                 count += element;
               });
+              count -= char.grades[weapon - 1][starttiergroup - 1][8];
             } else {
               count += char.grades[weapon - 1][starttiergroup - 1][grade - 1];
             }
@@ -146,18 +150,20 @@ export interface Data {
           if (starttiergroup > endtiergroup) {
             for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
               if (grade === 0) {
-                  weapon[starttiergroup - i - 1].pop().forEach(element => {
+                  weapon[starttiergroup - i - 1].forEach(element => {
                   count += element;
                 });
+                count -= weapon[starttiergroup - i - 1][8];
               } else {
                 count += weapon[starttiergroup - i - 1][grade - 1];
               }
             }
           } else if (starttiergroup === endtiergroup) {
             if (grade === 0) {
-              weapon[starttiergroup - 1].pop().forEach(element => {
+              weapon[starttiergroup - 1].forEach(element => {
                 count += element;
               });
+              count -=  weapon[starttiergroup - 1][8];
             } else {
               count += weapon[starttiergroup - 1][grade - 1];
             }
@@ -167,18 +173,20 @@ export interface Data {
         if (starttiergroup > endtiergroup) {
           for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
             if (grade === 0) {
-              parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1].pop().forEach(e => {
+              parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1].forEach(e => {
                 count += e;
               });
+              count -=  parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][8];
             } else {
               count += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
             }
           }
         } else if (starttiergroup === endtiergroup) {
           if (grade === 0) {
-            parsedData[code - 1].grades[weapon - 1][starttiergroup - 1].pop().forEach(e => {
+            parsedData[code - 1].grades[weapon - 1][starttiergroup - 1].forEach(e => {
               count += e;
             });
+            count -=  parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][8];
           } else {
             count += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
           }

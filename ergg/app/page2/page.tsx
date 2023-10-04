@@ -1,79 +1,17 @@
-'use client'
+import { useEffect } from "react";
+import parseSynergy from "./fetcher";
 
-// 전적검색 이후 개인지표 보여주는 화면.
-// 6각형 그래프로 각 등수에 따른 AvgDeal 
-
-import React, { forwardRef, useRef, useEffect } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Chart, Line, } from 'react-chartjs-2';
-
-ChartJS.defaults.font.family = 'SUIT-REGULAR';
-ChartJS.defaults.font.family = 'SUIT-REGULAR';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: false,
-    },
-    interactions: {
-      pointHoverBorderColor: '#FFFFFF',
-      pointHoverBorderWidth: 5,
-      pointHoverRadius: 7,
-    },
-    title: {
-      display: true,
-      text: '각 등수 별 확률',
-      font: {
-        size: 12,
-      }
-    },
-  },
-};
-
-const labels = ['8등', '7등', '6등', '5등', '탈출', '4등', '3등', '2등', '1등'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: '??%',
-      data: labels.map((l, p) => Math.floor(Math.random()*100)),
-      borderColor: '#300759',
-      backgroundColor: '#1c1c1c',
-      borderWidth: 1.5,
-      tension: 0.2,
-    }
-  ],
-};
-
-export default function Home() {
+export default async function Home() {
+  // 시발 지금 tierItem에서 데이터 받아와서 SynergyList로 전달해줘야하는데 막혔다
+  // 라우팅 쿼리로 전달하던 전역상태로 전달하던 해야함. 전자는 클라이언트 컴포넌트 강제사용때문에 애로함. 후자로 가는게 낫지않을까 생각
+  const data =await parseSynergy()
+  
   return (
-    <div class="flex p-8 justify-center w-screen h-screen">
-      <div class="bg-stone-100 lg:w-[1200px] h-screen">
-        <div class="w-[400px] h-[200px] p-2 rounded-md bg-slate-200">
-          <Line options={options} data={data} />
-        </div>
+    <div className="flex flex-col w-[1400px] h-screen bg-neutral-100 gap-y-4">
+      <div className="flex flex-col w-full h-[250px] bg-neutral-200 p-4">
+        HEAD SPACE
       </div>
+      
     </div>
   )
 }

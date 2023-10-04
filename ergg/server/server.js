@@ -284,7 +284,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     let i = repeatstart;
     while ((errorCount < 100 || startpoint + i < lastOrdinaryGame) && startpoint + i < verChangedPoint) {
         try {
-            if (i % 1000 === 0) {
+            if (i % 10000 === 0) {
                 console.log(i + "회 진행중")
             }
             await getGameData(startpoint + i);
@@ -292,7 +292,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
         i += parallels;
     }
     if (repeatstart === parallels) {
-        console.log("최종점 확인으로 종료.");
+        console.log("최종점 확인으로 1분간 반복대기.");
         setTimeout(() => {
             Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
@@ -306,6 +306,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
                 versionMinor: versionMinor,
                 data: UpdatedSynergyData
             });
+            console.log("종료.");
         }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
     }
 }
@@ -327,7 +328,7 @@ async function UpdateFunc(response) {
                 // 1. 등수
                 UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1]++;
 
-                if (user.escapeState === 1) { // 탈출인지 구분
+                if (user.escapeState === 3) { // 탈출인지 구분
                     UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][8]++;
                 }
 
@@ -369,71 +370,34 @@ async function UpdateFunc(response) {
                     const synergyWeaponCode = getWeaponNum(game[userP].characterNum - 1, game[userP].equipFirstItemForLog[0][0]);
 
                     const isExist = (element) => element[0] == synergyCharCode && element[1] == synergyWeaponCode;
-                    const index = UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup].findIndex(isExist);
+                    const index = UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].findIndex(isExist);
                     const isTeam = game[userP].teamNumber === user.teamNumber && game[userP].characterNum !== user.characterNum;
 
                     if (index === -1) {
                         if (user.gameRank === 1 && isTeam) { // 1등이며 같은 팀일 경우
 
                             // 가장 하위 차원의 객체에 [캐릭 코드, 무기 index(0~3), 승리 수, 순방 수, 이 캐릭터와 함께한 전체 판수] 로 기록됨.
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup].push([synergyCharCode, synergyWeaponCode, 1, 1, 1]);
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 1, 1, 1]);
                         } else if (user.mmrGain > 0 && isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 1, 1]);
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 1, 1]);
                         } else if (isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 0, 1]);
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 0, 1]);
                         }
                     } else {
                         if (user.gameRank === 1 && isTeam) { // 1등이며 같은 팀일 경우
 
                             // 가장 하위 차원의 객체에 [캐릭 코드, 무기 index(0~3), 승리 수, 순방 수, 이 캐릭터와 함께한 전체 판수] 로 기록됨.
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup][index][2]++;
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup][index][3]++;
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup][index][4]++;
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][2]++;
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][3]++;
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
                         } else if (user.mmrGain > 0 && isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup][index][3]++;
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup][index][4]++;
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][3]++;
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
                         } else if (isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[tierGroup][index][4]++;
+                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
                         }
                     }
                 }
-
-                // 3. 나를 죽인 캐릭터 기록 - 너무 난해해져서 잠정중단
-
-                // let deathDetails = JSON.parse(user.deathDetails);
-                // if (Object.keys(deathDetails).length !== 0) { // 1데스 이상일 경우
-                //     let deathCount = 0;
-                //     Object.values(deathDetails).forEach((d) => {
-                //         deathCount += d; // 데스 수 총합
-                //     })
-
-                //     // KillDetails 로 가야 날 죽인 캐릭 + 무기 를 알수있는데 이는 최대 3개밖에 기록이안됨 ;; 불안정한 지표임
-                //     for (let i = 1; i <= deathCount && i <= 3; i++) { // 데스 수 만큼 반복
-                //         if (i !== 1) {
-                //             const killerCharCode = getCharCodeByName(user[`killerCharacter${i}`]);
-                //             const killerWeaponCode = getWeaponNumByName(getCharCodeByName(user[`killerCharacter${i}`]) - 1, user[`killerWeapon${i}`]);
-                //             const killerTeam1 = game.find(e => e.userNum == user[`killerUserNum${i}`]);
-                //             const killerTeamNum = killerTeam1.teamNumber;
-
-                //             for (let userP = 0; userP < game.length; userP++) { // 할거면 여기서부터
-
-                //             }
-                //         } else {
-                //             const killerCharCode = getCharCodeByName(user.killerCharacter);
-                //             const killerWeaponCode = getWeaponNumByName(getCharCodeByName(user.killerCharacter) - 1, user.killerWeapon);
-
-                //             const isExist = (element) => element[0][0] == killerCharCode && element[0][1] == killerWeaponCode;
-                //             const index = UpdatedSynergyData[user.characterNum - 1].counter[tierGroup].findIndex(isExist);
-
-                //             if (index === -1) { // 이미 시너지 데이터가 존재하는지
-                //                 UpdatedSynergyData[user.characterNum - 1].counter[tierGroup]
-                //                     .push([killerCharCode, killerWeaponCode, 1]); // 여기서 WeaponNum은 시작이 0임. (0,1,2,3)
-                //             } else {
-                //                 UpdatedSynergyData[user.characterNum - 1].counter[tierGroup][index][2]++;
-                //             }
-                //         }
-                //     }
-                // }
             }
 
         })

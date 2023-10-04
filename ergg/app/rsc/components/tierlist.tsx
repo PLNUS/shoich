@@ -68,7 +68,7 @@ export default function TierList({ data, verOptions }: any) { // data >> refacto
       <TierHead />
       <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
       {charList.map((char, p) => (
-        <TierItem key={p} char={char} position={p} />))}
+        <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
         </div>
     </div>
   )
