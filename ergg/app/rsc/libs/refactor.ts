@@ -4,6 +4,7 @@ export interface Data {
     code: number; // 험체 코드
     name: string; // 험체 이름 + 무기
     weapon: string;
+    weaponNum: number;
   
     WR: number; // WinRate
     PR: number; // PickRate
@@ -287,9 +288,7 @@ export interface Data {
     }
     return score;
   }
-  
-
-  
+    
   export function getNadjaPoint(char: Data) { // 티어 산출 밸런싱 필요
     let var1: number = char.data!.sbcount; // 
     let var2: number = char.data!.sbscore;
@@ -354,6 +353,7 @@ export interface Data {
             code: char.code,
             name: char.name,
             weapon: getKoreanWeapon(weapon.toString()),
+            weaponNum: wcode, // 0~3임
   
             WR: properties.gamecountbygrade[0] === 0 ? 0 :
               Math.floor(properties.gamecountbygrade[1] / properties.gamecountbygrade[0] * 10000) / 100,

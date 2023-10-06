@@ -4,6 +4,7 @@ import { useState } from "react";
 import { getColor } from "../libs/assets";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useStore } from "@/app/page2/store";
 
 export default function TierItem({ char, position, tierGroup}: any) {
   const [animate, setAnimate] = useState('hidden');
@@ -30,15 +31,12 @@ export default function TierItem({ char, position, tierGroup}: any) {
           onClick={() => setAnimate('hidden')}>
           <path fillRule="evenodd" d="M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5ZM10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5Z" />
         </svg>
-        <Link href={{
-          pathname: `/page2`, // 라우팅 id
-          query: { selectedData: JSON.stringify({
-            tierGroup : tierGroup
-          })}, // props 
-        }} as="/page2" >
+        <Link href="/page2" onClick={() => {
+          useStore.setState({selectedItem: data, tierGroup: tierGroup})
+        }}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" className="mr-3 p-2 w-10 h-10" clipRule="evenodd" fillRule="evenodd" strokeLinejoin="round" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z" />
-            <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z" />
+            <path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z" />
+            <path fillRule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z" />
           </svg>
         </Link>
       </motion.div>
