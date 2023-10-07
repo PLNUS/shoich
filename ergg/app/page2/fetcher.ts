@@ -18,7 +18,7 @@ async function mergeSynergys(mother: Array<any>) {
     });
   
     let mergedList = formattedData[0];
-    if (formattedData.length > 1) {
+    if (formattedData.length > 2) {
       formattedData.shift();
 
       formattedData.map((slist, sp) => {
@@ -36,6 +36,22 @@ async function mergeSynergys(mother: Array<any>) {
                     mergedList[cp].synergy[wp][tp][index][2] += sdata[2];
                     mergedList[cp].synergy[wp][tp][index][3] += sdata[3];
                     mergedList[cp].synergy[wp][tp][index][4] += sdata[4];
+                  }
+                })
+              });
+            });
+            schar.items.map((weapon, wp) => {
+              weapon.map((tiergroup, tp) => {
+                tiergroup.map((idata, dp) => {
+                  const isExist = e => e[0] == idata[0];
+                  const index = char.items[wp][tp].findIndex(isExist);
+
+                  if(index === -1) {
+                    mergedList[cp].items[wp][tp].push(idata);
+                  } else {
+                    mergedList[cp].items[wp][tp][index][1] += idata[1];
+                    mergedList[cp].items[wp][tp][index][2] += idata[2];
+                    mergedList[cp].items[wp][tp][index][3] += idata[3];
                   }
                 })
               });

@@ -13,6 +13,7 @@ const config: Config = {
         mb: ["Pretendard-Black"],
         msb: ["Pretendard-Bold"],
         mr: ["Pretendard-Regular"],
+        rb: ["TTTogether"]
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

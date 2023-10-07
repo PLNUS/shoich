@@ -26,7 +26,7 @@
     @apply absolute -translate-y-1 scale-105;
   }
   .charicon_dir {
-    @apply relative overflow-hidden rounded-full grow h-full aspect-square;
+    @apply relative overflow-hidden rounded-full h-full aspect-square;
   }
   .charicon_tier {
     @apply flex items-center justify-center absolute rounded-full text-white;
@@ -85,5 +85,12 @@
   font-family: 'Pretendard-Regular';
   src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
   font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TTTogether';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/TTTogetherA.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
 }

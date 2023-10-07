@@ -178,20 +178,14 @@ app.listen(SCHEDULE_PORT, () => {
         sendSyncRequests(docs[0].lastGameNum, 8);
     })
     //매 n초마다 수행!
-    schedule.scheduleJob('10 41 * * * *', function () {
-        // Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
-        //     console.log(docs[0].lastGameNum);
-        //     UpdatedData = CharacterData; // 초기화
-        //     sendSyncRequests(docs[0].lastGameNum, 7);
-        // })
-    })
+    schedule.scheduleJob('10 41 * * * *', function () { });
 }) // 타입스크립트로 전환 해야함
 
 
 const API_KEY = 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0';
 
 function getWeaponNum(charCode, firstWeaponCode) {
-    if(firstWeaponCode === 0 ) { // 잠수면 그냥 1번무기에 반영
+    if (firstWeaponCode === 0) { // 잠수면 그냥 1번무기에 반영
         return 0;
     } else {
         let WeaponType = WeaponData.find(e => e.code == firstWeaponCode).weaponType
@@ -224,7 +218,7 @@ function sendSyncRequests(startpoint, parallels) { // 병렬 실행화. 비동�
     }
 }
 
-async function getGameData(gameCode) {
+async function getGameData(gameCode, parallels, repeatstart) {
     return new Promise((resolve, rejects) => {
         axios.get('https://open-api.bser.io/v1/games/' + gameCode, {
             params: {},
@@ -245,31 +239,33 @@ async function getGameData(gameCode) {
                     lastOrdinaryGame < gameCode ? lastOrdinaryGame = gameCode : null;
                     console.log("버전 변경점 확인, 잔존함수 2분 대기 이후 재파싱 시작.")
                     setTimeout(() => {
-                        Game.create({
-                            lastGameNum: lastOrdinaryGame + 1,
-                            versionMajor: versionMajor,
-                            versionMinor: versionMinor,
-                            data: UpdatedData
-                        });
-                        Synergy.create({
-                            lastGameNum: lastOrdinaryGame + 1,
-                            versionMajor: versionMajor,
-                            versionMinor: versionMinor,
-                            data: UpdatedSynergyData
-                        });
+                        if (parallels === repeatstart) {
+                            Game.create({
+                                lastGameNum: verChangedPoint,
+                                versionMajor: versionMajor,
+                                versionMinor: versionMinor,
+                                data: UpdatedData
+                            });
+                            Synergy.create({
+                                lastGameNum: verChangedPoint,
+                                versionMajor: versionMajor,
+                                versionMinor: versionMinor,
+                                data: UpdatedSynergyData
+                            });
 
-                        versionMajor = response.data.userGames[0].versionMajor;
-                        versionMinor = response.data.userGames[0].versionMinor;
-                        UpdatedData = CharacterData; // 초기화
-                        Version.create({
-                            versionMajor: versionMajor,
-                            versionMinor: versionMinor
-                        });
+                            versionMajor = response.data.userGames[0].versionMajor;
+                            versionMinor = response.data.userGames[0].versionMinor;
+                            UpdatedData = CharacterData; // 초기화
+                            Version.create({
+                                versionMajor: versionMajor,
+                                versionMinor: versionMinor
+                            });
 
-                        let point = verChangedPoint;
-                        verChangedPoint = Infinity; // 초기화
-                        sendSyncRequests(point, 15); // %% 주의 필요 %%
-                    }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기 후 동작
+                            let point = verChangedPoint;
+                            verChangedPoint = Infinity; // 초기화
+                            sendSyncRequests(point, 15); // %% 주의 필요 %%
+                        }
+                    }, 120000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기 후 동작
                 }
                 errorCount = 0;
                 resolve("성공")
@@ -287,13 +283,17 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
             if (i % 10000 === 0) {
                 console.log(i + "회 진행중")
             }
-            await getGameData(startpoint + i);
+            await getGameData(startpoint + i, parallels, repeatstart);
         } catch (err) { }
         i += parallels;
     }
     if (repeatstart === parallels) {
         console.log("최종점 확인으로 1분간 반복대기.");
+        let existGames = await Game.find({ versionMajor: versionMajor, versionMinor: versionMinor }).lean();
+        let existSynergys = await Synergy.find({ versionMajor: versionMajor, versionMinor: versionMinor }).lean();
         setTimeout(() => {
+            existGames.push({ data: UpdatedData });
+            existSynergys.push({ data: UpdatedSynergyData });
             Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 versionMajor: versionMajor,
@@ -314,105 +314,238 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
 async function UpdateFunc(response) {
     let game = response.data.userGames;
 
-    // matchingMode = 2 일반 3 랭크
-    // matchingTeamMod = 3 스쿼드
-    if (game[0].matchingMode === 3 && game[0].serverName === "Seoul") { // 랭겜, 서버 세팅
-        game.map((user, p) => {
-            if (user.mmrBefore > 1000) { // 브론즈 이상 통계만 수집
-                let weaponNum = getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0]);
-                let tierGroup = getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1;
+    try {
+        if (game[0].matchingMode === 3 && game[0].serverName === "Seoul") { // 랭겜, 서버 세팅
+            game.map((user, p) => {
+                if (user.mmrBefore > 1000) { // 브론즈 이상 통계만 수집
+                    let weaponNum = getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0]);
+                    let tierGroup = getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1;
 
-                // 이하 각 유저에 대해 수집하는 지표들
-                // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)
+                    // 이하 각 유저에 대해 수집하는 지표들
+                    // 등수 / 점수 / 평딜 / 팀킬 / (데스 or 데스 시점)
 
-                // 1. 등수
-                UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1]++;
+                    // 1. 등수
+                    UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1]++;
 
-                if (user.escapeState === 3) { // 탈출인지 구분
-                    UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][8]++;
-                }
+                    if (user.escapeState === 3) { // 탈출 성공시
+                        UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][8]++;
+                    }
 
-                // 2. 점수
-                if (user.mmrGain > 0) { // 점수 먹었을 경우
-                    UpdatedData[user.characterNum - 1].scores[weaponNum][tierGroup][0]++;
-                }
-                // 점수 먹었던 안먹었던 총 점수변동 반영
-                UpdatedData[user.characterNum - 1].scores[weaponNum][tierGroup][1] += user.mmrGain;
+                    // 2. 점수
+                    if (user.mmrGain > 0) { // 점수 먹었을 경우
+                        UpdatedData[user.characterNum - 1].scores[weaponNum][tierGroup][0]++;
+                    }
+                    // 점수 먹었던 안먹었던 총 점수변동 반영
+                    UpdatedData[user.characterNum - 1].scores[weaponNum][tierGroup][1] += user.mmrGain;
 
-                // 가독성 위해 if문 두번 씀 그냥
-                if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
-                    // 3. 평딜
-                    let targetGameCount = UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1];
-                    // 해당 구간(티어그룹별, 무기별) 판수 카운트
+                    // 가독성 위해 if문 두번 씀 그냥
+                    if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
+                        // 3. 평딜
+                        let targetGameCount = UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1];
+                        // 해당 구간(티어그룹별, 무기별) 판수 카운트
 
-                    let beforeAvgDeal = UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1];
+                        let beforeAvgDeal = UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1];
 
-                    UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1]
-                        = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
+                        UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1]
+                            = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
 
-                    // 4. TK(팀 킬수)
-                    let beforeAvgTK = UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1];
+                        // 4. TK(팀 킬수)
+                        let beforeAvgTK = UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1];
 
-                    UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1]
-                        = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
-                }
+                        UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1]
+                            = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
+                    }
 
-                // Q. 평딜이랑 TK 지표를 등수별로 수집해야 하는가?
-                // 예상 가능한 사용처 - 전적검색 이후 우승시 평딜 , 우승시 팀킬 등으로 캐리력 등 계산,
-                //                     티어산출 시 같은 딜러그룹(평원딜, 메이지, 브루저 등) 내에서 비교 반영
-                // A. 일단 할 수 있으면 구체적으로 수집해보자
+                    // Q. 평딜이랑 TK 지표를 등수별로 수집해야 하는가?
+                    // 예상 가능한 사용처 - 전적검색 이후 우승시 평딜 , 우승시 팀킬 등으로 캐리력 등 계산,
+                    //                     티어산출 시 같은 딜러그룹(평원딜, 메이지, 브루저 등) 내에서 비교 반영
+                    // A. 일단 할 수 있으면 구체적으로 수집해보자
 
 
-                /* =============================================  이하 synergyData  =============================================================== */
+                    /* =============================================  이하 synergyData  =============================================================== */
 
-                for (let userP = 0; userP < game.length; userP++) {
-                    const synergyCharCode = game[userP].characterNum;
-                    const synergyWeaponCode = getWeaponNum(game[userP].characterNum - 1, game[userP].equipFirstItemForLog[0][0]);
+                    for (let userP = 0; userP < game.length; userP++) {
+                        const synergyCharCode = game[userP].characterNum;
+                        const synergyWeaponCode = getWeaponNum(game[userP].characterNum - 1, game[userP].equipFirstItemForLog[0][0]);
 
-                    const isExist = (element) => element[0] == synergyCharCode && element[1] == synergyWeaponCode;
-                    const index = UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].findIndex(isExist);
-                    const isTeam = game[userP].teamNumber === user.teamNumber && game[userP].characterNum !== user.characterNum;
+                        const isExist = (element) => element[0] == synergyCharCode && element[1] == synergyWeaponCode;
+                        const index = UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].findIndex(isExist);
+                        const isTeam = game[userP].teamNumber === user.teamNumber && game[userP].characterNum !== user.characterNum;
 
-                    if (index === -1) {
-                        if (user.gameRank === 1 && isTeam) { // 1등이며 같은 팀일 경우
-
-                            // 가장 하위 차원의 객체에 [캐릭 코드, 무기 index(0~3), 승리 수, 순방 수, 이 캐릭터와 함께한 전체 판수] 로 기록됨.
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 1, 1, 1]);
-                        } else if (user.mmrGain > 0 && isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 1, 1]);
-                        } else if (isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 0, 1]);
+                        if (index === -1) {
+                            if (user.gameRank === 1 && isTeam) { // 1등이며 같은 팀일 경우
+                                if (user.mmrGain > 0) {
+                                    UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 1, 1, 1]);
+                                } else {
+                                    UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 1, 0, 1]);
+                                }
+                            } else if (user.mmrGain > 0 && isTeam) {
+                                UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 1, 1]);
+                            } else if (isTeam) {
+                                UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup].push([synergyCharCode, synergyWeaponCode, 0, 0, 1]);
+                            }
+                        } else {
+                            if (user.gameRank === 1 && isTeam) { // 1등이며 같은 팀일 경우
+                                // 가장 하위 차원의 객체에 [캐릭 코드, 무기 index(0~3), 승리 수, 순방 수, 이 캐릭터와 함께한 전체 판수] 로 기록됨.
+                                UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][2]++;
+                            }
+                            if (user.mmrGain > 0 && isTeam) {
+                                UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][3]++;
+                            }
+                            if (isTeam) {
+                                UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
+                            }
                         }
-                    } else {
-                        if (user.gameRank === 1 && isTeam) { // 1등이며 같은 팀일 경우
+                    }
 
-                            // 가장 하위 차원의 객체에 [캐릭 코드, 무기 index(0~3), 승리 수, 순방 수, 이 캐릭터와 함께한 전체 판수] 로 기록됨.
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][2]++;
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][3]++;
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
-                        } else if (user.mmrGain > 0 && isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][3]++;
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
-                        } else if (isTeam) {
-                            UpdatedSynergyData[user.characterNum - 1].synergy[weaponNum][tierGroup][index][4]++;
+                    // 이하 아이템 통계 기록 부분 원리는 시너지 기록과 같음
+
+                    for (let itemType = 0; itemType < 5; itemType++) {
+                        if (user.equipment[itemType] !== null) {
+                            const isExist = (element) => element[0] == user.equipment[itemType];
+                            const index = UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].findIndex(isExist);
+
+                            if (index === -1) {
+                                if (user.gameRank === 1) {
+                                    if (user.mmrGain > 0) {
+                                        UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 1, 1, 1]);
+                                    } else {
+                                        UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 1, 0, 1]);
+                                    }
+                                } else if (user.mmrGain > 0) {
+                                    UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 0, 1, 1]);
+                                }
+                                UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 0, 0, 1]);
+                            } else {
+                                if (user.gameRank === 1) {
+                                    UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup][index][1]++;
+                                }
+                                if (user.mmrGain > 0) {
+                                    UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup][index][2]++;
+                                }
+                                UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup][index][3]++;
+                            }
                         }
                     }
                 }
-            }
+            });
+            // matchingMode = 2 일반 3 랭크
+            // matchingTeamMod = 3 스쿼드
 
-        })
 
-        rankcount++;
-    } else if (game[0].matchingMode === 2) { }
+            rankcount++;
+        }
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const CharBaseData = require('./character.json');
 
-function getCharCodeByName(name) {
-    return CharBaseData.findIndex(x => x.name == name) + 1;
+function mergeJSON(lists) { // 파싱 데이터 병합 함수
+    let formattedData = [];
+    lists.map((data, p) => {
+        formattedData.push(data.data);
+    });
+
+    let mergedList = formattedData[0];
+    if (formattedData.length > 1) {
+        formattedData.shift();
+
+        formattedData.map((list, lp) => {
+            mergedList.map((char, cp) => {
+                char.grades.map((weapon, wp) => {
+                    weapon.map((tg, tp) => {
+                        tg.map((grade, gp) => {
+                            mergedList[cp].grades[wp][tp][gp] += list[cp].grades[wp][tp][gp];
+                        });;
+                    });
+                });
+                char.scores.map((weapon, wp) => {
+                    weapon.map((tg, tp) => {
+                        tg.map((scores, sp) => {
+                            mergedList[cp].scores[wp][tp][sp] += list[cp].grades[wp][tp][sp];
+                        });;
+                    })
+                });
+            });
+            mergedList.map((char, cp) => {
+                char.tk.map((weapon, wp) => {
+                    weapon.map((tg, tp) => {
+                        tg.map((tks, p) => {
+                            let a1befval = mergedList[cp].tk[wp][tp][p] * mergedList[cp].grades[wp][tp][p];
+                            let a2befval = list[cp].tk[wp][tp][p] * list[cp].grades[wp][tp][p];
+                            let a12grade = mergedList[cp].grades[wp][tp][p] + list[cp].grades[wp][tp][p]
+                            mergedList[cp].tk[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade;
+                            // 1 평킬 x 1 판수 + 2 평킬 x 2 판수 / 1판수 + 2판수
+                        });
+                    });
+                });
+                char.avgdeal.map((weapon, wp) => {
+                    weapon.map((tg, tp) => {
+                        tg.map((deals, p) => {
+                            let a1befval = mergedList[cp].avgdeal[wp][tp][p] * mergedList[cp].grades[wp][tp][p];
+                            let a2befval = list[cp].avgdeal[wp][tp][p] * list[cp].grades[wp][tp][p];
+                            let a12grade = mergedList[cp].grades[wp][tp][p] + list[cp].grades[wp][tp][p]
+                            mergedList[cp].avgdeal[wp][tp][p] = isNaN((a1befval + a2befval) / a12grade) ? 0 : (a1befval + a2befval) / a12grade;
+                            // 1 평딜 x 1 판수 + 2 평딜 x 2 판수 / 1판수 + 2판수
+                        });
+                    });
+                });
+            });
+        });
+    }
+    return mergedList;
 }
 
-function getWeaponNumByName(code, wpname) {
-    let list = Object.values(CharMastery[code]);
-    return list.findIndex(x => x == wpname);
+function mergeSynergys(mother) {
+    let formattedData = [];
+    mother.map((data, p) => {
+        formattedData.push(data.data);
+    });
+
+    let mergedList = formattedData[0];
+    if (formattedData.length > 1) {
+        formattedData.shift();
+
+        formattedData.map((slist, sp) => {
+            mergedList.map((char, cp) => {
+                slist.map((schar, scp) => {
+                    schar.synergy.map((weapon, wp) => {
+                        weapon.map((tiergroup, tp) => {
+                            tiergroup.map((sdata, dp) => {
+                                const isExist = e => e[0] == sdata[0] && e[1] == sdata[1];
+                                const index = char.synergy[wp][tp].findIndex(isExist);
+
+                                if (index === -1) {
+                                    mergedList[cp].synergy[wp][tp].push(sdata);
+                                } else {
+                                    mergedList[cp].synergy[wp][tp][index][2] += sdata[2];
+                                    mergedList[cp].synergy[wp][tp][index][3] += sdata[3];
+                                    mergedList[cp].synergy[wp][tp][index][4] += sdata[4];
+                                }
+                            })
+                        });
+                    });
+                    schar.items.map((weapon, wp) => {
+                        weapon.map((tiergroup, tp) => {
+                            tiergroup.map((idata, dp) => {
+                                const isExist = e => e[0] == idata[0];
+                                const index = char.items[wp][tp].findIndex(isExist);
+
+                                if (index === -1) {
+                                    mergedList[cp].items[wp][tp].push(idata);
+                                } else {
+                                    mergedList[cp].items[wp][tp][index][1] += idata[1];
+                                    mergedList[cp].items[wp][tp][index][2] += idata[2];
+                                    mergedList[cp].items[wp][tp][index][3] += idata[3];
+                                }
+                            })
+                        });
+                    });
+                })
+            });
+        });
+    }
+    return mergedList;
 }
