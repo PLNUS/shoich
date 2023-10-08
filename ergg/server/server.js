@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const schedule = require('node-schedule');
 const cors = require('cors');
 
-const SCHEDULE_PORT = 8010;
+const SCHEDULE_PORT = 8000;
 const app = express(); // app생성
 const axios = require('axios');
 
@@ -47,6 +47,25 @@ const synergySchema = new Schema({
     }
 });
 
+const itemSchema = new Schema({
+    lastGameNum: {
+        required: true,
+        type: Number,
+    },
+    versionMajor: {
+        required: true,
+        type: Number,
+    },
+    versionMinor: {
+        required: true,
+        type: Number,
+    },
+    data: {
+        required: true,
+        type: Object,
+    }
+});
+
 const verSchema = new Schema({
     versionMajor: {
         required: true,
@@ -60,11 +79,13 @@ const verSchema = new Schema({
 
 const Version = mongoose.model('versions', verSchema)
 const Synergy = mongoose.model('synergys', synergySchema);
+const Item = mongoose.model('items', itemSchema);
 const Game = mongoose.model('games', gameSchema);
 
 const CharMastery = require("./charMastery.json");
 const CharacterData = require("./charData.json");
 const SynergyData = require("./synergyData.json");
+const ItemData = require("./itemData.json");
 const WeaponData = require("./weaponData.json");
 
 function getTierGroup(mmr, eterCut, demiCut) {
@@ -149,34 +170,15 @@ app.post('/games', function (req, res) { // 순수하게 게임 데이터들만 
         })
 });
 
-app.post('/upload', function (req, res) {
-    Game.create({
-        lastGameNum: req.body.lastGameNum,
-        versionMajor: req.body.versionMajor,
-        versionMinor: req.body.versionMinor,
-        data: req.body.data
-    })
-        .then(() => {
-            res.send(200, "complited");
-        })
-})
-
-app.post('/uploadver', function (req, res) {
-    Version.create({
-        versionMajor: req.body.versionMajor,
-        versionMinor: req.body.versionMinor,
-    })
-        .then(() => {
-            res.send(200, "complited");
-        })
-})
-
 app.listen(SCHEDULE_PORT, () => {
     Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
         console.log(docs[0].lastGameNum);
-        UpdatedData = CharacterData; // 초기화
+        UpdatedData = CharacterData; 
+        UpdatedSynergyData = SynergyData;
+        UpdatedItemData = ItemData; // 초기화
         sendSyncRequests(docs[0].lastGameNum, 8);
     })
+    
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
 }) // 타입스크립트로 전환 해야함
@@ -203,6 +205,7 @@ function getWeaponNum(charCode, firstWeaponCode) {
 
 let UpdatedData = CharacterData;
 let UpdatedSynergyData = SynergyData;
+let UpdatedItemData = ItemData;
 let rankcount = 0;
 let verChangedPoint = Infinity;
 
@@ -252,10 +255,20 @@ async function getGameData(gameCode, parallels, repeatstart) {
                                 versionMinor: versionMinor,
                                 data: UpdatedSynergyData
                             });
+                            Item.create({
+                                lastGameNum: verChangedPoint,
+                                versionMajor: versionMajor,
+                                versionMinor: versionMinor,
+                                data: UpdatedItemData
+                            });
 
                             versionMajor = response.data.userGames[0].versionMajor;
                             versionMinor = response.data.userGames[0].versionMinor;
-                            UpdatedData = CharacterData; // 초기화
+
+                            UpdatedData = CharacterData; 
+                            UpdatedSynergyData = SynergyData;
+                            UpdatedItemData = ItemData; // 초기화
+
                             Version.create({
                                 versionMajor: versionMajor,
                                 versionMinor: versionMinor
@@ -263,7 +276,7 @@ async function getGameData(gameCode, parallels, repeatstart) {
 
                             let point = verChangedPoint;
                             verChangedPoint = Infinity; // 초기화
-                            sendSyncRequests(point, 15); // %% 주의 필요 %%
+                            sendSyncRequests(point, 15); // %% 주의/동일화 필요 %%
                         }
                     }, 120000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기 후 동작
                 }
@@ -289,11 +302,11 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     }
     if (repeatstart === parallels) {
         console.log("최종점 확인으로 1분간 반복대기.");
-        let existGames = await Game.find({ versionMajor: versionMajor, versionMinor: versionMinor }).lean();
-        let existSynergys = await Synergy.find({ versionMajor: versionMajor, versionMinor: versionMinor }).lean();
+        // let existGames = await Game.find({ versionMajor: versionMajor, versionMinor: versionMinor }).lean();
+        // let existSynergys = await Synergy.find({ versionMajor: versionMajor, versionMinor: versionMinor }).lean();
         setTimeout(() => {
-            existGames.push({ data: UpdatedData });
-            existSynergys.push({ data: UpdatedSynergyData });
+            // existGames.push({ data: UpdatedData });
+            // existSynergys.push({ data: UpdatedSynergyData });
             Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 versionMajor: versionMajor,
@@ -305,6 +318,12 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
                 versionMajor: versionMajor,
                 versionMinor: versionMinor,
                 data: UpdatedSynergyData
+            });
+            Item.create({
+                lastGameNum: verChangedPoint,
+                versionMajor: versionMajor,
+                versionMinor: versionMinor,
+                data: UpdatedItemData
             });
             console.log("종료.");
         }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
@@ -401,29 +420,29 @@ async function UpdateFunc(response) {
                     // 이하 아이템 통계 기록 부분 원리는 시너지 기록과 같음
 
                     for (let itemType = 0; itemType < 5; itemType++) {
-                        if (user.equipment[itemType] !== null) {
+                        if (user.equipment[itemType] !== undefined) {
                             const isExist = (element) => element[0] == user.equipment[itemType];
-                            const index = UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].findIndex(isExist);
+                            const index = UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].findIndex(isExist);
 
                             if (index === -1) {
                                 if (user.gameRank === 1) {
                                     if (user.mmrGain > 0) {
-                                        UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 1, 1, 1]);
+                                        UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 1, 1, 1]);
                                     } else {
-                                        UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 1, 0, 1]);
+                                        UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 1, 0, 1]);
                                     }
                                 } else if (user.mmrGain > 0) {
-                                    UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 0, 1, 1]);
+                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 0, 1, 1]);
                                 }
-                                UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 0, 0, 1]);
+                                UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType], 0, 0, 1]);
                             } else {
                                 if (user.gameRank === 1) {
-                                    UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup][index][1]++;
+                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][1]++;
                                 }
                                 if (user.mmrGain > 0) {
-                                    UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup][index][2]++;
+                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][2]++;
                                 }
-                                UpdatedSynergyData[user.characterNum - 1].items[weaponNum][tierGroup][index][3]++;
+                                UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][3]++;
                             }
                         }
                     }
@@ -440,7 +459,6 @@ async function UpdateFunc(response) {
     }
 }
 
-const CharBaseData = require('./character.json');
 
 function mergeJSON(lists) { // 파싱 데이터 병합 함수
     let formattedData = [];

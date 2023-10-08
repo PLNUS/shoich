@@ -26,9 +26,9 @@ function mergeJSON(lists: Array<any>) { // 파싱 데이터 병합 함수
   });
 
   let mergedList = formattedData[0];
-  if (formattedData.length > 1) {
-    formattedData.shift();
+  formattedData.shift(); // 기본 형식 세팅을 위해 0번째꺼 그냥 가져옴
 
+  if (formattedData.length > 0) {
     formattedData.map((list, lp) => {
       mergedList.map((char: any, cp: number) => {
         char.grades.map((weapon: Array<Array<Array<number>>>, wp: number) => {

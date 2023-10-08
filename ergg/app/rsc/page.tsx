@@ -1,8 +1,6 @@
 'use server'
 
 import TierList from "./components/tierlist";
-import TrendGrid from "./components/trendgrid";
-import { getGameCount } from "./libs/refactor";
 import getTierList from "./libs/tierfetcher";
 
 export default async function Home() {

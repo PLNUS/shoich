@@ -58,15 +58,15 @@ export interface Data {
   }
   
   export function getCharTier(np: number) {
-    if (np >= 260) {
+    if (np >= 270) {
       return 0;
     } else if (np >= 210) {
       return 1;
-    } else if (np >= 180) {
+    } else if (np >= 150) {
       return 2;
-    } else if (np >= 140) {
+    } else if (np >= 90) {
       return 3;
-    } else if (np >= 100) {
+    } else if (np >= 30) {
       return 4
     } else {
       return 5;
@@ -296,7 +296,8 @@ export interface Data {
     let var4: number = char.WR;
     let var5: number = char.data!.avggrade;
     let var6: number = char.PR;
-    return (var2 / var1 + var3 * 4 + var4 * 6 - (var5 - 3) * 30) * var6;
+    if(var6 < 0.1) {return 0;}
+    return (var2 / var1 + var3 * 4 + var4 * 6 - (var5 - 3) * 30) * (var6);
   }
   
   export function getListforTiergroup(parsedData: Array<any>, startTierGroup: number, endTierGroup: number) { // 우선순위 1 함수 가독성 및 효율 개선 필요, 
