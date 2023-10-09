@@ -2,9 +2,9 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface SelectedItem {
-  selectedItem: object;
+  selectedItem: any;
   tierGroup: Array<number>;
-  setSelected: (selectedItem: object, tierGroup: Array<number>) => void;
+  setSelected: (selectedItem: any, tierGroup: Array<number>) => void;
 }
 
 export const useSelectedStore = create(

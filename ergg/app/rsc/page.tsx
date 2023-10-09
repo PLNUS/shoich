@@ -13,13 +13,15 @@ export default async function Home() {
         isDisabled: false,
         label: <div className="text-left">{`Ver 1.${ver.versionMajor}.${ver.versionMinor}`}</div>,
       });
+      
+      // 
   })
 
   return (
     <div className="page_wrap justify-center">
       <div 
         className="flex flex-col items-center px-4 min-w-[700px] h-full gap-y-2">
-        <TierList data={tierlists.data} verOptions={verOptions}></TierList>
+          <TierList data={tierlists.data} verOptions={verOptions}></TierList>
       </div>
     </div>
   )

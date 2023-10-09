@@ -68,10 +68,9 @@ export const data = {
 
 export default function Home() {
   return (
-    <div class="flex p-8 justify-center w-screen h-screen">
-      <div class="bg-stone-100 lg:w-[1200px] h-screen">
-        <div class="w-[400px] h-[200px] p-2 rounded-md bg-slate-200">
-          <Line options={options} data={data} />
+    <div className="flex p-8 justify-center w-screen h-screen">
+      <div className="bg-stone-100 lg:w-[1200px] h-screen">
+        <div className="w-[400px] h-[200px] p-2 rounded-md bg-slate-200">
         </div>
       </div>
     </div>

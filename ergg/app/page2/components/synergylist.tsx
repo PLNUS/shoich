@@ -1,18 +1,22 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelectedStore } from "../store";
 import { getBaseData, getSynergyList } from "../libs/refactor";
 
 export default function SynergyList({ data }: any) {
-
     const [showUnstableSynWin, setShowUnstableSynWin] = useState(false);
     const [showUnstableSynSb, setShowUnstableSynSb] = useState(false);
     const { selectedItem, tierGroup } = useSelectedStore();
-    const [baseData, setBaseData] = useState<Array<any>>(getBaseData(getSynergyList(data, selectedItem.code, selectedItem.weaponNum, tierGroup[0], tierGroup[1])));
+    const [baseData, setBaseData] = useState<Array<any>>([]);
 
     useEffect(() => { // 여기가 문제임 여기가
-        
+        if(sessionStorage.getItem("synergy") === null) {
+            sessionStorage.setItem("synergy", JSON.stringify(data));
+            setBaseData(getBaseData(getSynergyList(data, selectedItem.code, selectedItem.weaponNum, tierGroup[0], tierGroup[1])));
+        } else {
+            setBaseData(getBaseData(getSynergyList(JSON.parse(sessionStorage.getItem("synergy")!), selectedItem.code, selectedItem.weaponNum, tierGroup[0], tierGroup[1])));
+        }
     }, [])
 
     return (
@@ -134,17 +138,17 @@ export default function SynergyList({ data }: any) {
     )
 }
 
-const sortByWR = (x, y) => {
+const sortByWR = (x:any, y:any) => {
     if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
     return y.code - x.code;
 }
 
-const sortBySb = (x, y) => {
+const sortBySb = (x:any, y:any) => {
     if (x.synergySb !== y.synergySb) return y.synergySb - x.synergySb;
     return y.code - x.code;
 }
 
-const sortByGames = (x, y) => {
+const sortByGames = (x:any, y:any) => {
     if (x.games !== y.games) return y.games - x.games;
     return y.code - x.code;
 }

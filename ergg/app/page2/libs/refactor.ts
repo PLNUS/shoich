@@ -53,13 +53,20 @@ export function getNameByCharCode(code: number) {
 
 export function getSynergyList(data: Array<any>, charCode: number, weaponNum: number, startTierGroup: number, endTierGroup: number) {
     // charCode, weaponNum은 0일 수 없음.
-    // tierGroup => 8 브 7 실 6 골 ~ 2 데 1 이
+    // tierGroup => 8 브   7 실 6 골 ~ 2 데 1 이
     const sList: Array<Array<number>> = [];
-
+    console.log(startTierGroup + " 부터 " + endTierGroup);
+    console.log(data[49].synergy[0]);
     for (let i = 0; i <= (startTierGroup - endTierGroup); i++) {
-        data[charCode - 1].synergy[weaponNum][startTierGroup - i - 1].map((sData, p) => {
-            const isExist = (e) => e[0] == sData[0] && e[1] == sData[1];
-            const index = sList.findIndex(isExist);
+        console.log(startTierGroup - i - 1);
+        let isExist;
+        let index:number;
+        data[charCode - 1].synergy[weaponNum][startTierGroup - i - 1].map((sData:any, p:number) => {
+            isExist = (e:any) => e[0] === sData[0] && e[1] === sData[1];
+            index = sList.findIndex(isExist);
+
+            
+            console.log(sData);
 
             if (index === -1) {
                 sList.push(sData);

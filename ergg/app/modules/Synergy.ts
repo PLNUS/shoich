@@ -21,6 +21,6 @@ const synergySchema = new Schema({
     }
 });
 
-const Synergy = models.synergys ||  mongoose.model('synergys', synergySchema);
+const Synergy = models?.synergys ||  mongoose.model('synergys', synergySchema);
 
 export default Synergy;

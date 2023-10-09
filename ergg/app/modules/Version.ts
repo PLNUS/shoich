@@ -11,6 +11,6 @@ const verSchema = new Schema({
     }
 });
 
-const Version =  models.versions || mongoose.model('versions', verSchema);
+const Version =  models?.versions || mongoose.model('versions', verSchema);
 
 export default Version;
