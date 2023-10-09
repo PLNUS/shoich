@@ -131,3 +131,10 @@ killDetails => 빈사 deathDetails => 확킬
 
 시발 시발 시발 10'8 PAGE2에서 새로고침 or 뒤로가기 앞으로가기 시
 재파싱 안하고 있는데이터 또 병합하는 현상 발생. 해결해야함
+
+그니까 이게 이거같음. 뒤로가기 -> 앞으로가기를 하면 Props가 변함
+RSC(Page.tsx) => RCC(synergyList.tsx) 순으로 Fetched Data (Props)를 내려주는데, 이게 정상적인 Refresh나 Load를 거치지 않고
+뒤로가기 -> 앞으로가기 로 다시 RCC가 호출되면 props가 이상하게 변함 그냥 좇같음
+
+지금 오류수정떄문에 많이 밀렸는데 지금 Zustand 쓰고있는거 다 sessionStorage로 바꾸고
+머야 그 mongoDB document 크기가 너무 큼; 파싱해서 각각 저장하기보다 파싱할때마다 그냥 버전별로 하나에 병합하는식으로 재작성 필요

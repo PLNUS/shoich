@@ -1,21 +1,24 @@
 'use client'
 
 import { useEffect, useRef, useState } from "react";
-import { useSelectedStore } from "../store";
 import { getBaseData, getSynergyList } from "../libs/refactor";
+import { Data } from "@/app/rsc/libs/refactor";
 
 export default function SynergyList({ data }: any) {
+
     const [showUnstableSynWin, setShowUnstableSynWin] = useState(false);
     const [showUnstableSynSb, setShowUnstableSynSb] = useState(false);
-    const { selectedItem, tierGroup } = useSelectedStore();
+
     const [baseData, setBaseData] = useState<Array<any>>([]);
 
-    useEffect(() => { // 여기가 문제임 여기가
+    useEffect(() => {
+        const selected:Data = JSON.parse(sessionStorage.getItem("char")!);
+        const tierGroup = JSON.parse(sessionStorage.getItem("tierGroup")!);
         if(sessionStorage.getItem("synergy") === null) {
             sessionStorage.setItem("synergy", JSON.stringify(data));
-            setBaseData(getBaseData(getSynergyList(data, selectedItem.code, selectedItem.weaponNum, tierGroup[0], tierGroup[1])));
+            setBaseData(getBaseData(getSynergyList(data, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
         } else {
-            setBaseData(getBaseData(getSynergyList(JSON.parse(sessionStorage.getItem("synergy")!), selectedItem.code, selectedItem.weaponNum, tierGroup[0], tierGroup[1])));
+            setBaseData(getBaseData(getSynergyList(JSON.parse(sessionStorage.getItem("synergy")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
         }
     }, [])
 
@@ -68,7 +71,7 @@ export default function SynergyList({ data }: any) {
                     <div className="text-2xl font-mr tracking-tighter p-2">
                         함께하면 승리하기 쉬워요
                     </div>
-                    <label className="flex flex-row justify-center p-2">
+                    <label className="flex flex-row items-center p-2">
                         <input type="checkbox" className="accent-blue-700"
                             onChange={(e) => {
                                 if (e.target.checked) {

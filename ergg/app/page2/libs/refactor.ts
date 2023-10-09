@@ -65,9 +65,6 @@ export function getSynergyList(data: Array<any>, charCode: number, weaponNum: nu
             isExist = (e:any) => e[0] === sData[0] && e[1] === sData[1];
             index = sList.findIndex(isExist);
 
-            
-            console.log(sData);
-
             if (index === -1) {
                 sList.push(sData);
             } else {
