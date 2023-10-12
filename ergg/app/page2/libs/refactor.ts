@@ -1,5 +1,5 @@
 
-import CharData from "../charData.json";
+import CharData from "./charData.json";
 import CharMastery from "../../rsc/libs/charMastery.json";
 import { getKoreanWeapon } from "../../rsc/libs/refactor";
 

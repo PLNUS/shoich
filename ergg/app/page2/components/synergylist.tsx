@@ -23,8 +23,8 @@ export default function SynergyList({ data }: any) {
     }, [])
 
     return (
-        <div className="flex flex-row w-full">
-            <div className="flex flex-col w-1/3 h-auto bg-indigo-100 p-2 mb-4">
+        <div className="flex flex-col w-1/3">
+            <div className="flex flex-col w-full h-auto bg-indigo-100">
                 <div className="flex flex-row justify-between items-end">
                     <div className="text-2xl font-mr tracking-tighter p-2">
                         함께하면 점수가 올라요
@@ -66,7 +66,7 @@ export default function SynergyList({ data }: any) {
                         : null))}
                 </div>
             </div>
-            <div className="flex flex-col w-1/3 h-auto bg-sky-100 p-2 mb-4 rounded-xl">
+            <div className="flex flex-col w-full h-auto bg-sky-100">
                 <div className="flex flex-row justify-between items-end">
                     <div className="text-2xl font-mr tracking-tighter p-2">
                         함께하면 승리하기 쉬워요
@@ -109,7 +109,7 @@ export default function SynergyList({ data }: any) {
                         : null))}
                 </div>
             </div>
-            <div className="flex flex-col w-1/3 h-auto bg-indigo-100 p-2 mb-4">
+            <div className="flex flex-col w-full h-auto bg-indigo-100">
                 <div className="flex flex-row justify-between items-end">
                     <div className="text-2xl font-mr tracking-tighter p-2">
                         팀원으로 자주 만나요

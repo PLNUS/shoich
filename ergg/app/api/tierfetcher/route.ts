@@ -1,22 +1,12 @@
 import Game from "@/app/modules/Game";
-import Version from "@/app/modules/Version";
 import dbConnect from "@/app/modules/dbManager";
 
 export async function GET(request: Request) {  // 버전별로 각각 List 따로 병합하기..
     dbConnect();
     
     const games = Game;
-    const vers = Version;
-
-    const versions: Array<any> = await vers.find({}, { versionMajor: 1, versionMinor: 1, _id: 0 }).lean();
-
-    let mergedGames = new Array(versions.length);
-
-    for (let i = 0; i < versions.length; i++) {
-        const allGames = await games.find({ versionMajor: versions[i].versionMajor, versionMinor: versions[i].versionMinor }).lean();
-        mergedGames[i] = mergeJSON(allGames);
-    }
-    return Response.json({ versions: versions, data: mergedGames });
+    const allGames = await games.findOne().lean();
+    return Response.json(allGames);
 }
 
 function mergeJSON(lists: Array<any>) { // 파싱 데이터 병합 함수

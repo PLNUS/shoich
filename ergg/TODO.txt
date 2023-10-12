@@ -138,3 +138,7 @@ RSC(Page.tsx) => RCC(synergyList.tsx) 순으로 Fetched Data (Props)를 내려�
 
 지금 오류수정떄문에 많이 밀렸는데 지금 Zustand 쓰고있는거 다 sessionStorage로 바꾸고
 머야 그 mongoDB document 크기가 너무 큼; 파싱해서 각각 저장하기보다 파싱할때마다 그냥 버전별로 하나에 병합하는식으로 재작성 필요
+
+하루단위로 파싱해서 저장하고 업데이트 / client 측에서 localstorage 에 파싱한 데이터 저장하고 없을시에만 파싱
+
+머 육각형 그래프 

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from "react";
-import { getColor } from "../libs/assets";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Data } from "../libs/refactor";
@@ -12,15 +11,13 @@ export default function TierItem({ char, position, tierGroup}: any) {
   const data:Data = char; // 받아온 값들
   const p = position; // 번호임 그냥
 
-  const color = getColor(data.tier);
-
   return (
     <motion.div className="tierlist_item_wrap"
       whileTap={{ scale: 0.98 }}
     // onHoverStart={e => { setAnimate("visible") }}
     // onHoverEnd={e => { setAnimate("hidden") }}
     >
-      <motion.div className={`absolute flex flex-row justify-end w-full h-full items-center ${color} rounded-xl py-2`}
+      <motion.div className={`absolute flex flex-row justify-end w-full h-full items-center ${data.color} rounded-xl py-2`}
         variants={{
           hidden: { opacity: 1, x: "-101%" },
           visible: { opacity: 1, x: 0 }
@@ -91,7 +88,7 @@ export default function TierItem({ char, position, tierGroup}: any) {
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.PR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.SR}%</div>
         <div className="w-[12%] px-2">
-          <p className={`rounded-xl text-center text-md font-mb text-white ` + color}>{data.tier === 0 ? 'OP' : data.tier}</p>
+          <p className={`rounded-xl text-center text-md font-mb text-white ` + data.color}>{data.tier === 0 ? 'OP' : data.tier}</p>
         </div>
       </div>
     </motion.div >);

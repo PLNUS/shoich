@@ -7,14 +7,6 @@ const gameSchema = new Schema({
         required: true,
         type: Number,
     },
-    versionMajor: {
-        required: true,
-        type: Number,
-    },
-    versionMinor: {
-        required: true,
-        type: Number,
-    },
     data: {
         required: true,
         type: Object,

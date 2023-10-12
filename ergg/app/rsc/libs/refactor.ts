@@ -1,3 +1,4 @@
+import { getColor } from "./assets";
 import CharMastery from "./charMastery.json";
 
 export interface Data {
@@ -13,6 +14,7 @@ export interface Data {
     data: PrimaryData | undefined;
   
     tier: number; //임시, 삭제예정
+    color: string;
     nadjapoint: number; // 나쟈 포인트, 각종 지표로 산출된 정수로 티어 산출시 사용
   };
   
@@ -210,7 +212,7 @@ export interface Data {
             targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
           });
         } else {
-          deal += parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1][grade - 1];
+          deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1][grade - 1];
           targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
         }
       }
@@ -221,7 +223,7 @@ export interface Data {
           targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][gp];
         });
       } else {
-        deal += parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - 1][grade - 1];
+        deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - 1][grade - 1];
         targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
       }
     }
@@ -241,7 +243,7 @@ export interface Data {
             targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
           });
         } else {
-          tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - i - 1][grade - 1];
+          tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - i - 1][grade - 1] * parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
           targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
         }
       }
@@ -252,7 +254,7 @@ export interface Data {
           targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][gp];
         });
       } else {
-        tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - 1][grade - 1];
+        tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
         targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
       }
     }
@@ -365,11 +367,13 @@ export interface Data {
   
             nadjapoint: 0,
             tier: 0,
+            color: "",
   
             data: properties
           };
           newData.nadjapoint = getNadjaPoint(newData);
           newData.tier = getCharTier(newData.nadjapoint);
+          newData.color = getColor(newData.tier);
           newCharList.push(newData);
         }
       });

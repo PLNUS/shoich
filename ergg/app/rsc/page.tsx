@@ -4,24 +4,14 @@ import TierList from "./components/tierlist";
 import getTierList from "./libs/tierfetcher";
 
 export default async function Home() {
-  const tierlists:any = await getTierList();
-
-  let verOptions:Array<Object> = []; // Ver Selector의 Options
-  tierlists.versions.map((ver:any, p:number) => {
-     verOptions.push({
-        value: p,
-        isDisabled: false,
-        label: <div className="text-left">{`Ver 1.${ver.versionMajor}.${ver.versionMinor}`}</div>,
-      });
-      
-      // 
-  })
+  const tierlist:any = await getTierList();
 
   return (
     <div className="page_wrap justify-center">
+      실시간 실험체 티어
       <div 
-        className="flex flex-col items-center px-4 min-w-[700px] h-full gap-y-2">
-          <TierList data={tierlists.data} verOptions={verOptions}></TierList>
+        className="flex flex-col items-center px-4 min-w-[600px] h-full gap-y-2">
+          <TierList data={tierlist.data}></TierList>
       </div>
     </div>
   )

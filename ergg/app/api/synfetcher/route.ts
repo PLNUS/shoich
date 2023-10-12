@@ -6,7 +6,6 @@ export async function GET() {
     dbConnect();
     const synergys = Synergy;
     const motherData:any = await synergys.findOne().lean();
-    // const merged = await mergeSynergys(motherData);
     return Response.json({ data: motherData!.data });
 }
 
