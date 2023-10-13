@@ -7,7 +7,7 @@ import ReactSelect from "react-select";
 import TierItem from "./tieritem";
 
 export default function TierList({ data }: any) { // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
-  const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
+  const [charList, setCharList] = useState<Array<Data>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
   const tierGroups = useRef([5, 1]);
 
   useEffect(() => {

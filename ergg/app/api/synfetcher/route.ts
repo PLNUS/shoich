@@ -1,6 +1,6 @@
 import Synergy from "../../modules/Synergy";
 import dbConnect from "../../modules/dbManager";
-import SynergyData from "../../../server/synergyData.json";
+import SynergyData from "../../../server/base/synergyData.json";
 
 export async function GET() {
     dbConnect();

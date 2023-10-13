@@ -1,6 +1,5 @@
 import Item from "../../modules/Item";
 import dbConnect from "../../modules/dbManager";
-import SynergyData from "../../../server/synergyData.json";
 
 export async function GET() {
     dbConnect();

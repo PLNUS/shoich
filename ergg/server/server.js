@@ -329,7 +329,7 @@ async function UpdateFunc(response) {
                             const isExist = (element) => element[0] == user.equipment[itemType];
                             const index = UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].findIndex(isExist);
 
-                            if (index === -1) {
+                            if (index === -1) { // 제대로 병합이 ㅏㅇㄴ되고있음
                                 if (user.gameRank === 1) {
                                     if (user.mmrGain > 0) {
                                         UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,item.grade, 1, 1, 1]);

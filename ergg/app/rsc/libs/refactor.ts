@@ -76,6 +76,9 @@ export interface Data {
   }
   
   export function getAvgGrade(parsedData: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number) {
+    if(getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 0) === 0) { // Nan 값 처리
+      return 0;
+    }
     return (getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 1)
       + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 2) * 2
       + getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, 3) * 3
