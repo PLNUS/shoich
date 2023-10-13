@@ -2,7 +2,7 @@
 
 import { Data } from "@/app/rsc/libs/refactor";
 import { useEffect, useState } from "react";
-import { CharRadar, CountPerGradeLine, GradeLine } from "./charts";
+import { CharRadar, CountPerGradeLine } from "./charts";
 
 
 export default function SynergyHead() {

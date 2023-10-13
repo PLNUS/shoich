@@ -1,6 +1,6 @@
 
-import CharData from "./charData.json";
-import CharMastery from "../../rsc/libs/charMastery.json";
+import CharData from "@/server/charData.json";
+import CharMastery from "@/server/charMastery.json";
 import { getKoreanWeapon } from "../../rsc/libs/refactor";
 
 interface Synergy {

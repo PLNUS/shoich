@@ -1,5 +1,5 @@
 import { getColor } from "./assets";
-import CharMastery from "./charMastery.json";
+import CharMastery from "@/server/charMastery.json";
 
 export interface Data {
     code: number; // 험체 코드
