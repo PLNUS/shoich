@@ -3,10 +3,10 @@ import CharData from "@/server/base/charData.json";
 import CharMastery from "@/server/parsed/charMastery.json";
 import { getKoreanWeapon } from "../../rsc/libs/refactor";
 
-interface Synergy {
+interface Item {
     code: number;
-    weapon: string;
-    name: string;
+    itemtype: number;
+    itemgrade: string;
     synergyWin: number;
     synergySb: number;
     countWin: number;
@@ -16,25 +16,25 @@ interface Synergy {
     games: number;
 }
 
-export function getBaseData(data: Array<Array<number>>) {
-    let formattedData: Array<Synergy> = [];
+export function getFormattedItem(data: Array<Array<any>>) {
+    let formattedData: Array<Item> = [];
     let entireGames = 0;
     data.forEach(element => {
-        entireGames += element[4];
+        entireGames += element[5];
     });;
 
     data.map((char, p) => {
         formattedData.push({
             code: char[0],
-            weapon: getWeaponNameByCharCode(char[0], char[1]),
-            name: getWeaponNameByCharCode(char[0], char[1]) + " " + getNameByCharCode(char[0]),
-            synergyWin: Math.floor(char[2] / char[4] * 10000) / 100,
-            synergySb: Math.floor(char[3] / char[4] * 10000) / 100,
-            countWin: char[2],
-            countSb: char[3],
-            validitySb: char[4] > entireGames / 200,
-            validityWin: char[4] > entireGames / 300,
-            games: char[4]
+            itemtype: char[1],
+            itemgrade: char[2],
+            synergyWin: Math.floor(char[3] / char[5] * 10000) / 100,
+            synergySb: Math.floor(char[4] / char[5] * 10000) / 100,
+            countWin: char[3],
+            countSb: char[4],
+            validitySb: char[5] > entireGames / 200,
+            validityWin: char[5] > entireGames / 300,
+            games: char[5]
         });
     });
     return formattedData;
@@ -51,15 +51,15 @@ export function getNameByCharCode(code: number) {
     return CharData[code - 1].name;
 }
 
-export function getSynergyList(data: Array<any>, charCode: number, weaponNum: number, startTierGroup: number, endTierGroup: number) {
+export function getItemList(data: Array<any>, charCode: number, weaponNum: number, startTierGroup: number, endTierGroup: number) {
     // charCode, weaponNum은 0일 수 없음.
     // tierGroup => 8 브   7 실 6 골 ~ 2 데 1 이
     const sList: Array<Array<number>> = [];
     for (let i = 0; i <= (startTierGroup - endTierGroup); i++) {
         let isExist;
         let index:number;
-        data[charCode - 1].synergy[weaponNum][startTierGroup - i - 1].map((sData:any, p:number) => {
-            isExist = (e:any) => e[0] === sData[0] && e[1] === sData[1];
+        data[charCode - 1].items[weaponNum][startTierGroup - i - 1].map((sData:any, p:number) => {
+            isExist = (e:any) => e[0] === sData[0];
             index = sList.findIndex(isExist);
 
             if (index === -1) {

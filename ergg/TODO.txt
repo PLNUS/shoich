@@ -142,3 +142,12 @@ RSC(Page.tsx) => RCC(synergyList.tsx) 순으로 Fetched Data (Props)를 내려�
 하루단위로 파싱해서 저장하고 업데이트 / client 측에서 localstorage 에 파싱한 데이터 저장하고 없을시에만 파싱
 
 머 육각형 그래프 
+
+
+
+//itemCode 및 등급 정리한 JSON 파일 동적으로 업데이트가능하게 만들고 음.. 거기서 영웅+등급인거만 리스트에 Push 그리고 validation 제한 형식다르게
+
+그리고 로딩화면 구성하고 revalidation 주기 제대로 설정하기
+
+현재 업데이트마다 수동으로 변경해야하는 것 다 없애고 이미지빼고 자동화되도록
+

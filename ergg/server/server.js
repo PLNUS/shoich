@@ -46,11 +46,11 @@ const Synergy = mongoose.model('synergys', synergySchema);
 const Item = mongoose.model('items', itemSchema);
 const Game = mongoose.model('games', gameSchema);
 
-const CharMastery = require("./charMastery.json");
-const CharacterData = require("./charData.json");
-const SynergyData = require("./synergyData.json");
-const ItemData = require("./itemData.json");
-const WeaponData = require("./weaponData.json");
+const CharMastery = require("./parsed/charMastery.json");
+const CharacterData = require("./base/charData.json");
+const SynergyData = require("./base/synergyData.json");
+const ItemData = require("./base/itemData.json");
+const ItemParsed = require("./parsed/itemData.json");
 
 function getTierGroup(mmr, eterCut, demiCut) {
     if (mmr >= eterCut) {
@@ -140,7 +140,7 @@ app.listen(SCHEDULE_PORT, () => {
         UpdatedData = CharacterData;
         UpdatedSynergyData = SynergyData;
         UpdatedItemData = ItemData; // 초기화
-        sendSyncRequests(docs[0].lastGameNum, 8);
+        sendSyncRequests(docs[0].lastGameNum, 6);
     })
 
     //매 n초마다 수행!
@@ -154,7 +154,7 @@ function getWeaponNum(charCode, firstWeaponCode) {
     if (firstWeaponCode === 0) { // 잠수면 그냥 1번무기에 반영
         return 0;
     } else {
-        let WeaponType = WeaponData.find(e => e.code == firstWeaponCode).weaponType
+        let WeaponType = ItemParsed.find(e => e.code == firstWeaponCode).weaponType
         if (CharMastery[charCode].weapon1 == WeaponType) {
             return 0;
         } else if (CharMastery[charCode].weapon2 == WeaponType) {
@@ -198,6 +198,9 @@ async function getGameData(gameCode) {
                 }
                 resolve("성공")
             }).catch(function (error) {
+                if(error.response.status === 429) {
+                    console.log("파싱주기가 너무 빠릅니다.");
+                }
                 rejects(error);
             });
     })
@@ -320,29 +323,31 @@ async function UpdateFunc(response) {
                     // 이하 아이템 통계 기록 부분 원리는 시너지 기록과 같음
 
                     for (let itemType = 0; itemType < 5; itemType++) {
-                        if (user.equipment[itemType] !== undefined) {
+                        const findByCode = (e) => e.code === user.equipment[itemType];
+                        const item = ItemParsed.find(findByCode);
+                        if (user.equipment[itemType] !== undefined && item !== undefined) {
                             const isExist = (element) => element[0] == user.equipment[itemType];
                             const index = UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].findIndex(isExist);
 
                             if (index === -1) {
                                 if (user.gameRank === 1) {
                                     if (user.mmrGain > 0) {
-                                        UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType , 1, 1, 1]);
+                                        UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,item.grade, 1, 1, 1]);
                                     } else {
-                                        UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,  1, 0, 1]);
+                                        UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,item.grade,  1, 0, 1]);
                                     }
                                 } else if (user.mmrGain > 0) {
-                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType, 0, 1, 1]);
+                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,item.grade, 0, 1, 1]);
                                 }
-                                UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,  0, 0, 1]);
+                                UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup].push([user.equipment[itemType],itemType,item.grade, 0, 0, 1]);
                             } else {
                                 if (user.gameRank === 1) {
-                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][2]++;
-                                }
-                                if (user.mmrGain > 0) {
                                     UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][3]++;
                                 }
-                                UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][4]++;
+                                if (user.mmrGain > 0) {
+                                    UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][4]++;
+                                }
+                                UpdatedItemData[user.characterNum - 1].items[weaponNum][tierGroup][index][5]++;
                             }
                         }
                     }
@@ -352,5 +357,7 @@ async function UpdateFunc(response) {
             // matchingTeamMod = 3 스쿼드
             rankcount++;
         }
-    } catch (e) { }
+    } catch (e) {
+        console.log(e);
+    }
 }
