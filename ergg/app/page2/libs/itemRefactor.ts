@@ -8,34 +8,43 @@ interface Item {
     code: number;
     itemtype: number;
     itemgrade: string;
+
     synergyWin: number;
     synergySb: number;
+
     countWin: number;
     countSb: number;
-    validityWin: boolean;
-    validitySb: boolean;
+
+    PR: number;
+
     games: number;
+    entiregames: Array<number>;
 }
 
 export function getFormattedItem(data: Array<any>) {
     let formattedData: Array<Item> = [];
-    let entireGames = 0;
+    let entireGames = [0,0,0,0,0];
     data.forEach(element => {
-        entireGames += element[5];
+        entireGames[element[1]] += element[5];
     });;
 
     data.map((char, p) => {
         formattedData.push({
             code: char[0],
+
             itemtype: char[1],
             itemgrade: char[2],
+
             synergyWin: Math.floor(char[3] / char[5] * 10000) / 100,
             synergySb: Math.floor(char[4] / char[5] * 10000) / 100,
+
             countWin: char[3],
             countSb: char[4],
-            validitySb: char[5] > entireGames / 200,
-            validityWin: char[5] > entireGames / 300,
-            games: char[5]
+
+            PR: Math.floor(char[5] / entireGames[char[1]] * 10000) /100 ,
+
+            games: char[5],
+            entiregames: entireGames
         });
     });
     return formattedData;

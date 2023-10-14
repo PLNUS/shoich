@@ -151,3 +151,5 @@ RSC(Page.tsx) => RCC(synergyList.tsx) 순으로 Fetched Data (Props)를 내려�
 
 현재 업데이트마다 수동으로 변경해야하는 것 다 없애고 이미지빼고 자동화되도록
 
+
+spinner로 로딩중 화면 구현하기

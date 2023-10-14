@@ -19,8 +19,8 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
 
   return (
     <div className="flex flex-col h-fill w-full overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
-      <div className="flex flex-row w-full justify-between p-2">
-        <div className="flex flex-row gap-x-2 items-center">
+      <div className="flex flex-row w-full justify-between">
+        <div className="flex flex-row items-end">
           <ReactSelect
             className="w-[150px]"
             isSearchable={false}
@@ -33,11 +33,11 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
               updateEndDisable(tierGroups.current[0]);
               setAverage()
             }} />
-          <div className="text-base font-ml">
-            부터
-          </div>
+            <div className="text-base font-msb ml-2">
+              부터
+            </div>
         </div>
-        <div className="flex flex-row gap-x-2 items-center">
+        <div className="flex flex-row items-end">
           <ReactSelect
             className="w-[150px]"
             isSearchable={false}
@@ -50,16 +50,25 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
               updateStartDisable(tierGroups.current[1]);
               setAverage()
             }} />
-          <div className="text-base font-ml">
+          <div className="text-base font-msb ml-2">
             까지
           </div>
+        </div>
+        <div className="flex items-center w-[150px] h-full border-b border-slate-500 ml-2">
+          <input 
+          className="appearance-none bg-transparent text-right border-none w-full text-gray-700 mr-3 leading-tight focus:outline-none" 
+          type="text" 
+          placeholder="실험체 검색 >>"
+          onChange={(e) => {
+            console.log(e.target.value);
+          }}/>
         </div>
       </div>
       <TierHead />
       <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
-      {charList.map((char, p) => (
-        <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
-        </div>
+        {charList.map((char, p) => (
+          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
+      </div>
     </div>
   )
 
@@ -103,7 +112,7 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
     let entireWR = 0;
 
     let counts = 0;
-    charList.map((char:Data, p:number) => {
+    charList.map((char: Data, p: number) => {
       entireAvgDeal += char.data?.avgdealbygrade[0]!;
       entireAvgGrade += char.data?.avggrade!;
       entireTK += char.data?.tkbygrade[0]!;
@@ -113,8 +122,8 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
 
       counts++;
     });
-    
-    sessionStorage.setItem("average", JSON.stringify([entireAvgDeal / counts, entirePR / counts ,entireAvgGrade / counts, entireSB/counts, entireTK / counts, entireWR / counts]));
+
+    sessionStorage.setItem("average", JSON.stringify([entireAvgDeal / counts, entirePR / counts, entireAvgGrade / counts, entireSB / counts, entireTK / counts, entireWR / counts]));
   }
 }
 

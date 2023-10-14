@@ -6,6 +6,42 @@ import { Data } from "@/app/rsc/libs/refactor";
 import { getFormattedItem, getItemList } from "../libs/itemRefactor";
 import Image from "next/image";
 
+function getGradientByGrade(grade: string) {
+    switch (grade) {
+        case "Legend": return "bg-gradient-to-b from-yellow-700 to-amber-400";
+        case "Epic": return "bg-gradient-to-b from-violet-900 to-violet-400";
+    }
+    return "";
+}
+
+const sortByWR = (x: any, y: any) => {
+    if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
+    return y.code - x.code;
+}
+
+const sortBySb = (x: any, y: any) => {
+    if (x.synergySb !== y.synergySb) return y.synergySb - x.synergySb;
+    return y.code - x.code;
+}
+
+const sortByGames = (x: any, y: any) => {
+    if (x.games !== y.games) return y.games - x.games;
+    return y.code - x.code;
+}
+
+interface Synergy {
+    code: number;
+    weapon: string;
+    name: string;
+    synergyWin: number;
+    synergySb: number;
+    countWin: number;
+    countSb: number;
+    validityWin: boolean;
+    validitySb: boolean;
+    games: number;
+}
+
 export default function SynergyList({ synergy, item }: any) {
 
     const [showUnstableSynWin, setShowUnstableSynWin] = useState(false);
@@ -35,7 +71,7 @@ export default function SynergyList({ synergy, item }: any) {
 
     return (
         <div className="flex flex-row w-full h-full">
-            <div className="flex flex-col w-1/3">
+            <div className="flex flex-col w-1/3 gap-y-2">
                 <div className="flex flex-col w-full h-auto bg-indigo-100">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
@@ -151,186 +187,53 @@ export default function SynergyList({ synergy, item }: any) {
                 </div>
             </div>
 
-            <div className="flex flex-col w-1/3">
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
-                    <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
-                            아이템 그룹 : 승률
-                        </div>
+            <div className="flex flex-col w-1/3 ml-8">
+                <div className="flex flex-row items-center w-full h-[45px] bg-slate-400 rounded-xl p-2">
+                    <div className="w-1/5 text-base text-center font-msb text-black">
+                        아이템
                     </div>
-                    <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
-                        {[...itemData].sort(sortByWR).map((item, p) => (
-                            item.itemtype === 0 ? 
-                            <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
-                                <div className={`flex w-[70px] h-[42px] p-1 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                    <div className="w-full h-full relative">
-                                        <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
-                                    </div>
-                                </div>
-                                <div className="text-xs w-full text-white pt-2">
-                                    <span className={`text-sm font-msb ${item.synergySb > 50 ? "text-sky-200" : "text-orange-200"} `}>{item.synergyWin}%</span>
-                                </div>
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb ${item.validityWin ? "text-white" : "text-rose-200"}`}>{item.countWin}회</span> 승리
-                                </div> 
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb`}>{item.code}</span>
-                                </div> 
-                            </div> : null
-                        ))}
+                    <div className="w-1/5 text-base text-center font-msb text-black">
+                        이름
+                    </div>
+                    <div className="w-1/5 text-base text-center font-msb text-black">
+                        픽률
+                    </div>
+                    <div className="w-1/5 text-base text-center font-msb text-black">
+                        승률
+                    </div>
+                    <div className="w-1/5 text-base text-center font-msb text-black">
+                        순방률
                     </div>
                 </div>
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
-                    <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
-                            아이템 그룹 : 승률
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
-                        {[...itemData].sort(sortByWR).map((item, p) => (
-                            item.itemtype === 1 ? 
-                            <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
-                                <div className={`flex w-[70px] h-[42px] p-1 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                    <div className="w-full h-full relative">
-                                        <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
+                <div className="flex flex-col w-full h-full gap-y-2 p-2">
+                    {[...itemData].sort(sortByGames).map((item, p) => (
+                        item.itemtype === 4 ?
+                            <div className="flex flex-row items-center w-full h-[50px] bg-slate-300 rounded-xl">
+                                <div className="flex items-center justify-center w-1/5 h-full">
+                                    <div className={`flex w-[60px] h-[36px] p-0.5 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
+                                        <div className="w-full h-full relative">
+                                            <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="text-xs w-full text-white pt-2">
-                                    <span className={`text-sm font-msb ${item.synergySb > 50 ? "text-sky-200" : "text-orange-200"} `}>{item.synergyWin}%</span>
+                                <div className="w-1/5 text-base text-center font-msb text-black">
+                                    {item.code}
                                 </div>
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb ${item.validityWin ? "text-white" : "text-rose-200"}`}>{item.countWin}회</span> 승리
-                                </div> 
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb`}>{item.code}</span>
-                                </div> 
-                            </div> : null
-                        ))}
-                    </div>
-                </div>
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
-                    <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
-                            아이템 그룹 : 승률
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
-                        {[...itemData].sort(sortByWR).map((item, p) => (
-                            item.itemtype === 2 ? 
-                            <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
-                                <div className={`flex w-[70px] h-[42px] p-1 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                    <div className="w-full h-full relative">
-                                        <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
-                                    </div>
+                                <div className="w-1/5 text-base text-center font-msb text-black">
+                                    {item.PR}%
                                 </div>
-                                <div className="text-xs w-full text-white pt-2">
-                                    <span className={`text-sm font-msb ${item.synergySb > 50 ? "text-sky-200" : "text-orange-200"} `}>{item.synergyWin}%</span>
+                                <div className="w-1/5 text-base text-center font-msb text-black">
+                                    {item.synergyWin}%
                                 </div>
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb ${item.validityWin ? "text-white" : "text-rose-200"}`}>{item.countWin}회</span> 승리
-                                </div> 
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb`}>{item.code}</span>
-                                </div> 
-                            </div> : null
-                        ))}
-                    </div>
-                </div>
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
-                    <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
-                            아이템 그룹 : 승률
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
-                        {[...itemData].sort(sortByWR).map((item, p) => (
-                            item.itemtype === 3 ? 
-                            <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
-                                <div className={`flex w-[70px] h-[42px] p-1 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                    <div className="w-full h-full relative">
-                                        <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
-                                    </div>
+                                <div className="w-1/5 text-base text-center font-msb text-black">
+                                    {item.synergySb}%
                                 </div>
-                                <div className="text-xs w-full text-white pt-2">
-                                    <span className={`text-sm font-msb ${item.synergySb > 50 ? "text-sky-200" : "text-orange-200"} `}>{item.synergyWin}%</span>
-                                </div>
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb ${item.validityWin ? "text-white" : "text-rose-200"}`}>{item.countWin}회</span> 승리
-                                </div> 
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb`}>{item.code}</span>
-                                </div> 
-                            </div> : null
-                        ))}
-                    </div>
-                </div>
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
-                    <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
-                            아이템 그룹 : 승률
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
-                        {[...itemData].sort(sortByWR).map((item, p) => (
-                            item.itemtype === 4 ? 
-                            <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
-                                <div className={`flex w-[70px] h-[42px] p-1 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                    <div className="w-full h-full relative">
-                                        <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
-                                    </div>
-                                </div>
-                                <div className="text-xs w-full text-white pt-2">
-                                    <span className={`text-sm font-msb ${item.synergySb > 50 ? "text-sky-200" : "text-orange-200"} `}>{item.synergyWin}%</span>
-                                </div>
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb ${item.validityWin ? "text-white" : "text-rose-200"}`}>{item.countWin}회</span> 승리
-                                </div> 
-                                <div className="text-[10px] leading-3 font-mr w-full text-white">
-                                    <span className={`text-xs font-msb`}>{item.code}</span>
-                                </div> 
-                            </div> : null
-                        ))}
-                    </div>
+                            </div>
+                            : null
+                    ))}
                 </div>
             </div>
-            
         </div>
 
     )
-}
-
-function getGradientByGrade(grade:string){
-    switch(grade){
-        case "Legend" : return "bg-gradient-to-b from-yellow-900 to-amber-400";
-        case "Epic" : return "bg-gradient-to-b from-violet-900 to-violet-400";
-    }
-    return "";
-}
-
-const sortByWR = (x: any, y: any) => {
-    if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
-    return y.code - x.code;
-}
-
-const sortBySb = (x: any, y: any) => {
-    if (x.synergySb !== y.synergySb) return y.synergySb - x.synergySb;
-    return y.code - x.code;
-}
-
-const sortByGames = (x: any, y: any) => {
-    if (x.games !== y.games) return y.games - x.games;
-    return y.code - x.code;
-}
-
-interface Synergy {
-    code: number;
-    weapon: string;
-    name: string;
-    synergyWin: number;
-    synergySb: number;
-    countWin: number;
-    countSb: number;
-    validityWin: boolean;
-    validitySb: boolean;
-    games: number;
 }
