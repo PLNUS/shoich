@@ -9,7 +9,7 @@ import { includesByCho } from "hangul-util";
 
 export default function TierList({ data }: any) { // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
   const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
-  const [searchList, setSearchList] = useState<Array<Array<number>>>([]); 
+  const searchBase = useRef(charList);
   const tierGroups = useRef([5, 1]);
 
   useEffect(() => {
@@ -62,20 +62,18 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
           type="text" 
           placeholder="실험체 검색 >>"
           onChange={(e) => {
-            setSearchList([]);
-            let a = [];
-            [...charList].filter((element) => !includesByCho(e.target.value, element.weapon+element.name)).map((item ,p) => {
-              a.push([item.code, item.weaponNum])
-              setSearchList(a);
-            })
+            if(e.target.value == "") {
+              setCharList(searchBase.current);
+            } else {
+              setCharList(searchBase.current.filter((element) => includesByCho(e.target.value.replace(" ",""), element.weapon+element.name)));
+            }
           }}/>
         </div>
       </div>
       <TierHead />
       <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
         {charList.map((char, p) => (
-          searchList.findIndex(e => char.code === e[0] && char.weaponNum === e[1]) === -1 ? 
-          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} /> : null))}
+          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
       </div>
     </div>
   )
