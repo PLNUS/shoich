@@ -7,7 +7,9 @@ import ReactSelect from "react-select";
 import TierItem from "./tieritem";
 import { includesByCho } from "hangul-util";
 
-export default function TierList({ data }: any) { // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
+export default function TierList({ data }: any) { 
+  // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
+  // 리스트에 표현되는 것들로만 만든 리스트가 필요하다. 전체데이터 포함된걸로 할려니까 너무 느림
   const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
   const searchBase = useRef(charList);
   const tierGroups = useRef([5, 1]);
@@ -33,6 +35,7 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
               setCharList(getListforTiergroup(data, e!.value!, tierGroups.current[1]).sort(sortStandard.current));
               tierGroups.current[0] = e!.value!;
               updateEndDisable(tierGroups.current[0]);
+              searchBase.current.sort(sortStandard.current);
               setAverage()
             }} />
             <div className="text-base font-msb ml-2">
@@ -50,6 +53,7 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
               setCharList(getListforTiergroup(data, tierGroups.current[0], e!.value!).sort(sortStandard.current));
               tierGroups.current[1] = e!.value!;
               updateStartDisable(tierGroups.current[1]);
+              searchBase.current.sort(sortStandard.current);
               setAverage()
             }} />
           <div className="text-base font-msb ml-2">
@@ -62,7 +66,7 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
           type="text" 
           placeholder="실험체 검색 >>"
           onChange={(e) => {
-            if(e.target.value == "") {
+            if(e.target.value === "") {
               setCharList(searchBase.current);
             } else {
               setCharList(searchBase.current.filter((element) => includesByCho(e.target.value.replace(" ",""), element.weapon+element.name)));
@@ -102,9 +106,11 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
   function compareAndSort(newStandard: any) {
     if (sortStandard.current == newStandard) {
       setCharList([...charList].reverse())
+      searchBase.current.reverse();
     } else {
       setCharList([...charList].sort(newStandard));
       sortStandard.current = newStandard;
+      searchBase.current.sort(newStandard);
     }
   }
 

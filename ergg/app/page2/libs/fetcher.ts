@@ -1,6 +1,6 @@
 export async function getSynergyAll() {  // 버전별로 각각 List 따로 병합하기..
   "use server"
-  const res = await fetch("http://localhost:3000/api/synfetcher", {next : {revalidate: 1}});
+  const res = await fetch("https://stunning-couscous-pjrvwgv55gwphwvq-3000.app.github.dev/api/synfetcher", {next : {revalidate: false}});
 
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
@@ -12,7 +12,7 @@ export async function getSynergyAll() {  // 버전별로 각각 List 따로 병�
 
 export async function getItemAll() {  // 버전별로 각각 List 따로 병합하기..
   "use server"
-  const res = await fetch("http://localhost:3000/api/itemfetcher", {next : {revalidate: 1}});
+  const res = await fetch("https://stunning-couscous-pjrvwgv55gwphwvq-3000.app.github.dev/api/itemfetcher", {next : {revalidate: false}});
 
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
