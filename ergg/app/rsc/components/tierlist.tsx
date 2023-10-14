@@ -5,9 +5,11 @@ import { endOptions, scrollbarStyles, sortStandard, startOptions, updateEndDisab
 import { Data, getListforTiergroup } from "../libs/refactor";
 import ReactSelect from "react-select";
 import TierItem from "./tieritem";
+import { includesByCho } from "hangul-util";
 
 export default function TierList({ data }: any) { // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
-  const [charList, setCharList] = useState<Array<Data>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
+  const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
+  const [searchList, setSearchList] = useState<Array<Array<number>>>([]); 
   const tierGroups = useRef([5, 1]);
 
   useEffect(() => {
@@ -56,18 +58,24 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
         </div>
         <div className="flex items-center w-[150px] h-full border-b border-slate-500 ml-2">
           <input 
-          className="appearance-none bg-transparent text-right border-none w-full text-gray-700 mr-3 leading-tight focus:outline-none" 
+          className="appearance-none bg-transparent text-right border-none w-full text-gray-700 mr-3 text-sm leading-tight focus:outline-none" 
           type="text" 
           placeholder="실험체 검색 >>"
           onChange={(e) => {
-            console.log(e.target.value);
+            setSearchList([]);
+            let a = [];
+            [...charList].filter((element) => !includesByCho(e.target.value, element.weapon+element.name)).map((item ,p) => {
+              a.push([item.code, item.weaponNum])
+              setSearchList(a);
+            })
           }}/>
         </div>
       </div>
       <TierHead />
       <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
         {charList.map((char, p) => (
-          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
+          searchList.findIndex(e => char.code === e[0] && char.weaponNum === e[1]) === -1 ? 
+          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} /> : null))}
       </div>
     </div>
   )
@@ -123,7 +131,7 @@ export default function TierList({ data }: any) { // data >> refactor속 parsedD
       counts++;
     });
 
-    sessionStorage.setItem("average", JSON.stringify([entireAvgDeal / counts, entirePR / counts, entireAvgGrade / counts, entireSB / counts, entireTK / counts, entireWR / counts]));
+    typeof window !== 'undefined' ? sessionStorage.setItem("average", JSON.stringify([entireAvgDeal / counts, entirePR / counts, entireAvgGrade / counts, entireSB / counts, entireTK / counts, entireWR / counts])) : null;
   }
 }
 

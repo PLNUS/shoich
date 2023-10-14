@@ -208,7 +208,7 @@ export default function SynergyList({ synergy, item }: any) {
                 <div className="flex flex-col w-full h-full gap-y-2 p-2">
                     {[...itemData].sort(sortByGames).map((item, p) => (
                         item.itemtype === 4 ?
-                            <div className="flex flex-row items-center w-full h-[50px] bg-slate-300 rounded-xl">
+                            <div key={p} className="flex flex-row items-center w-full h-[50px] bg-slate-300 rounded-xl">
                                 <div className="flex items-center justify-center w-1/5 h-full">
                                     <div className={`flex w-[60px] h-[36px] p-0.5 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
                                         <div className="w-full h-full relative">

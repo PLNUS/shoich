@@ -6,13 +6,14 @@ import { CharRadar, CountPerGradeLine } from "./charts";
 
 
 export default function SynergyHead() {
+  'use client'
+
   const [head, setHead] = useState<Data>()
 
   useEffect(() => {
-    const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
-    selected.data!.avggrade = Math.floor(selected.data!.avggrade * 100) / 100;
-    setHead(selected);
-
+      const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
+      selected.data!.avggrade = Math.floor(selected.data!.avggrade * 100) / 100;
+      setHead(selected);
   }, [])
 
   return (
@@ -44,7 +45,7 @@ export default function SynergyHead() {
             <span className="text-sm font-mb pb-0.5"><span className="bg-slate-400 text-slate-400">회색</span> : 평균</span>
           </div>
           <div className="w-[200px] h-[200px] rounded-lg overflow-hidden bg-slate-800 border-4 p-2">
-            <CharRadar average={JSON.parse(sessionStorage.getItem("average")!)} target={[head?.data?.avgdealbygrade[0], head?.PR, head?.data?.avggrade, head?.SR, head?.data?.tkbygrade[0], head?.WR]} />
+            <CharRadar average={typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem("average")!) : [0,0,0,0,0,0]} target={[head?.data?.avgdealbygrade[0], head?.PR, head?.data?.avggrade, head?.SR, head?.data?.tkbygrade[0], head?.WR]} />
           </div>
         </div>
         <div className="flex flex-col h-full">
