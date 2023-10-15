@@ -153,3 +153,12 @@ RSC(Page.tsx) => RCC(synergyList.tsx) 순으로 Fetched Data (Props)를 내려�
 
 
 spinner로 로딩중 화면 구현하기
+sessionstorage에 현재 선택 티어그룹 정해놓은거 있으면 로딩시 불러오기
+
+알론소 통계없어서 Nan 뜨는데 NAN 데이터 처리 구현해야함
+
+아이템 UI 이쁘게 만들기 
+
+요렇게마 ㄴ하면 될드듯?
+
+그리고 하루씩 파싱해올건지 정해야함

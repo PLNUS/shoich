@@ -1,18 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getBaseData, getSynergyList } from "../libs/refactor";
 import { Data } from "@/app/rsc/libs/refactor";
 import { getFormattedItem, getItemList } from "../libs/itemRefactor";
-import Image from "next/image";
-
-function getGradientByGrade(grade: string) {
-    switch (grade) {
-        case "Legend": return "bg-gradient-to-b from-yellow-700 to-amber-400";
-        case "Epic": return "bg-gradient-to-b from-violet-900 to-violet-400";
-    }
-    return "";
-}
+import ItemList from "./itemlist";
 
 const sortByWR = (x: any, y: any) => {
     if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
@@ -24,7 +16,7 @@ const sortBySb = (x: any, y: any) => {
     return y.code - x.code;
 }
 
-const sortByGames = (x: any, y: any) => {
+export const sortByGames = (x: any, y: any) => {
     if (x.games !== y.games) return y.games - x.games;
     return y.code - x.code;
 }
@@ -186,53 +178,8 @@ export default function SynergyList({ synergy, item }: any) {
                     </div>
                 </div>
             </div>
-
-            <div className="flex flex-col w-1/3 ml-8">
-                <div className="flex flex-row items-center w-full h-[45px] bg-slate-400 rounded-xl p-2">
-                    <div className="w-1/5 text-base text-center font-msb text-black">
-                        아이템
-                    </div>
-                    <div className="w-1/5 text-base text-center font-msb text-black">
-                        이름
-                    </div>
-                    <div className="w-1/5 text-base text-center font-msb text-black">
-                        픽률
-                    </div>
-                    <div className="w-1/5 text-base text-center font-msb text-black">
-                        승률
-                    </div>
-                    <div className="w-1/5 text-base text-center font-msb text-black">
-                        순방률
-                    </div>
-                </div>
-                <div className="flex flex-col w-full h-full gap-y-2 p-2">
-                    {[...itemData].sort(sortByGames).map((item, p) => (
-                        item.itemtype === 4 ?
-                            <div key={p} className="flex flex-row items-center w-full h-[50px] bg-slate-300 rounded-xl">
-                                <div className="flex items-center justify-center w-1/5 h-full">
-                                    <div className={`flex w-[60px] h-[36px] p-0.5 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                        <div className="w-full h-full relative">
-                                            <Image alt="" layout="fill" src={`/items/${item.code}.png`} ></Image>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="w-1/5 text-base text-center font-msb text-black">
-                                    {item.code}
-                                </div>
-                                <div className="w-1/5 text-base text-center font-msb text-black">
-                                    {item.PR}%
-                                </div>
-                                <div className="w-1/5 text-base text-center font-msb text-black">
-                                    {item.synergyWin}%
-                                </div>
-                                <div className="w-1/5 text-base text-center font-msb text-black">
-                                    {item.synergySb}%
-                                </div>
-                            </div>
-                            : null
-                    ))}
-                </div>
-            </div>
+            <ItemList data={itemData} itemGrade="Epic"/>
+            <ItemList data={itemData} itemGrade="Legend"/>
         </div>
 
     )

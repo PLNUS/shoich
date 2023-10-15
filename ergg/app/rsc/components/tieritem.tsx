@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Data } from "../libs/refactor";
@@ -31,7 +31,6 @@ export default function TierItem({ char, position, tierGroup}: any) {
         </svg>
         <Link href="/page2" onClick={() => {
           typeof window !== 'undefined' ? sessionStorage.setItem("char", JSON.stringify(data)) : null;
-          typeof window !== 'undefined' ? sessionStorage.setItem("tierGroup", JSON.stringify(tierGroup)) : null;
         }}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" className="mr-3 p-2 w-10 h-10" clipRule="evenodd" fillRule="evenodd" strokeLinejoin="round" viewBox="0 0 16 16">
             <path fillRule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z" />
@@ -58,11 +57,11 @@ export default function TierItem({ char, position, tierGroup}: any) {
         </div>
         <div className="tierlist_item_hover_text">
           <div>평균 팀킬</div>
-          <div>{data.data === undefined ? 0 : Math.floor(data.data.tkbygrade[0] * 100) / 100}</div>
+          <div>{data.data === undefined ? 0 : Math.floor(data.data.tkbygrade[0] * 100) / 100}킬</div>
         </div>
         <div className="tierlist_item_hover_text">
-          <div>점수 변동</div>
-          <div>{data.data === undefined ? 0 : Math.floor(data.data.sbscore / data.data.gamecountbygrade[0] * 100) / 100}</div>
+          <div>평균 점수상승</div>
+          <div>{data.data === undefined ? 0 : Math.floor(data.data.sbscore / data.data.gamecountbygrade[0] * 100) / 100}p</div>
         </div>
         <div className="tierlist_item_hover_text">
           <div>탈출 확률</div>

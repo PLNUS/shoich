@@ -302,7 +302,7 @@ export interface Data {
     let var5: number = char.data!.avggrade;
     let var6: number = char.PR;
     if(var6 < 0.1) {return 0;}
-    return (var2 / var1 + var3 * 4 + var4 * 6 - (var5 - 3) * 30) * (var6);
+    return (var2 / var1 + var3 * 6 + var4 * 6 - (var5 - 3) * 40) * (var6);
   }
   
   export function getListforTiergroup(parsedData: Array<any>, startTierGroup: number, endTierGroup: number) { // 우선순위 1 함수 가독성 및 효율 개선 필요, 

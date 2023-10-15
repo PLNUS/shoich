@@ -7,15 +7,19 @@ import ReactSelect from "react-select";
 import TierItem from "./tieritem";
 import { includesByCho } from "hangul-util";
 
-export default function TierList({ data }: any) { 
+export default function TierList({ data }: any) {
   // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
   // 리스트에 표현되는 것들로만 만든 리스트가 필요하다. 전체데이터 포함된걸로 할려니까 너무 느림
-  const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, 5, 1).sort(sortStandard.np));
-  const searchBase = useRef(charList);
   const tierGroups = useRef([5, 1]);
+  if (typeof window !== "undefined" && sessionStorage.getItem("tierGroup")) {
+    tierGroups.current = JSON.parse(sessionStorage.getItem("tierGroup")!);
+  }
+  const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, tierGroups.current[0], tierGroups.current[1]).sort(sortStandard.np));
+  const searchBase = useRef(charList);
 
   useEffect(() => {
-    sortStandard.current = sortStandard.np;
+    sortStandard.current === undefined ? sortStandard.current = sortStandard.np : null;
+    sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
     updateEndDisable(tierGroups.current[0]);
     updateStartDisable(tierGroups.current[1]);
     setAverage();
@@ -30,17 +34,19 @@ export default function TierList({ data }: any) {
             isSearchable={false}
             options={startOptions}
             styles={scrollbarStyles}
-            defaultValue={startOptions[3]}
+            defaultValue={startOptions[8 - tierGroups.current[0]]}
             onChange={(e) => { // .sort(sortStandard[1])
-              setCharList(getListforTiergroup(data, e!.value!, tierGroups.current[1]).sort(sortStandard.current));
+              const newList = getListforTiergroup(data, e!.value!, tierGroups.current[1]).sort(sortStandard.current);
+              setCharList(newList);
+              searchBase.current = newList;
               tierGroups.current[0] = e!.value!;
               updateEndDisable(tierGroups.current[0]);
-              searchBase.current.sort(sortStandard.current);
+              sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
               setAverage()
             }} />
-            <div className="text-base font-msb ml-2">
-              부터
-            </div>
+          <div className="text-base font-msb ml-2">
+            부터
+          </div>
         </div>
         <div className="flex flex-row items-end">
           <ReactSelect
@@ -48,12 +54,14 @@ export default function TierList({ data }: any) {
             isSearchable={false}
             options={endOptions}
             styles={scrollbarStyles}
-            defaultValue={endOptions[7]}
+            defaultValue={endOptions[8 - tierGroups.current[1]]}
             onChange={(e) => { // 이상한 조건일때 ex) 이터부터 다이아까지 안되게 해야함
-              setCharList(getListforTiergroup(data, tierGroups.current[0], e!.value!).sort(sortStandard.current));
+              const newList = getListforTiergroup(data, tierGroups.current[0], e!.value!).sort(sortStandard.current);
+              setCharList(newList);
+              searchBase.current = newList;
               tierGroups.current[1] = e!.value!;
               updateStartDisable(tierGroups.current[1]);
-              searchBase.current.sort(sortStandard.current);
+              sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
               setAverage()
             }} />
           <div className="text-base font-msb ml-2">
@@ -61,17 +69,17 @@ export default function TierList({ data }: any) {
           </div>
         </div>
         <div className="flex items-center w-[150px] h-full border-b border-slate-500 ml-2">
-          <input 
-          className="appearance-none bg-transparent text-right border-none w-full text-gray-700 mr-3 text-sm leading-tight focus:outline-none" 
-          type="text" 
-          placeholder="실험체 검색 >>"
-          onChange={(e) => {
-            if(e.target.value === "") {
-              setCharList(searchBase.current);
-            } else {
-              setCharList(searchBase.current.filter((element) => includesByCho(e.target.value.replace(" ",""), element.weapon+element.name)));
-            }
-          }}/>
+          <input
+            className="appearance-none bg-transparent text-right border-none w-full h-full text-gray-700 mr-2 text-sm leading-tight focus:outline-none"
+            type="text"
+            placeholder="실험체 검색(초성) >>"
+            onChange={(e) => {
+              if (e.target.value === "") {
+                setCharList(searchBase.current);
+              } else {
+                setCharList(searchBase.current.filter((element) => includesByCho(e.target.value.replace(" ", ""), element.weapon + element.name)));
+              }
+            }} />
         </div>
       </div>
       <TierHead />

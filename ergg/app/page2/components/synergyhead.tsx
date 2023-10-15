@@ -17,50 +17,53 @@ export default function SynergyHead() {
   }, [])
 
   return (
-    <div className="flex flex-col w-full h-[300px] bg-neutral-200 p-4 text-2xl font-mb">
-      <div className="flex flex-row w-full p-2 gap-x-4">
+    <div className="flex flex-col w-full h-[300px] bg-neutral-300 p-2 text-2xl font-mb">
+      <div className="flex flex-row w-full p-2 justify-between">
         <CharIcon />
-        <div className="flex flex-col pl-4 gap-y-2">
+        <div className="flex flex-col gap-y-2">
           <span className="text-[42px] font-rb py-4">
             {head?.weapon} {head?.name}
           </span>
-          <div className="flex flex-row text-2xl font-ml tracking-tight gap-x-2">
-            <div className={`flex flex-col w-[100px] items-center rounded ${head?.color} text-white py-1`}>
+          <div className="flex flex-row text-xl font-ml tracking-tight gap-x-2">
+            <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
               <span className="text-base">픽률</span>
               <span className="font-mb">{head?.PR}%</span>
             </div>
-            <div className={`flex flex-col w-[100px] items-center rounded ${head?.color} text-white py-1`}>
+            <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
               <span className="text-base">승률</span>
               <span className="font-mb">{head?.WR}%</span>
             </div>
-            <div className={`flex flex-col w-[100px] items-center rounded ${head?.color} text-white py-1`}>
+            <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
               <span className="text-base">평균 순위</span>
-              <span className="font-mb">{head?.data?.avggrade} 위</span>
+              <span className="font-mb">{head?.data?.avggrade}위</span>
             </div>
           </div>
         </div>
         <div className="flex flex-col h-full">
-          <div className="flex flex-row px-2 justify-between items-end">
+          <div className="flex flex-row p-1 justify-between items-end">
             <span className="text-2xl font-mb">파워 헥사곤</span>
             <span className="text-sm font-mb pb-0.5"><span className="bg-slate-400 text-slate-400">회색</span> : 평균</span>
           </div>
-          <div className="w-[200px] h-[200px] rounded-lg overflow-hidden bg-slate-800 border-4 p-2">
+          <div className="w-[200px] h-[200px] rounded-lg overflow-hidden bg-slate-800 p-2">
             <CharRadar average={typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem("average")!) : [0,0,0,0,0,0]} target={[head?.data?.avgdealbygrade[0], head?.PR, head?.data?.avggrade, head?.SR, head?.data?.tkbygrade[0], head?.WR]} />
           </div>
         </div>
         <div className="flex flex-col h-full">
-          <div className="flex flex-row px-2 justify-between items-end">
+          <div className="flex flex-col p-1">
             <span className="text-2xl font-mb">순위별 게임 수</span>
+            <span className="text-sm font-msb text-slate-500 pl-0.5">그래프 왼쪽이 높을수록 좋은 실험체</span>
           </div>
-          <div className="w-[250px] h-[140px] rounded-lg bg-slate-800 border-4 p-2">
+          <div className="w-[320px] h-[180px] rounded-lg bg-slate-800 p-2">
             <CountPerGradeLine target={head?.data?.gamecountbygrade} hasEscapeValue={true} />
           </div>
         </div>
         <div className="flex flex-col h-full">
-          <div className="flex flex-row px-2 justify-between items-end">
+          <div className="flex flex-col p-1">
             <span className="text-2xl font-mb">순위별 평균 딜링</span>
+            <span className="text-sm font-msb text-slate-500 pl-0.5">그래프 왼쪽이 높을수록 좋은 실험체</span>
           </div>
-          <div className="w-[250px] h-[140px] rounded-lg bg-slate-800 border-4 p-2"><CountPerGradeLine target={head?.data?.avgdealbygrade} hasEscapeValue={false} />
+          <div className="w-[320px] h-[180px] rounded-lg bg-slate-800 p-2">
+            <CountPerGradeLine target={head?.data?.avgdealbygrade} hasEscapeValue={false} />
           </div>
         </div>
       </div>
@@ -70,7 +73,7 @@ export default function SynergyHead() {
 
   function CharIcon() {
     return (
-      <div className="flex items-end justify-end w-[130px] h-[130px] relative mt-3">
+      <div className="flex items-end justify-end w-[130px] h-[130px] relative mt-2 ml-2">
         <div className="absolute flex aspect-square w-[130px]">
           <div className={`charicon_dir bg-neutral-300 l${head?.color} border-[10px] pt-1`}>
             <img className="absolute -translate-y-1.5 object-cover" src={`/characters/${head?.code}.webp`} />
