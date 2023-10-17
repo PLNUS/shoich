@@ -309,6 +309,11 @@ export interface Data {
     // 티어그룹 플레+ 다이아+ 릴+ 추가 필요. function(startTierGroup, endTierGroup) 이런식으로 function(1, 0) 하면 이터 + function(2, 0) 하면 릴+ function (4, 3) 하면 플레만
     // 표본 수 확인가능하게 표시하기
     let newCharList: Array<Data> = [];
+
+    if(startTierGroup === 0 && endTierGroup === 0) {
+      // 초깃값 0,0 인 SSR시 빈 리스트 반환
+      return newCharList;
+    }
     
     parsedData.map((char, p) => {
       let weaponData = Object.values(CharMastery[p]);
