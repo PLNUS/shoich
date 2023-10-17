@@ -56,11 +56,11 @@ export default function TierItem({ char, position, tierGroup}: any) {
           <div>{data.data === undefined ? 0 : Math.floor(data.data.avggrade * 100) / 100 + "위"}</div>
         </div>
         <div className="tierlist_item_hover_text">
-          <div>평균 팀킬</div>
+          <div>평균 팀킬 수</div>
           <div>{data.data === undefined ? 0 : Math.floor(data.data.tkbygrade[0] * 100) / 100}킬</div>
         </div>
         <div className="tierlist_item_hover_text">
-          <div>평균 점수상승</div>
+          <div>점수 이득 평균</div>
           <div>{data.data === undefined ? 0 : Math.floor(data.data.sbscore / data.data.gamecountbygrade[0] * 100) / 100}p</div>
         </div>
         <div className="tierlist_item_hover_text">
@@ -69,23 +69,24 @@ export default function TierItem({ char, position, tierGroup}: any) {
         </div>
       </motion.div>
       <div className="flex flex-row items-center w-full h-full" onClick={() => setAnimate('visible')}>
-        <div className="w-[12%] text-center font-mb text-lg border-r border-stone-400">{p + 1}</div>
-        <div className="flex flex-row min-w-[42%] items-center text-md h-full gap-x-2 pl-2">
+        <div className="w-[10%] text-center font-mb text-lg border-r border-stone-400">{p + 1}</div>
+        <div className="flex flex-row min-w-[30%] items-center text-md h-full gap-x-2 pl-3">
           <motion.div
             variants={{
               hidden: { opacity: 1, x: "0" },
-              visible: { opacity: 1, x: "-60px" }
+              visible: { opacity: 1, x: "-70px" }
             }}
             transition={{ duration: 0.3, ease: [0, 0.71, 0.2, 1.01] }}
             animate={animate}
             className="charicon_dir scale-[90%]">
             <img className="charicon" src={`/characters/${data.code}.webp`} />
           </motion.div>
-          <div className="font-mr w-[80%] border-r text-sm border-stone-400">{data.weapon + " " + data.name}</div>
+          <div className="font-mr w-[80%] border-r text-sm border-stone-400 pl-1">{data.weapon + " " + data.name}</div>
         </div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.WR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.PR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.SR}%</div>
+        <div className="w-[12%] text-center border-r text-sm border-stone-400">{Math.floor(data.data?.avggrade! * 100) / 100}위</div>
         <div className="w-[12%] px-2">
           <p className={`rounded-xl text-center text-md font-mb text-white ` + data.color}>{data.tier === 0 ? 'OP' : data.tier}</p>
         </div>

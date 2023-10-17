@@ -161,6 +161,7 @@ interface Standard {
   pr : (x: Data, y: Data) => number,
   sr : (x: Data, y: Data) => number,
   np : (x: Data, y: Data) => number,
+  ag : (x: Data, y: Data) => number,
   current? : (x: Data, y: Data) => number,
 }
 
@@ -182,6 +183,11 @@ export const sortStandard:Standard = {
   },
   np : (x: Data, y: Data) => {
     if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+    if (x.PR !== y.PR) return y.PR - x.PR;
+    return y.code - x.code;
+  },
+  ag : (x: Data, y: Data) => {
+    if (x.data!.avggrade !== y.data!.avggrade) return y.data!.avggrade - x.data!.avggrade;
     if (x.PR !== y.PR) return y.PR - x.PR;
     return y.code - x.code;
   }

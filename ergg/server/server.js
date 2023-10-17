@@ -140,7 +140,7 @@ app.listen(SCHEDULE_PORT, () => {
         UpdatedData = CharacterData;
         UpdatedSynergyData = SynergyData;
         UpdatedItemData = ItemData; // 초기화
-        sendSyncRequests(29230000, 6);
+        sendSyncRequests(docs[0].lastGameNum, 6);
     })
 
     //매 n초마다 수행!

@@ -6,14 +6,14 @@ import { Data, getListforTiergroup } from "../libs/refactor";
 import ReactSelect from "react-select";
 import TierItem from "./tieritem";
 import { includesByCho } from "hangul-util";
+import HeadPart from "./headpart";
 
 export default function TierList({ data }: any) {
   // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
   // 리스트에 표현되는 것들로만 만든 리스트가 필요하다. 전체데이터 포함된걸로 할려니까 너무 느림
-  const tierGroups = useRef([5, 1]);
-  if (typeof window !== "undefined" && sessionStorage.getItem("tierGroup")) {
-    tierGroups.current = JSON.parse(sessionStorage.getItem("tierGroup")!);
-  }
+  const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== undefined ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
+  // 여기 수정 필요 플레엇 ㅓ바뀌는거
+  const tierGroups = useRef(existTg);
   const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, tierGroups.current[0], tierGroups.current[1]).sort(sortStandard.np));
   const searchBase = useRef(charList);
 
@@ -91,22 +91,16 @@ export default function TierList({ data }: any) {
   )
 
   function TierHead() {
+
     return (
-      <div className="flex flex-row relative min-w-full min-h-[40px] items-center rounded py-1 bg-neutral-600">
-        <div className="w-[12%] text-center text-base border-r border-white text-white font-msb">순위</div>
-        <div id="sort_by_abc" className="w-[42%] text-center border-r text-base border-white text-white font-msb">구분</div>
-        <div id="sort_by_wr" className="w-[12%] text-center border-r text-base border-white text-white font-msb" onClick={() => {
-          compareAndSort(sortStandard.wr);
-        }}>승률</div>
-        <div id="sort_by_pr" className="w-[12%] text-center border-r text-base border-white text-white font-msb" onClick={() => {
-          compareAndSort(sortStandard.pr);
-        }}>픽률</div>
-        <div id="sort_by_sr" className="w-[12%] text-center border-r text-base border-white text-white font-msb" onClick={() => {
-          compareAndSort(sortStandard.sr);
-        }}>순방률</div>
-        <div id="sort_by_tier" className="w-[12%] text-center text-base text-white font-msb" onClick={() => {
-          compareAndSort(sortStandard.np);
-        }}>티어</div>
+      <div className="flex flex-row relative min-w-full min-h-[40px] items-center rounded py-1 bg-neutral-700">
+        <div className="w-[10%] text-center text-base border-r border-white text-white font-msb">순위</div>
+        <div id="sort_by_abc" className="w-[30%] text-center border-r text-base border-white text-white font-msb">구분</div>
+        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.wr} text="승률"/>
+        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.pr} text="픽률" />
+        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.sr} text="순방률" />
+        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.ag} text="평순" />
+        <HeadPart isLast={true} sortFunc={compareAndSort} sortBy={sortStandard.np} text="티어" />
       </div>
     );
   }

@@ -53,7 +53,7 @@
     @apply flex flex-row relative min-w-full min-h-[55px] items-center bg-zinc-200 rounded-xl py-2 overflow-hidden;
   }
   .tierlist_item_hover_textdiv {
-    @apply absolute flex flex-row gap-x-4;
+    @apply absolute flex flex-row gap-x-6 pl-4;
   }
   .tierlist_item_hover_text {
     @apply flex flex-col text-white divide-y divide-white text-sm;
