@@ -6,8 +6,8 @@ export default function HeadPart({sortFunc, sortBy, text, isLast}: any) {
     return (
         <div className={`w-[12%] ${!isLast ? "border-r" : ""} border-white px-3`}>
           <div className="flex flex-row rounded-xl justify-center items-center gap-x-1 hover:bg-neutral-500" onClick={() => {
-            sortFunc(sortBy);
             svgState.rotate === 0 ? setSvgState({rotate : 180, type : text}) : setSvgState({rotate : 0, type : text});
+            sortFunc(sortBy);
             console.log(svgState); //  여기 작동안함 확인좀
           }}>
             <span className="text-sm text-white font-mr">{text}</span>

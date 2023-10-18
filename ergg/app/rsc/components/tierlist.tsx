@@ -9,13 +9,12 @@ import { includesByCho } from "hangul-util";
 import HeadPart from "./headpart";
 
 export default function TierList({ data }: any) {
-  // data >> refactor속 parsedData에 쓰이는 원시형 , charList >> 가공형
-  // 리스트에 표현되는 것들로만 만든 리스트가 필요하다. 전체데이터 포함된걸로 할려니까 너무 느림
   const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== undefined ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
-  
   // 지금 이 TierList Component 자체가 SSR로 한번 Generate 되어서 클라이언트로 내려오는데 그때 이 TierGroups 값이 [5,1] 이 됨 (typeof window 에 걸려서)
-  // 근데 그렇게 내려온 페이지를 다시 클라이언트 사이드 Hydrate 시 다른 TierGroups 값이 배정되면서 Hydration 에러가 발생.
-
+  // 이후 Hydrate 시 다른 TierGroups 값이 배정되면서 Hydration 에러가 발생하여 CSR로 전환, 이후 sessionStorage 에서 가져온 TierGroup 값으로 다시 렌더링
+  
+  // 에러긴 하지만 결과적으로는 원하는 기능(초기 데이터 더미이더라도 보이기, 이후 정식 데이터로 업데이트) 구현됨.
+  
   const tierGroups = useRef(existTg);
   const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, tierGroups.current[0], tierGroups.current[1]).sort(sortStandard.np));
   const searchBase = useRef(charList);
