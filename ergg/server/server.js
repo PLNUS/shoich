@@ -220,18 +220,21 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     if (repeatstart === parallels) {
         console.log("최종점: " + lastOrdinaryGame + ", 1분간 반복대기.");
         setTimeout(() => {
-            Game.updateOne({ lastGameNum: startpoint }, {
+            Game.deleteOne({ lastGameNum: startpoint });
+            Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 data: UpdatedData
-            }).then((res) => { });
-            Synergy.updateOne({ lastGameNum: startpoint }, {
+            });
+            Synergy.deleteOne({ lastGameNum: startpoint });
+            Synergy.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 data: UpdatedSynergyData
-            }).then((res) => { });
-            Item.updateOne({ lastGameNum: startpoint }, {
+            });
+            Item.deleteOne({ lastGameNum: startpoint })
+            Item.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 data: UpdatedItemData
-            }).then((res) => { });
+            });
             console.log("종료.");
         }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
     }

@@ -130,6 +130,7 @@ export function getColor(tier: number) {
     case 3: return `bg-amber-500 border-amber-500`
     case 4: return `bg-orange-500 border-orange-500`
     case 5: return `bg-rose-500 border-rose-500`
+    case 6: return `bg-red-900 border-red-900`
     default: return `bg-stone-100 border-stone-100`
   }
 }

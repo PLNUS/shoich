@@ -23,8 +23,9 @@ export default function ItemList({ data, itemGrade }: any) {
 
     return (
         <div className="flex flex-col w-[500px] h-fit ml-8">
-            <div className="flex flex-row items-center w-full min-h-[45px] divide-x divide-slate-700 pt-0.5">
-                <div className="flex flex-row w-[46%] px-2">
+            <span className="font-ml text-lg p-1">아이템 통계 - {itemGrade}</span>
+            <div className="flex flex-row items-center w-full min-h-[45px] divide-x-2 divide-slate-800 pt-0.5">
+                <div className="flex flex-row w-[46%] pr-4">
                     <ReactSelect
                         className="w-full"
                         isSearchable={false}
@@ -35,42 +36,43 @@ export default function ItemList({ data, itemGrade }: any) {
                             setType(e!.value)
                         }} />
                 </div>
-                <div className="w-[18%] text-base text-center font-msb text-slate-700">
+                <div className="w-[18%] text-sm text-center tracking-widest font-msb text-slate-700">
                     픽률
                 </div>
-                <div className="w-[18%] text-base text-center font-msb text-slate-700">
+                <div className="w-[18%] text-sm text-center tracking-widest font-msb text-slate-700">
                     승률
                 </div>
-                <div className="w-[18%] text-base text-center font-msb text-slate-700">
+                <div className="w-[18%] text-sm text-center tracking-widest font-msb text-slate-700">
                     순방률
                 </div>
             </div>
             <div className="flex flex-col w-full h-full gap-y-2 py-2 overflow-hidden">
                 {data.sort(sortByGames).map((item: any, p: number) => (
                     item.itemtype === type && item.itemgrade === itemGrade ?
-                        <div key={p} className="flex flex-row items-center w-full min-h-[50px] divide-x divide-white bg-slate-700">
-                            <div className="flex flex-row w-[46%] items-center gap-x-3 py-2 pl-3">
-                                <div className={`flex w-[60px] h-[36px] p-1 ${getGradientByGrade(item.itemgrade)} rounded-lg`}>
-                                    <div className="w-full h-full relative">
+                        <div key={p} className={`flex flex-row items-center w-full min-h-[50px] divide-x-2 divide-slate-800
+                         ${itemGrade === "Epic" ? "bg-[rgb(228,224,254)]" : "bg-[rgb(254,221,187)]"}
+                         rounded-md shadow-md`}>
+                            <div className="flex flex-row w-[46%] items-center gap-x-2 py-2 pl-3">
+                                <div className={`flex justify-center w-[60px] h-[36px] py-1 ${getGradientByGrade(item.itemgrade)} rounded-md`}>
                                         <Image alt=""
-                                            quality={10}
-                                            layout="fill" src={`/items/${item.code}.png`} ></Image>
-                                    </div>
+                                            quality={30}
+                                            width={52} height={36} src={`/items/${item.code}.png`} ></Image>
                                 </div>
-                                <span className="text-sm tracking-widest font-msb text-white ">{getItemNameByCode(item.code)}</span>
+                                <span className="text-xs font-msb text-slate-800 ">{getItemNameByCode(item.code)}</span>
                             </div>
-                            <div className="w-[18%] text-sm text-center font-mr text-white">
+                            <div className="w-[18%] text-xs text-center tracking-wide font-rb text-slate-800 pb-[1px]">
                                 {item.PR}%
                             </div>
-                            <div className="w-[18%] text-sm text-center font-mr text-white">
+                            <div className="w-[18%] text-xs text-center tracking-wide font-rb text-slate-800 pb-[1px]">
                                 {item.synergyWin}%
                             </div>
-                            <div className="w-[18%] text-sm text-center font-mr text-white">
+                            <div className="w-[18%] text-xs text-center tracking-wide font-rb text-slate-800 pb-[1px]">
                                 {item.synergySb}%
                             </div>
                         </div>
                         : null
-                ))}
+                )) // 퍼센티지에 따른 시각화 처리 필요
+                }
             </div>
         </div>
     )

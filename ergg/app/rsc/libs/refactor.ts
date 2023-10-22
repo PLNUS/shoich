@@ -70,6 +70,8 @@ export interface Data {
       return 3;
     } else if (np >= 30) {
       return 4
+    } else if (np === 0) {
+      return 6;
     } else {
       return 5;
     }
@@ -301,7 +303,7 @@ export interface Data {
     let var4: number = char.WR;
     let var5: number = char.data!.avggrade;
     let var6: number = char.PR;
-    if(var6 < 0.1) {return 0;}
+    if(var6 < 0.08) {return 0;} // 0.08% 픽률 아래인애들은 RIP
     return (var2 / var1 + var3 * 6 + var4 * 6 - (var5 - 3) * 40) * (var6);
   }
   

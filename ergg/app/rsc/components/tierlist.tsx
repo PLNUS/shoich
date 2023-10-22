@@ -9,7 +9,7 @@ import { includesByCho } from "hangul-util";
 import HeadPart from "./headpart";
 
 export default function TierList({ data }: any) {
-  const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== undefined ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
+  const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== null ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
   // 지금 이 TierList Component 자체가 SSR로 한번 Generate 되어서 클라이언트로 내려오는데 그때 이 TierGroups 값이 [5,1] 이 됨 (typeof window 에 걸려서)
   // 이후 Hydrate 시 다른 TierGroups 값이 배정되면서 Hydration 에러가 발생하여 CSR로 전환, 이후 sessionStorage 에서 가져온 TierGroup 값으로 다시 렌더링
   

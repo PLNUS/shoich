@@ -81,7 +81,7 @@ export default function SynergyHead() {
         </div>
         <div className="absolute flex aspect-square w-[40px] -translate-y-2">
           <div className={`charicon_dir flex items-center justify-center ${head?.color}`}>
-            <span className="font-mb text-xl text-white">{head?.tier === 0 ? "OP" : head?.tier} </span>
+            <span className="font-mb text-xl text-white">{head?.tier === 0 ? "OP" : (head?.tier === 6 ? "RIP" : head?.tier)} </span>
           </div>
         </div>
       </div>
