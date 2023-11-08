@@ -42,14 +42,28 @@ const itemSchema = new Schema({
     }
 });
 
+const traitSchema = new Schema({
+    lastGameNum: {
+        required: true,
+        type: Number,
+    },
+    data: {
+        required: true,
+        type: Object,
+    }
+});
+
 const Synergy = mongoose.model('synergys', synergySchema);
 const Item = mongoose.model('items', itemSchema);
 const Game = mongoose.model('games', gameSchema);
+const Trait = mongoose.model('traits', traitSchema);
 
 const CharMastery = require("./parsed/charMastery.json");
 const CharacterData = require("./base/charData.json");
 const SynergyData = require("./base/synergyData.json");
 const ItemData = require("./base/itemData.json");
+const TraitData = require("./base/traitData.json");
+// const TraitList = require("./parsed/traitList.json");
 const ItemParsed = require("./parsed/itemData.json");
 
 function getTierGroup(mmr, eterCut, demiCut) {
@@ -170,6 +184,7 @@ function getWeaponNum(charCode, firstWeaponCode) {
 let UpdatedData = CharacterData;
 let UpdatedSynergyData = SynergyData;
 let UpdatedItemData = ItemData;
+let UpdatedTraitData = TraitData;
 let rankcount = 0;
 
 let lastOrdinaryGame = 0;
@@ -210,7 +225,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     let i = repeatstart;
     while (errorCount < 100 || startpoint + i < lastOrdinaryGame) {
         try {
-            if(i%10000 === 0) {
+            if (i % 10000 === 0) {
                 console.log(i + " 회")
             }
             await getGameData(startpoint + i);
@@ -220,20 +235,25 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     if (repeatstart === parallels) {
         console.log("최종점: " + lastOrdinaryGame + ", 1분간 반복대기.");
         setTimeout(() => {
-            Game.deleteOne({ lastGameNum: startpoint });
+            Game.deleteMany({}); // DeleteOne이 작동안함 확인 필요
             Game.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 data: UpdatedData
             });
-            Synergy.deleteOne({ lastGameNum: startpoint });
+            Synergy.deleteMany({});
             Synergy.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 data: UpdatedSynergyData
             });
-            Item.deleteOne({ lastGameNum: startpoint })
+            Item.deleteMany({});
             Item.create({
                 lastGameNum: lastOrdinaryGame + 1,
                 data: UpdatedItemData
+            });
+            Trait.deleteMany({});
+            Trait.create({
+                lastGameNum: lastOrdinaryGame + 1,
+                data: UpdatedTraitData
             });
             console.log("종료.");
         }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
@@ -369,6 +389,104 @@ async function UpdateFunc(response) {
                     } catch (e) {
                         console.log("아이템 부문 처리오류");
                         console.log(e);
+                    }
+
+                    // 아래 특성 기록 부분 TODO ㅇㅇ;
+
+                    try {
+                        const coreIndex = UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup].findIndex((e) => e.core[0] == user.traitFirstCore);
+                        if (coreIndex !== -1) {
+                            user.traitFirstSub.map((sub, subp) => {
+                                const subIndex = UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.findIndex((e) => e[0] == sub);
+                                
+                                UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[3]++;
+                                if(subIndex !== -1) {
+                                    UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][3]++;
+
+                                    if (user.gameRank === 1) {
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[1]++;
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][1]++;
+                                    }
+                                    if (user.mmrGain > 0) {
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[2]++;
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][2]++;
+                                    }
+                                } else {
+                                    if (user.gameRank === 1) {
+                                        if (user.mmrGain > 0) {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 1, 1, 1]);
+                                        } else {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 1, 0, 1]);
+                                        }
+                                    } else {
+                                        if (user.mmrGain > 0) {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 0, 1, 1]);
+                                        } else {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 0, 0, 1]);
+                                        }
+                                    }
+                                }
+                            });
+                            user.traitSecondSub.map((sub, subp) => {
+                                const subIndex = UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.findIndex((e) => e[0] == sub);
+                                
+                                UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[3]++;
+                                if(subIndex !== -1) {
+                                    UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][3]++;
+
+                                    if (user.gameRank === 1) {
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[1]++;
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][1]++;
+                                    }
+                                    if (user.mmrGain > 0) {
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[2]++;
+                                        UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][2]++;
+                                    }
+                                } else {
+                                    if (user.gameRank === 1) {
+                                        if (user.mmrGain > 0) {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 1, 1, 1]);
+                                        } else {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 1, 0, 1]);
+                                        }
+                                    } else {
+                                        if (user.mmrGain > 0) {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 0, 1, 1]);
+                                        } else {
+                                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.push([sub, 0, 0, 1]);
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            let coreList = [];
+                            let subList = [];
+                            if (user.gameRank === 1) {
+                                if (user.mmrGain > 0) {
+                                    coreList = [user.traitFirstCore, 1, 1, 1];
+                                    subList = [[user.traitFirstSub[0], 1, 1, 1], [user.traitFirstSub[1], 1, 1, 1], [user.traitSecondSub[0], 1, 1, 1], [user.traitSecondSub[1], 1, 1, 1]];
+                                } else {
+                                    coreList = [user.traitFirstCore, 1, 0, 1];
+                                    subList = [[user.traitFirstSub[0], 1, 0, 1], [user.traitFirstSub[1], 1, 0, 1], [user.traitSecondSub[0], 1, 0, 1], [user.traitSecondSub[1], 1, 0, 1]];
+                                }
+                            } else {
+                                if (user.mmrGain > 0) {
+                                    coreList = [user.traitFirstCore, 0, 0, 1];
+                                    subList = [[user.traitFirstSub[0], 0, 1, 1], [user.traitFirstSub[1], 0, 1, 1], [user.traitSecondSub[0], 0, 1, 1], [user.traitSecondSub[1], 0, 1, 1]];
+                                } else {
+                                    coreList = [user.traitFirstCore, 0, 0, 1];
+                                    subList = [[user.traitFirstSub[0], 0, 0, 1], [user.traitFirstSub[1], 0, 0, 1], [user.traitSecondSub[0], 0, 0, 1], [user.traitSecondSub[1], 0, 0, 1]];
+                                }
+                            }
+
+                            UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup].push({
+                                core: coreList,
+                                sub: subList
+                            });
+                        }
+                    } catch (error) {
+                        console.log("특성 부문 에러");
+                        console.error(error);
                     }
                 }
             });

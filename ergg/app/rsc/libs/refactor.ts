@@ -104,7 +104,7 @@ export interface Data {
         parsedData.map((char:any, cp:number) => {
           char.grades.map((weapon:any, wp:number) => {
             if (starttiergroup > endtiergroup) {
-              for (let i = 0; i <= (starttiergroup - endtiergroup); i++) { // 포문은 조건비교보다 i++이 먼저
+              for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
                 if (grade === 0) {
                     weapon[starttiergroup - i - 1].forEach((element: number) => { // 탈출수 중복 안되도록 모든 등수 리턴할때는 POP();
                     count += element;
@@ -205,6 +205,8 @@ export interface Data {
   }
   
   export function getAvgdeal(parsedData: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
+    // 10/22 여기 수정해야함. 여러 티어그룹 - 각 등수별 평딜 구할 때 값이 이상함
+
     // code, weapon 은 0일 수 없음
     let deal = 0;
     let targetgrades = 0;
@@ -219,6 +221,7 @@ export interface Data {
         } else {
           deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1][grade - 1];
           targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
+          // 여기
         }
       }
     } else if (starttiergroup === endtiergroup) {
@@ -391,6 +394,3 @@ export interface Data {
   
     return newCharList;
   }
-  
-  
-  
