@@ -245,7 +245,74 @@ async function updateMastery(l10n) {
                     let synData = [];
                     let itemData = [];
                     let traitData = [];
+                    let skillDescData = [];
                     response.data.data.map((mastery, p) => {
+                        const basicSkillQ = "Skill/Group/Desc/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "400" : "200");
+                        const skillIndexQ = l10n.indexOf(basicSkillQ) + basicSkillQ.length;
+                        const endSkillIndexQ = l10n.indexOf("\r", skillIndexQ);
+
+                        const basicSkillQName = "Skill/Group/Name/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "400" : "200");
+                        const skillIndexQName = l10n.indexOf(basicSkillQName) + basicSkillQName.length;
+                        const endSkillIndexQName = l10n.indexOf("\r", skillIndexQName);
+
+                        const basicSkillW = "Skill/Group/Desc/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "500" : "300");
+                        const skillIndexW = l10n.indexOf(basicSkillW) + basicSkillW.length;
+                        const endSkillIndexW = l10n.indexOf("\r", skillIndexW);
+
+                        const basicSkillWName = "Skill/Group/Name/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "500" : "300");
+                        const skillIndexWName = l10n.indexOf(basicSkillWName) + basicSkillWName.length;
+                        const endSkillIndexWName = l10n.indexOf("\r", skillIndexWName);
+
+                        const basicSkillE = "Skill/Group/Desc/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "600" : "400");
+                        const skillIndexE = l10n.indexOf(basicSkillE) + basicSkillE.length;
+                        const endSkillIndexE = l10n.indexOf("\r", skillIndexE);
+
+                        const basicSkillEName = "Skill/Group/Name/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "600" : "400");
+                        const skillIndexEName = l10n.indexOf(basicSkillEName) + basicSkillEName.length;
+                        const endSkillIndexEName = l10n.indexOf("\r", skillIndexEName);
+
+                        const basicSkillR = "Skill/Group/Desc/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "700" : "500");
+                        const skillIndexR = l10n.indexOf(basicSkillR) + basicSkillR.length;
+                        const endSkillIndexR = l10n.indexOf("\r", skillIndexR);
+
+                        const basicSkillRName = "Skill/Group/Name/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "700" : "500");
+                        const skillIndexRName = l10n.indexOf(basicSkillRName) + basicSkillRName.length;
+                        const endSkillIndexRName = l10n.indexOf("\r", skillIndexRName);
+
+                        const basicSkillT = "Skill/Group/Desc/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + "100";
+                        const skillIndexT = l10n.indexOf(basicSkillT) + basicSkillT.length;
+                        const endSkillIndexT = l10n.indexOf("\r", skillIndexT);
+
+                        const basicSkillTName = "Skill/Group/Name/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + "100";
+                        const skillIndexTName = l10n.indexOf(basicSkillTName) + basicSkillTName.length;
+                        const endSkillIndexTName = l10n.indexOf("\r", skillIndexTName);
+
+                        const descQ = skillIndexQ < 50 ? "null" : l10n.substring(skillIndexQ + 1, endSkillIndexQ).replaceAll("\\n", "\n");
+                        const descW = skillIndexW < 50 ? "null" : l10n.substring(skillIndexW + 1, endSkillIndexW).replaceAll("\\n", "\n");
+                        const descE = skillIndexE < 50 ? "null" : l10n.substring(skillIndexE + 1, endSkillIndexE).replaceAll("\\n", "\n");
+                        const descR = skillIndexR < 50 ? "null" : l10n.substring(skillIndexR + 1, endSkillIndexR).replaceAll("\\n", "\n");
+                        const descT = skillIndexT < 50 ? "null" : l10n.substring(skillIndexT + 1, endSkillIndexT).replaceAll("\\n", "\n");
+
+                        const nameQ = skillIndexQ < 50 ? "null" : l10n.substring(skillIndexQName + 1, endSkillIndexQName);
+                        const nameW = skillIndexW < 50 ? "null" : l10n.substring(skillIndexWName + 1, endSkillIndexWName);
+                        const nameE = skillIndexE < 50 ? "null" : l10n.substring(skillIndexEName + 1, endSkillIndexEName);
+                        const nameR = skillIndexR < 50 ? "null" : l10n.substring(skillIndexRName + 1, endSkillIndexRName);
+                        const nameT = skillIndexT < 50 ? "null" : l10n.substring(skillIndexTName + 1, endSkillIndexTName);
+
+                        skillDescData.push({
+                            code: mastery.code,
+                            nameQ: nameQ,
+                            nameW: nameW,
+                            nameE: nameE,
+                            nameR: nameR,
+                            nameT: nameT,
+                            descQ: descQ,
+                            descW: descW,
+                            descE: descE,
+                            descR: descR,
+                            descT: descT
+                        });
+
                         const basicName = "Character/Name/" + mastery.code;
                         const index = l10n.indexOf(basicName) + basicName.length;
                         const endIndex = l10n.indexOf("\r", index);
@@ -292,13 +359,17 @@ async function updateMastery(l10n) {
                         error ? console.log(error) : null;
                         console.log('base/itemData updated')
                     });
-                    fs.writeFile('base/traitData.json', JSON.stringify(traitData.), 'utf8', function (error) {
+                    fs.writeFile('base/traitData.json', JSON.stringify(traitData), 'utf8', function (error) {
                         error ? console.log(error) : null;
                         console.log('base/traitData updated')
                     });
                     fs.writeFile('parsed/charMastery.json', JSON.stringify(masteryList), 'utf8', function (error) {
                         error ? console.log(error) : null;
                         console.log('parsed/mastery updated')
+                    });
+                    fs.writeFile('parsed/skillDesc.json', JSON.stringify(skillDescData), 'utf8', function (error) {
+                        error ? console.log(error) : null;
+                        console.log('parsed/skillDesc updated')
                     });
                 }
 
@@ -319,19 +390,19 @@ async function updateL10n() {
         })
             .then(function (response) {
                 axios.get(response.data.data.l10Path, {
-                params: {},
-            })
-                .then(function (response) {
-                    resolve(response.data);
+                    params: {},
                 })
-                .catch(function (error) {
-                    rejects(error);
-                });
+                    .then(function (response) {
+                        resolve(response.data);
+                    })
+                    .catch(function (error) {
+                        rejects(error);
+                    });
             })
-            .catch(function (error) { 
+            .catch(function (error) {
                 rejects(error);
             });
-        
+
     });
 }
 

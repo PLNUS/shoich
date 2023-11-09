@@ -73,11 +73,11 @@ export default function SynergyList({ synergy, item, trait }: any) {
 
     return (
         <div className="flex flex-row w-full h-full">
-            <div className="flex flex-col w-[370px] gap-y-2">
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
+            <div className="flex flex-col w-[385px] h-[616px] justify-between gap-y-2">
+                <div className="flex flex-col w-full h-auto border-neutral-300 border-2 rounded-md px-2">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
-                            점수 오르기 쉬운
+                            순방하기 좋아요
                         </div>
                         <label className="flex flex-row items-center p-2">
                             <input type="checkbox" className="accent-blue-700"
@@ -116,10 +116,10 @@ export default function SynergyList({ synergy, item, trait }: any) {
                             : null))}
                     </div>
                 </div>
-                <div className="flex flex-col w-full h-auto bg-sky-100">
+                <div className="flex flex-col w-full h-auto border-neutral-300 border-2 rounded-md px-2">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
-                            1등하기 쉬운
+                            우승하기 좋아요
                         </div>
                         <label className="flex flex-row items-center p-2">
                             <input type="checkbox" className="accent-blue-700"
@@ -159,10 +159,10 @@ export default function SynergyList({ synergy, item, trait }: any) {
                             : null))}
                     </div>
                 </div>
-                <div className="flex flex-col w-full h-auto bg-indigo-100">
+                <div className="flex flex-col w-full h-auto border-neutral-300 border-2 rounded-md px-2">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
-                            자주 만나는
+                            자주 만나요
                         </div>
                     </div>
                     <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">

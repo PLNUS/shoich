@@ -23,8 +23,8 @@ export default function ItemList({ data }: any) {
     }
 
     return (
-        <div className="flex flex-col w-[480px] h-fit pl-8">
-            <span className="font-ml text-lg p-1">아이템 통계</span>
+        <div className="flex flex-col w-[434px] h-[616px] ml-4 border-neutral-300 border-2 rounded-md px-2">
+            <span className="font-ml text-2xl pl-1 pt-2 pb-1">아이템 통계</span>
             <div className="flex flex-row items-center w-full min-h-[45px] divide-x-2 divide-slate-800 pt-0.5">
                 <div className="flex flex-row w-[46%] pr-4 gap-x-2">
                     <ReactSelect

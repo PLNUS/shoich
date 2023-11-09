@@ -3,13 +3,14 @@
 import { Data } from "@/app/rsc/libs/refactor";
 import { useEffect, useState } from "react";
 import { CharRadar, CountPerGradeLine } from "./charts";
+import SkillDesc from "@/server/parsed/skillDesc.json";
 import Image from "next/image";
 
 
 export default function SynergyHead() {
   'use client'
 
-  const [head, setHead] = useState<Data>()
+  const [head, setHead] = useState<Data>();
 
   useEffect(() => {
     const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
@@ -18,72 +19,16 @@ export default function SynergyHead() {
   }, [])
 
   return (
-    <div className="flex flex-row justify-between w-full h-auto bg-neutral-300 p-4 text-2xl font-mb">
+    <div className="flex flex-row justify-between w-full h-auto border-neutral-300 border-2 rounded-md p-4 text-2xl font-mb mt-2">
       <div className="flex flex-col w-[470px] h-full">
         <CharIcon />
-        <div className="flex flex-row w-full h-full pl-4">
-          <div className="flex items-center w-1/5 h-full px-2">
-            <div className="flex items-end justify-end relative w-[60px] h-[60px]">
-              <Image
-                className="rounded-lg"
-                alt=""
-                quality={100}
-                layout='fill'
-                src={`/skills/${head?.code}/q.png`} />
-              <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">Q</div>
-            </div>
-          </div>
-          <div className="flex items-center w-1/5 h-full px-2">
-            <div className="flex items-end justify-end relative w-[60px] h-[60px]">
-              <Image
-                className="rounded-lg"
-                alt=""
-                quality={100}
-                layout='fill'
-                src={`/skills/${head?.code}/w.png`} />
-              <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">W</div>
-            </div>
-          </div>
-          <div className="flex items-center w-1/5 h-full px-2">
-            <div className="flex items-end justify-end relative w-[60px] h-[60px]">
-              <Image
-                className="rounded-lg"
-                alt=""
-                quality={100}
-                layout='fill'
-                src={`/skills/${head?.code}/e.png`} />
-              <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">E</div>
-            </div>
-          </div>
-          <div className="flex items-center w-1/5 h-full px-2">
-            <div className="flex items-end justify-end relative w-[60px] h-[60px]">
-              <Image
-                className="rounded-lg"
-                alt=""
-                quality={100}
-                layout='fill'
-                src={`/skills/${head?.code}/r.png`} />
-              <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">R</div>
-            </div>
-          </div>
-          <div className="flex items-center w-1/5 h-full px-2">
-            <div className="flex items-end justify-end relative w-[60px] h-[60px]">
-              <Image
-                className="rounded-lg"
-                alt=""
-                quality={100}
-                layout='fill'
-                src={`/skills/${head?.code}/t.png`} />
-              <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">T</div>
-            </div>
-          </div>
-        </div>
+        <SkillDetails />
       </div>
       <PowerHexagon />
       <div className="flex flex-col h-full">
         <div className="flex flex-col p-1">
           <span className="text-2xl font-mb">순위별 게임 수</span>
-          <span className="text-sm font-msb text-slate-500 pl-0.5">그래프 왼쪽이 높을수록 좋은 실험체</span>
+          <span className="text-sm font-msb text-slate-500 pl-0.5">그래프 왼쪽이 높을수록 평균 순위가 높아요</span>
         </div>
         <div className="w-[320px] h-[180px] rounded-lg bg-slate-800 p-2">
           <CountPerGradeLine target={head?.data?.gamecountbygrade} hasEscapeValue={true} />
@@ -92,7 +37,7 @@ export default function SynergyHead() {
       <div className="flex flex-col h-full">
         <div className="flex flex-col p-1">
           <span className="text-2xl font-mb">순위별 평균 딜링</span>
-          <span className="text-sm font-msb text-slate-500 pl-0.5">그래프 왼쪽이 높을수록 좋은 실험체</span>
+          <span className="text-sm font-msb text-slate-500 pl-0.5">중간이 솟아있으면 트럭 전복하기 쉬운 실험체에요</span>
         </div>
         <div className="w-[320px] h-[180px] rounded-lg bg-slate-800 p-2">
           <CountPerGradeLine target={head?.data?.avgdealbygrade} hasEscapeValue={false} />
@@ -101,6 +46,109 @@ export default function SynergyHead() {
     </div>
   )
   // '평딜', '픽률', '평순', '순방률', '평킬', '승률' 순임
+
+  function SkillDetails() {
+    const [showTooltip, setShowTooltip] = useState(0);
+
+    return (<div className="flex flex-col w-auto h-full ml-4 rounded-lg gap-y-1 py-1">
+          <div className="text-lg font-rb">스킬 설명 -</div>
+          <div className="flex flex-row w-full h-full">
+            <div className="flex items-center w-1/5 h-full">
+              <div
+                className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
+                onMouseOver={() => setShowTooltip(1)}
+                onMouseOut={() => setShowTooltip(0)}>
+                <Image
+                  className="rounded-lg"
+                  alt=""
+                  quality={100}
+                  layout='fill'
+                  src={`/skills/${head?.code}/q.png`} />
+                <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">Q</div>
+                <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[500px] h-[170px] z-50 rounded p-2 "
+                  + (showTooltip === 1 ? "visible" : "invisible")}>
+                  <div className="font-mb text-base">{head === undefined ? "" : SkillDesc[head!.code - 1].nameQ}</div>
+                  <div>{head === undefined ? "" : SkillDesc[head!.code - 1].descQ}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center w-1/5 h-full">
+              <div
+                className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
+                onMouseOver={() => setShowTooltip(2)}
+                onMouseOut={() => setShowTooltip(0)}>
+                <Image
+                  className="rounded-lg"
+                  alt=""
+                  quality={100}
+                  layout='fill'
+                  src={`/skills/${head?.code}/w.png`} />
+                <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">W</div>
+                <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[500px] h-[170px] z-50 rounded p-2 "
+                  + (showTooltip === 2 ? "visible" : "invisible")}>
+                  <div className="font-mb text-base">{head === undefined ? "" : SkillDesc[head!.code - 1].nameW}</div>
+                  <div>{head === undefined ? "" : SkillDesc[head!.code - 1].descW}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center w-1/5 h-full">
+              <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
+                onMouseOver={() => setShowTooltip(3)}
+                onMouseOut={() => setShowTooltip(0)}>
+                <Image
+                  className="rounded-lg"
+                  alt=""
+                  quality={100}
+                  layout='fill'
+                  src={`/skills/${head?.code}/e.png`} />
+                <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">E</div>
+                <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[500px] h-[170px] z-50 rounded p-2 "
+                  + (showTooltip === 3 ? "visible" : "invisible")}>
+                  <div className="font-mb text-base">{head === undefined ? "" : SkillDesc[head!.code - 1].nameE}</div>
+                  <div>{head === undefined ? "" : SkillDesc[head!.code - 1].descE}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center w-1/5 h-full">
+              <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
+                onMouseOver={() => setShowTooltip(4)}
+                onMouseOut={() => setShowTooltip(0)}>
+                <Image
+                  className="rounded-lg"
+                  alt=""
+                  quality={100}
+                  layout='fill'
+                  src={`/skills/${head?.code}/r.png`} />
+                <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">R</div>
+                <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[500px] h-[170px] z-50 rounded p-2 "
+                  + (showTooltip === 4 ? "visible" : "invisible")}>
+                  <div className="font-mb text-base">{head === undefined ? "" : SkillDesc[head!.code - 1].nameR}</div>
+                  <div>{head === undefined ? "" : SkillDesc[head!.code - 1].descR}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center w-1/5 h-full">
+              <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-lg"
+                onMouseOver={() => setShowTooltip(5)}
+                onMouseOut={() => setShowTooltip(0)}>
+                <Image
+                  className="rounded-lg"
+                  alt=""
+                  quality={100}
+                  layout='fill'
+                  src={`/skills/${head?.code}/t.png`} />
+                <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">T</div>
+                <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[500px] h-[170px] z-50 rounded p-2 "
+                  + (showTooltip === 5 ? "visible" : "invisible")}>
+                  <div className="font-mb text-base">{head === undefined ? "" : SkillDesc[head!.code - 1].nameT}</div>
+                  <div>{head === undefined ? "" : SkillDesc[head!.code - 1].descT.toString()}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    );
+  }
 
   function PowerHexagon() {
     return (
