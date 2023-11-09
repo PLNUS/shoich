@@ -1,4 +1,3 @@
-
 import CharData from "@/server/base/charData.json";
 import CharMastery from "@/server/parsed/charMastery.json";
 import { getKoreanWeapon } from "../../rsc/libs/refactor";

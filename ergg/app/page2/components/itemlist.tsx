@@ -4,10 +4,11 @@ import ParsedItemData from "@/server/parsed/itemData.json";
 import { useState } from "react";
 import ReactSelect from "react-select";
 import { scrollbarStyles } from "@/app/rsc/libs/assets";
-import { itemTypeOptions } from "./assets";
+import { itemGradeOptions, itemTypeOptions } from "./assets";
 
-export default function ItemList({ data, itemGrade }: any) {
+export default function ItemList({ data }: any) {
     const [type, setType] = useState(0);
+    const [grade, setGrade] = useState("Legend");
 
     function getGradientByGrade(grade: string) {
         switch (grade) {
@@ -22,10 +23,19 @@ export default function ItemList({ data, itemGrade }: any) {
     }
 
     return (
-        <div className="flex flex-col w-[500px] h-fit ml-8">
-            <span className="font-ml text-lg p-1">아이템 통계 - {itemGrade}</span>
+        <div className="flex flex-col w-[480px] h-fit pl-8">
+            <span className="font-ml text-lg p-1">아이템 통계</span>
             <div className="flex flex-row items-center w-full min-h-[45px] divide-x-2 divide-slate-800 pt-0.5">
-                <div className="flex flex-row w-[46%] pr-4">
+                <div className="flex flex-row w-[46%] pr-4 gap-x-2">
+                    <ReactSelect
+                        className="w-full"
+                        isSearchable={false}
+                        options={itemGradeOptions}
+                        styles={scrollbarStyles}
+                        defaultValue={itemGradeOptions[1]}
+                        onChange={(e) => {
+                            setGrade(e!.value);
+                        }} />
                     <ReactSelect
                         className="w-full"
                         isSearchable={false}
@@ -33,7 +43,7 @@ export default function ItemList({ data, itemGrade }: any) {
                         styles={scrollbarStyles}
                         defaultValue={itemTypeOptions[0]}
                         onChange={(e) => {
-                            setType(e!.value)
+                            setType(e!.value);
                         }} />
                 </div>
                 <div className="w-[18%] text-sm text-center tracking-widest font-msb text-slate-700">
@@ -48,15 +58,15 @@ export default function ItemList({ data, itemGrade }: any) {
             </div>
             <div className="flex flex-col w-full h-full gap-y-2 py-2 overflow-hidden">
                 {data.sort(sortByGames).map((item: any, p: number) => (
-                    item.itemtype === type && item.itemgrade === itemGrade ?
+                    item.itemtype === type && item.itemgrade === grade ?
                         <div key={p} className={`flex flex-row items-center w-full min-h-[50px] divide-x-2 divide-slate-800
-                         ${itemGrade === "Epic" ? "bg-[rgb(228,224,254)]" : "bg-[rgb(254,221,187)]"}
+                        ${grade === "Epic" ? "bg-[rgb(228,224,254)]" : "bg-[rgb(254,221,187)]"}
                          rounded-md shadow-md`}>
                             <div className="flex flex-row w-[46%] items-center gap-x-2 py-2 pl-3">
                                 <div className={`flex justify-center w-[60px] h-[36px] py-1 ${getGradientByGrade(item.itemgrade)} rounded-md`}>
-                                        <Image alt=""
-                                            quality={30}
-                                            width={52} height={36} src={`/items/${item.code}.png`} ></Image>
+                                    <Image alt=""
+                                        quality={30}
+                                        width={52} height={36} src={`/items/${item.code}.png`} ></Image>
                                 </div>
                                 <span className="text-xs font-msb text-slate-800 ">{getItemNameByCode(item.code)}</span>
                             </div>

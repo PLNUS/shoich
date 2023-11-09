@@ -1,6 +1,6 @@
 'use server'
 
-import {getSynergyAll, getItemAll} from "./libs/fetcher";
+import {getSynergyAll, getItemAll, getTraitAll} from "./libs/fetcher";
 import SynergyHead from "./components/synergyhead";
 import SynergyList from "./components/synergylist";
 
@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col w-[1400px] h-screen bg-neutral-100 gap-y-4 overflow-scroll">
       <SynergyHead/>
-      <SynergyList synergy={(await getSynergyAll()).data} item={(await getItemAll()).data}/>
+      <SynergyList synergy={(await getSynergyAll()).data} item={(await getItemAll()).data} trait={(await getTraitAll()).data}/>
     </div>
   )
 }

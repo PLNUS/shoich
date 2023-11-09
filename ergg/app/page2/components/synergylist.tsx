@@ -5,6 +5,8 @@ import { getBaseData, getSynergyList } from "../libs/refactor";
 import { Data } from "@/app/rsc/libs/refactor";
 import { getFormattedItem, getItemList } from "../libs/itemRefactor";
 import ItemList from "./itemlist";
+import TraitLsit from "./traitlist";
+import { getTraitList } from "../libs/traitRefactor";
 
 const sortByWR = (x: any, y: any) => {
     if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
@@ -34,13 +36,14 @@ interface Synergy {
     games: number;
 }
 
-export default function SynergyList({ synergy, item }: any) {
+export default function SynergyList({ synergy, item, trait }: any) {
 
     const [showUnstableSynWin, setShowUnstableSynWin] = useState(false);
     const [showUnstableSynSb, setShowUnstableSynSb] = useState(false);
 
     const [baseData, setBaseData] = useState<Array<any>>([]);
     const [itemData, setItemData] = useState<Array<any>>([]);
+    const [traitData, setTraitData] = useState<Array<any>>([]);
 
     useEffect(() => {
         const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
@@ -59,15 +62,22 @@ export default function SynergyList({ synergy, item }: any) {
         } else {
             setItemData(getFormattedItem(getItemList(JSON.parse(sessionStorage.getItem("item")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
         }
+
+        if (sessionStorage.getItem("trait") === null) {
+            sessionStorage.setItem("trait", JSON.stringify(trait));
+            setTraitData(getTraitList(trait, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+        } else {
+            setTraitData(getTraitList(JSON.parse(sessionStorage.getItem("trait")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+        }
     }, [])
 
     return (
         <div className="flex flex-row w-full h-full">
-            <div className="flex flex-col w-1/3 gap-y-2">
+            <div className="flex flex-col w-[370px] gap-y-2">
                 <div className="flex flex-col w-full h-auto bg-indigo-100">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
-                            함께하면 점수가 올라요
+                            점수 오르기 쉬운
                         </div>
                         <label className="flex flex-row items-center p-2">
                             <input type="checkbox" className="accent-blue-700"
@@ -109,7 +119,7 @@ export default function SynergyList({ synergy, item }: any) {
                 <div className="flex flex-col w-full h-auto bg-sky-100">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
-                            함께하면 승리하기 쉬워요
+                            1등하기 쉬운
                         </div>
                         <label className="flex flex-row items-center p-2">
                             <input type="checkbox" className="accent-blue-700"
@@ -152,7 +162,7 @@ export default function SynergyList({ synergy, item }: any) {
                 <div className="flex flex-col w-full h-auto bg-indigo-100">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
-                            팀원으로 자주 만나요
+                            자주 만나는
                         </div>
                     </div>
                     <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
@@ -178,8 +188,8 @@ export default function SynergyList({ synergy, item }: any) {
                     </div>
                 </div>
             </div>
-            <ItemList data={itemData} itemGrade="Epic"/>
-            <ItemList data={itemData} itemGrade="Legend"/>
+            <ItemList data={itemData}/>
+            <TraitLsit data={traitData} />
         </div>
 
     )

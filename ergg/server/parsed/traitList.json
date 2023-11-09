@@ -1,1 +1,242 @@
-[{"name":"취약","code":7000201,"traitGroup":"Havoc","traitType":"Core"},{"name":"광분","code":7000301,"traitGroup":"None","traitType":"None"},{"name":"흡혈마","code":7000401,"traitGroup":"Havoc","traitType":"Core"},{"name":"벽력","code":7000501,"traitGroup":"Havoc","traitType":"Core"},{"name":"아드레날린","code":7000601,"traitGroup":"Havoc","traitType":"Core"},{"name":"철갑탄","code":7010101,"traitGroup":"Havoc","traitType":"Sub"},{"name":"복수자","code":7010201,"traitGroup":"None","traitType":"None"},{"name":"수확","code":7010301,"traitGroup":"None","traitType":"None"},{"name":"엔도르핀","code":7010311,"traitGroup":"Havoc","traitType":"Sub"},{"name":"갈증","code":7010401,"traitGroup":"None","traitType":"None"},{"name":"열세극복","code":7010501,"traitGroup":"Havoc","traitType":"Sub"},{"name":"영혼 흡수 장치","code":7010601,"traitGroup":"Havoc","traitType":"Sub"},{"name":"상처 악화","code":7010701,"traitGroup":"Havoc","traitType":"Sub"},{"name":"사냥꾼의 행운","code":7010801,"traitGroup":"None","traitType":"None"},{"name":"금강","code":7100101,"traitGroup":"Fortification","traitType":"Core"},{"name":"불괴","code":7100201,"traitGroup":"Fortification","traitType":"Core"},{"name":"망각","code":7100301,"traitGroup":"None","traitType":"None"},{"name":"빛의 수호","code":7100401,"traitGroup":"Fortification","traitType":"Core"},{"name":"응징","code":7100501,"traitGroup":"Fortification","traitType":"Core"},{"name":"대담","code":7110101,"traitGroup":"Fortification","traitType":"Sub"},{"name":"특공대","code":7110201,"traitGroup":"Fortification","traitType":"Sub"},{"name":"둔감","code":7110301,"traitGroup":"None","traitType":"None"},{"name":"견고","code":7110401,"traitGroup":"None","traitType":"None"},{"name":"중장갑","code":7110501,"traitGroup":"None","traitType":"None"},{"name":"먹보","code":7110601,"traitGroup":"Fortification","traitType":"Sub"},{"name":"불굴","code":7110701,"traitGroup":"Fortification","traitType":"Sub"},{"name":"캠핑 가이드","code":7110801,"traitGroup":"Fortification","traitType":"Sub"},{"name":"육식주의","code":7110901,"traitGroup":"Havoc","traitType":"Sub"},{"name":"초재생","code":7200101,"traitGroup":"Support","traitType":"Core"},{"name":"증폭 드론","code":7200201,"traitGroup":"Support","traitType":"Core"},{"name":"치유 드론","code":7200301,"traitGroup":"Support","traitType":"Core"},{"name":"추진력","code":7200401,"traitGroup":"None","traitType":"None"},{"name":"헌신","code":7200501,"traitGroup":"Support","traitType":"Core"},{"name":"가시 덤불","code":7210101,"traitGroup":"Support","traitType":"Sub"},{"name":"테이아","code":7210301,"traitGroup":"None","traitType":"None"},{"name":"후방 보급","code":7210401,"traitGroup":"Support","traitType":"Sub"},{"name":"시가전","code":7210501,"traitGroup":"Support","traitType":"Sub"},{"name":"스프린터","code":7210601,"traitGroup":"None","traitType":"None"},{"name":"할인 쿠폰","code":7210801,"traitGroup":"Support","traitType":"Sub"},{"name":"사냥의 전율","code":7211001,"traitGroup":"Support","traitType":"Sub"}]
+[
+    {
+        "name": "취약",
+        "code": 7000201,
+        "traitGroup": "Havoc",
+        "traitType": "Core"
+    },
+    {
+        "name": "광분",
+        "code": 7000301,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "흡혈마",
+        "code": 7000401,
+        "traitGroup": "Havoc",
+        "traitType": "Core"
+    },
+    {
+        "name": "벽력",
+        "code": 7000501,
+        "traitGroup": "Havoc",
+        "traitType": "Core"
+    },
+    {
+        "name": "아드레날린",
+        "code": 7000601,
+        "traitGroup": "Havoc",
+        "traitType": "Core"
+    },
+    {
+        "name": "철갑탄",
+        "code": 7010101,
+        "traitGroup": "Havoc",
+        "traitType": "Sub"
+    },
+    {
+        "name": "복수자",
+        "code": 7010201,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "수확",
+        "code": 7010301,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "엔도르핀",
+        "code": 7010311,
+        "traitGroup": "Havoc",
+        "traitType": "Sub"
+    },
+    {
+        "name": "갈증",
+        "code": 7010401,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "열세극복",
+        "code": 7010501,
+        "traitGroup": "Havoc",
+        "traitType": "Sub"
+    },
+    {
+        "name": "영혼 흡수 장치",
+        "code": 7010601,
+        "traitGroup": "Havoc",
+        "traitType": "Sub"
+    },
+    {
+        "name": "상처 악화",
+        "code": 7010701,
+        "traitGroup": "Havoc",
+        "traitType": "Sub"
+    },
+    {
+        "name": "사냥꾼의 행운",
+        "code": 7010801,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "금강",
+        "code": 7100101,
+        "traitGroup": "Fortification",
+        "traitType": "Core"
+    },
+    {
+        "name": "불괴",
+        "code": 7100201,
+        "traitGroup": "Fortification",
+        "traitType": "Core"
+    },
+    {
+        "name": "망각",
+        "code": 7100301,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "빛의 수호",
+        "code": 7100401,
+        "traitGroup": "Fortification",
+        "traitType": "Core"
+    },
+    {
+        "name": "응징",
+        "code": 7100501,
+        "traitGroup": "Fortification",
+        "traitType": "Core"
+    },
+    {
+        "name": "대담",
+        "code": 7110101,
+        "traitGroup": "Fortification",
+        "traitType": "Sub"
+    },
+    {
+        "name": "특공대",
+        "code": 7110201,
+        "traitGroup": "Fortification",
+        "traitType": "Sub"
+    },
+    {
+        "name": "둔감",
+        "code": 7110301,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "견고",
+        "code": 7110401,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "중장갑",
+        "code": 7110501,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "먹보",
+        "code": 7110601,
+        "traitGroup": "Fortification",
+        "traitType": "Sub"
+    },
+    {
+        "name": "불굴",
+        "code": 7110701,
+        "traitGroup": "Fortification",
+        "traitType": "Sub"
+    },
+    {
+        "name": "캠핑 가이드",
+        "code": 7110801,
+        "traitGroup": "Fortification",
+        "traitType": "Sub"
+    },
+    {
+        "name": "육식주의",
+        "code": 7110901,
+        "traitGroup": "Havoc",
+        "traitType": "Sub"
+    },
+    {
+        "name": "초재생",
+        "code": 7200101,
+        "traitGroup": "Support",
+        "traitType": "Core"
+    },
+    {
+        "name": "증폭 드론",
+        "code": 7200201,
+        "traitGroup": "Support",
+        "traitType": "Core"
+    },
+    {
+        "name": "치유 드론",
+        "code": 7200301,
+        "traitGroup": "Support",
+        "traitType": "Core"
+    },
+    {
+        "name": "추진력",
+        "code": 7200401,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "헌신",
+        "code": 7200501,
+        "traitGroup": "Support",
+        "traitType": "Core"
+    },
+    {
+        "name": "가시 덤불",
+        "code": 7210101,
+        "traitGroup": "Support",
+        "traitType": "Sub"
+    },
+    {
+        "name": "테이아",
+        "code": 7210301,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "후방 보급",
+        "code": 7210401,
+        "traitGroup": "Support",
+        "traitType": "Sub"
+    },
+    {
+        "name": "시가전",
+        "code": 7210501,
+        "traitGroup": "Support",
+        "traitType": "Sub"
+    },
+    {
+        "name": "스프린터",
+        "code": 7210601,
+        "traitGroup": "None",
+        "traitType": "None"
+    },
+    {
+        "name": "할인 쿠폰",
+        "code": 7210801,
+        "traitGroup": "Support",
+        "traitType": "Sub"
+    },
+    {
+        "name": "사냥의 전율",
+        "code": 7211001,
+        "traitGroup": "Support",
+        "traitType": "Sub"
+    }
+]
