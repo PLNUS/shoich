@@ -7,10 +7,10 @@ export default function TraitLsit({ data }: any) {
 
     return (
         <div className="flex flex-col w-[535px] h-[640px] overflow-y-auto scrollbar-hide pl-4 gap-y-2">
-            {data.map((trait: Trait, p: number) =>
+            {data.map((trait: Trait, p: number) => p < 3 ?
             (
                 <div className="flex flex-row w-full h-[200px] bg-stone-300 p-2 rounded items-center">
-                    <div className="flex flex-col min-w-[140px] gap-y-1 items-center p-1">
+                    <div className="flex flex-col min-w-[130px] gap-y-1 items-center p-1">
                         <div className="relative w-[80px] h-[80px] overflow-hidden rounded-full aspect-square">
                             <Image
                                 alt=""
@@ -26,10 +26,10 @@ export default function TraitLsit({ data }: any) {
                             <div className="text-center w-1/2 text-xs font-mr bg-neutral-600 rounded text-white p-1">순방<br />{trait.sbRate}%</div>
                         </div>
                     </div>
-                    <div className="w-full h-full px-2 grid grid-cols-2 grid-rows-3 gap-2 overflow-hidden">
+                    <div className="w-full h-full pl-2 grid grid-cols-2 grid-rows-3 gap-2 overflow-hidden">
                         {trait.sub.map((sub, p) =>  p < 6 ? (
                             <div className={`flex flex-row items-center w-full h-full 
-                            ${sub.type === "Havoc" ? "bg-pink-500" : sub.type === "Support" ? "bg-green-500" : "bg-indigo-500"} 
+                            ${sub.type === "Havoc" ? "bg-rose-300" : sub.type === "Support" ? "bg-green-300" : "bg-indigo-300"} 
                             rounded p-2 gap-x-2`}>
                             <div className="relative w-[40px] h-[40px] overflow-hidden rounded-full aspect-square">
                                 <Image
@@ -40,7 +40,10 @@ export default function TraitLsit({ data }: any) {
                                     src={`/trait/${sub.sub?.replaceAll(" ","")}.png`} />
                             </div>
                             <div className="flex flex-col grow h-full items-center">
-                                <div className="w-full text-center text-sm font-mr bg-violet-700 rounded text-white">{sub.sub}</div>
+                                <div className="flex flex-row w-full gap-x-1.5">
+                                    <div className="w-[60%] text-center text-xs font-mb tracking-tighter bg-white rounded text-black">{sub.sub}</div>
+                                    <div className="w-[40%] text-center text-xs font-mr bg-white rounded text-black">{sub.pickRate}%</div>
+                                </div>
                                 <div className="flex flex-row w-full h-full gap-x-1.5 items-end">
                                     <div className="text-center w-1/2 text-xs font-mr bg-slate-600 rounded text-white">{sub.winRate}%</div>
                                     <div className="text-center w-1/2 text-xs font-mr bg-neutral-600 rounded text-white">{sub.sbRate}%</div>
@@ -50,7 +53,7 @@ export default function TraitLsit({ data }: any) {
                         ) : null)}
                     </div>
                 </div>
-            )
+            ) : null
             )}
         </div>
     );

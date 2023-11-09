@@ -21,6 +21,7 @@ interface SubTrait {
 
     winRate: number;
     sbRate: number;
+    pickRate: number;
 
     countWin: number;
     countSb: number;
@@ -63,6 +64,7 @@ export function getTraitList(data: Array<any>, charCode: number, weaponNum: numb
                             games: sub[3],
                             winRate: 0,
                             sbRate: 0,
+                            pickRate: 0,
                         });
                     }
                 } else {
@@ -74,6 +76,7 @@ export function getTraitList(data: Array<any>, charCode: number, weaponNum: numb
                         games: sub[3],
                         winRate: 0,
                         sbRate: 0,
+                        pickRate: 0
                     });
                 }
             });
@@ -106,6 +109,7 @@ export function getTraitList(data: Array<any>, charCode: number, weaponNum: numb
         trait.sub.map((sub, subp) => {
             tList[p].sub[subp].winRate = Math.floor(sub.countWin / sub.games * 1000) / 10;
             tList[p].sub[subp].sbRate = Math.floor(sub.countSb / sub.games * 1000) / 10;
+            tList[p].sub[subp].pickRate = Math.floor(sub.games / trait.games * 1000) / 10;
         });
     });
     
