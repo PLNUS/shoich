@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Data } from "../libs/refactor";
+import Image from "next/image";
 
-export default function TierItem({ char, position, tierGroup}: any) {
+export default function TierItem({ char, position, tierGroup }: any) {
   const [animate, setAnimate] = useState('hidden');
-  
-  const data:Data = char; // 받아온 값들
+
+  const data: Data = char; // 받아온 값들
   const p = position; // 번호임 그냥
 
   return (
@@ -78,8 +79,14 @@ export default function TierItem({ char, position, tierGroup}: any) {
             }}
             transition={{ duration: 0.3, ease: [0, 0.71, 0.2, 1.01] }}
             animate={animate}
-            className="charicon_dir scale-[90%]">
-            <img className="charicon" src={`/characters/${data.code}.webp`} />
+            className="relative h-full aspect-square">
+              <Image
+                className="rounded-full"
+                alt=""
+                quality={80}
+                layout='fill'
+                objectFit="cover"
+                src={`/characters/${data.code}.webp`} />
           </motion.div>
           <div className="font-mr w-[80%] border-r text-sm border-stone-400 pl-1">{data.weapon + " " + data.name}</div>
         </div>

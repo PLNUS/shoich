@@ -188,7 +188,7 @@ export default function SynergyHead() {
           </div>
         </div>
         <div className="flex flex-col gap-y-2">
-          <span className="text-[42px] font-rb py-4">
+          <span className="text-[33px] font-rb py-4 tracking-tight">
             {head?.weapon} {head?.name}
           </span>
           <div className="flex flex-row text-xl font-ml tracking-tight gap-x-2">

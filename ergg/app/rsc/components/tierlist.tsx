@@ -64,7 +64,7 @@ export default function TierList({ data }: any) {
               tierGroups.current[1] = e!.value!;
               updateStartDisable(tierGroups.current[1]);
               sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
-              setAverage()
+              setAverage();
             }} />
           <div className="text-base font-msb ml-2">
             까지

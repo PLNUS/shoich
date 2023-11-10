@@ -424,12 +424,19 @@ async function updateTraits(l10n) {
 
                         const TraitName = data.substring(index + 1, endIndex);
 
+                        const basicTraitDesc = "Trait/Tooltip/" + trait.code;
+                        const indexDesc = data.indexOf(basicTraitDesc) + basicTraitDesc.length;
+                        const endIndexDesc = data.indexOf("\r", indexDesc);
+
+                        const TraitDesc = data.substring(indexDesc + 1, endIndexDesc);
+
                         // Fortification 파랑, Havoc 빨강, Support 연두 특성
 
                         if (trait.openAccountLv === 1) {
                             traitData.push({
                                 name: TraitName,
                                 code: trait.code,
+                                desc: TraitDesc,
                                 traitGroup: trait.traitGroup,
                                 traitType: trait.traitType
                             });

@@ -7,6 +7,7 @@ import { getFormattedItem, getItemList } from "../libs/itemRefactor";
 import ItemList from "./itemlist";
 import TraitLsit from "./traitlist";
 import { getTraitList } from "../libs/traitRefactor";
+import Image from "next/image";
 
 const sortByWR = (x: any, y: any) => {
     if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
@@ -94,15 +95,27 @@ export default function SynergyList({ synergy, item, trait }: any) {
                     <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
                         {[...baseData].sort(sortBySb).map((item, p) => (item.validitySb || showUnstableSynSb ?
                             <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl bg-slate-800 p-2`}>
-                                <div className="flex items-end justify-end w-[65px] h-[65px] relative mt-0.5">
-                                    <div className="absolute flex justify-end aspect-square w-[65px]">
-                                        <div className="charicon_dir bg-neutral-300 pt-1">
-                                            <img className="absolute -translate-y-1.5 scale-95" src={`/characters/${item.code}.webp`} />
+                                <div className="flex items-end justify-end min-w-[65px] h-[65px] relative mt-0.5">
+                                    <div className="absolute flex justify-end h-[65px] w-[65px]">
+                                        <div className="h-[65px] w-[65px] rounded-full bg-stone-300 overflow-hidden">
+                                            <Image
+                                                className="scale-95 -translate-y-1"
+                                                alt=""
+                                                quality={80}
+                                                width={65}
+                                                height={65}
+                                                src={`/characters/${item.code}.webp`} />
                                         </div>
                                     </div>
-                                    <div className="absolute flex justify-end aspect-square w-[22px]">
-                                        <div className="charicon_dir border-2 border-slate-500 bg-slate-500 pt-1">
-                                            <img className="absolute -translate-y-1" src={`/weapons/${item.weapon}.png`} />
+                                    <div className="absolute flex justify-end h-[22px] w-[22px]">
+                                        <div className="relative h-[22px] w-[22px] rounded-full border-[2px] overflow-hidden border-slate-500 bg-slate-500 pt-1">
+                                            <Image
+                                                className="-translate-y-1"
+                                                alt=""
+                                                quality={30}
+                                                width={22}
+                                                height={22}
+                                                src={`/weapons/${item.weapon}.png`} />
                                         </div>
                                     </div>
                                 </div>
@@ -138,14 +151,26 @@ export default function SynergyList({ synergy, item, trait }: any) {
                             <div key={p} className={`flex flex-col gap-y justify-start items-between min-w-[85px] h-full rounded-xl 
                         ${item.validityWin ? "bg-indigo-950" : "bg-orange-950"} p-2`}>
                                 <div className="flex items-end justify-end w-[65px] h-[65px] relative mt-0.5">
-                                    <div className="absolute flex justify-end aspect-square w-[65px]">
-                                        <div className="charicon_dir bg-neutral-300 pt-1">
-                                            <img className="absolute -translate-y-1.5 scale-95" src={`/characters/${item.code}.webp`} />
+                                <div className="absolute flex justify-end h-[65px] w-[65px]">
+                                        <div className="h-[65px] w-[65px] rounded-full bg-stone-300 overflow-hidden">
+                                            <Image
+                                                className="scale-95 -translate-y-1"
+                                                alt=""
+                                                quality={80}
+                                                width={65}
+                                                height={65}
+                                                src={`/characters/${item.code}.webp`} />
                                         </div>
                                     </div>
-                                    <div className="absolute flex justify-end aspect-square w-[22px]">
-                                        <div className="charicon_dir border-2 border-slate-500 bg-slate-500 pt-1">
-                                            <img className="absolute -translate-y-1" src={`/weapons/${item.weapon}.png`} />
+                                    <div className="absolute flex justify-end h-[22px] w-[22px]">
+                                        <div className="relative h-[22px] w-[22px] rounded-full border-[2px] overflow-hidden border-slate-500 bg-slate-500 pt-1">
+                                            <Image
+                                                className="-translate-y-1"
+                                                alt=""
+                                                quality={30}
+                                                width={22}
+                                                height={22}
+                                                src={`/weapons/${item.weapon}.png`} />
                                         </div>
                                     </div>
                                 </div>
@@ -169,14 +194,26 @@ export default function SynergyList({ synergy, item, trait }: any) {
                         {[...baseData].sort(sortByGames).map((item, p) => (
                             <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
                                 <div className="flex items-end justify-end w-[65px] h-[65px] relative mt-0.5">
-                                    <div className="absolute flex justify-end aspect-square w-[65px]">
-                                        <div className="charicon_dir bg-neutral-300 pt-1">
-                                            <img className="absolute -translate-y-1.5 scale-95" src={`/characters/${item.code}.webp`} />
+                                <div className="absolute flex justify-end h-[65px] w-[65px]">
+                                        <div className="h-[65px] w-[65px] rounded-full bg-stone-300 overflow-hidden">
+                                            <Image
+                                                className="scale-95 -translate-y-1"
+                                                alt=""
+                                                quality={60}
+                                                width={65}
+                                                height={65}
+                                                src={`/characters/${item.code}.webp`} />
                                         </div>
                                     </div>
-                                    <div className="absolute flex justify-end aspect-square w-[22px]">
-                                        <div className="charicon_dir border-2 border-slate-500 bg-slate-500 pt-1">
-                                            <img className="absolute -translate-y-1" src={`/weapons/${item.weapon}.png`} />
+                                    <div className="absolute flex justify-end h-[22px] w-[22px]">
+                                        <div className="relative h-[22px] w-[22px] rounded-full border-[2px] overflow-hidden border-slate-500 bg-slate-500 pt-1">
+                                            <Image
+                                                className="-translate-y-1"
+                                                alt=""
+                                                quality={20}
+                                                width={22}
+                                                height={22}
+                                                src={`/weapons/${item.weapon}.png`} />
                                         </div>
                                     </div>
                                 </div>
@@ -188,7 +225,7 @@ export default function SynergyList({ synergy, item, trait }: any) {
                     </div>
                 </div>
             </div>
-            <ItemList data={itemData}/>
+            <ItemList data={itemData} />
             <TraitLsit data={traitData} />
         </div>
 
