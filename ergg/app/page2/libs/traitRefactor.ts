@@ -61,7 +61,7 @@ export function getTraitList(data: Array<any>, charCode: number, weaponNum: numb
                         subList.push({
                             sub: subDesc?.name,
                             type: subDesc?.traitGroup,
-                            desc: subDesc!.desc,
+                            desc: subDesc === undefined ? "" : subDesc!.desc,
                             countWin: sub[1],
                             countSb: sub[2],
                             games: sub[3],
@@ -74,7 +74,7 @@ export function getTraitList(data: Array<any>, charCode: number, weaponNum: numb
                     subList.push({
                         sub: subDesc?.name,
                         type: subDesc?.traitGroup,
-                        desc: subDesc!.desc,
+                        desc: subDesc === undefined ? "" : subDesc!.desc,
                         countWin: sub[1],
                         countSb: sub[2],
                         games: sub[3],
@@ -93,7 +93,7 @@ export function getTraitList(data: Array<any>, charCode: number, weaponNum: numb
                 tList.push({
                     core: coreDesc?.name,
                     type: coreDesc?.traitGroup,
-                    desc: coreDesc!.desc,
+                    desc: coreDesc === undefined ? "" : coreDesc!.desc,
                     countWin: trait.core[1],
                     countSb: trait.core[2],
                     games: trait.core[3],

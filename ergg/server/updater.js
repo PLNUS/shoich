@@ -428,7 +428,7 @@ async function updateTraits(l10n) {
                         const indexDesc = data.indexOf(basicTraitDesc) + basicTraitDesc.length;
                         const endIndexDesc = data.indexOf("\r", indexDesc);
 
-                        const TraitDesc = data.substring(indexDesc + 1, endIndexDesc);
+                        const TraitDesc = data.substring(indexDesc + 1, endIndexDesc).replaceAll("\\n", "\n");
 
                         // Fortification 파랑, Havoc 빨강, Support 연두 특성
 

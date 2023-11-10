@@ -14,7 +14,7 @@ export default async function Home() {
     <div className="page_wrap justify-center">
       <div
         className="flex flex-col px-4 min-w-[800px] h-full gap-y-2">
-        <span className="text-3xl font-rb py-2">{formattedDate} 21:00 기준</span>{}
+        <span className="text-3xl font-rb py-2">{formattedDate} 기준</span>{}
         <TierList data={tierlist.data}></TierList>
       </div>
     </div>

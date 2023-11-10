@@ -4,6 +4,8 @@ import { useState } from "react";
 
 
 export default function TraitLsit({ data }: any) {
+    const [showTCD, setShowTCD] = useState(0);
+
     const sortByPR = (x: any, y: any) => {
         if (x.pickRate !== y.pickRate) return y.pickRate - x.pickRate;
         return y.games - x.games;
@@ -55,16 +57,24 @@ export default function TraitLsit({ data }: any) {
                 (
                     <div className="flex flex-row w-full h-[200px] border-neutral-300 border-2 rounded-md p-2 items-center">
                         <div className="flex flex-col min-w-[130px] gap-y-1 items-center p-1">
-                            <div className="relative w-[80px] h-[80px] rounded-full aspect-square">
+                            <div className="relative w-[80px] h-[80px] rounded-full aspect-square"
+                            onMouseOver={() => setShowTCD(p + 1)}
+                            onMouseOut={() => setShowTCD(0)}>
                                 <Image
                                     alt=""
                                     quality={100}
                                     layout='fill'
                                     objectFit="cover"
                                     src={`/trait/${trait.core?.replaceAll(" ", "")}.png`} />
-                                <div className={`flex absolute justify-end bg-gray-300 opacity-95 shadow-xl w-[230px] h-[100px] z-50 rounded 
-                                    ${"translate-x-[65px] -translate-y-[77px]"}`}>
-                                    <div className="w-full h-full p-2 text-xs font-mb">{trait.desc}</div>
+                                <div className={`flex flex-col absolute bg-gray-300 opacity-95 shadow-xl w-[320px] h-[110px] z-50 rounded 
+                                    ${p === 0 ?  "translate-x-[55px] translate-y-[50px] " : "translate-x-[55px] -translate-y-[82px] "}
+                                    ${showTCD === p+1 ? "visible" : "invisible"}`}>
+                                    <div className="w-full h-auto px-2 pt-2 pb-1 text-base font-mb">{trait.core} |
+                                        <span className={(trait.type === "Havoc" ? "text-red-700" : (trait.type === "Support" ? "text-emerald-700" : "text-blue-700"))}>
+                                            {trait.type === "Havoc" ? " 파괴" : trait.type === "Support" ? " 지원" : " 저항"}
+                                        </span>
+                                    </div>
+                                    <div className="w-full h-full px-2 text-xs font-mr">{trait.desc}</div>
                                 </div>
                             </div>
                             <div className="text-center text-base font-mb pt-1">{trait.core}</div>
