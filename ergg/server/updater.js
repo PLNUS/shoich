@@ -191,8 +191,12 @@ async function parseArmor(l10n) {
                 if (response.data.code === 200) {
                     response.data.data.map((armor, p) => {
                         if (armor.itemGrade === "Epic" || armor.itemGrade === "Legend") {
+                            const basicItem = "Item/Name/" + armor.code;
+                            const itemIndex = l10n.indexOf(basicItem) + basicItem.length;
+                            const endItemIndex = l10n.indexOf("\r", itemIndex);
+
                             itemData.push({
-                                name: armor.name,
+                                name: l10n.substring(itemIndex + 1, endItemIndex),
                                 code: armor.code,
                                 grade: armor.itemGrade,
                             })
@@ -216,8 +220,12 @@ async function parseWeapon(l10n) {
                 if (response.data.code === 200) {
                     response.data.data.map((weapon, p) => {
                         if (weapon.itemGrade === "Epic" || weapon.itemGrade === "Legend") {
+                            const basicItem = "Item/Name/" + weapon.code;
+                            const itemIndex = l10n.indexOf(basicItem) + basicItem.length;
+                            const endItemIndex = l10n.indexOf("\r", itemIndex);
+
                             itemData.push({
-                                name: weapon.name,
+                                name: l10n.substring(itemIndex + 1, endItemIndex),
                                 code: weapon.code,
                                 grade: weapon.itemGrade,
                                 weaponType: weapon.weaponType
@@ -245,6 +253,7 @@ async function updateMastery(l10n) {
                     let synData = [];
                     let itemData = [];
                     let traitData = [];
+                    let tacticalSkillData = [];
                     let skillDescData = [];
                     response.data.data.map((mastery, p) => {
                         const basicSkillQ = "Skill/Group/Desc/10" + (mastery.code < 10 ? "0" + mastery.code : mastery.code) + (mastery.code === 48 ? "400" : "200");
@@ -287,11 +296,49 @@ async function updateMastery(l10n) {
                         const skillIndexTName = l10n.indexOf(basicSkillTName) + basicSkillTName.length;
                         const endSkillIndexTName = l10n.indexOf("\r", skillIndexTName);
 
-                        const descQ = skillIndexQ < 50 ? "null" : l10n.substring(skillIndexQ + 1, endSkillIndexQ).replaceAll("\\n", "\n");
-                        const descW = skillIndexW < 50 ? "null" : l10n.substring(skillIndexW + 1, endSkillIndexW).replaceAll("\\n", "\n");
-                        const descE = skillIndexE < 50 ? "null" : l10n.substring(skillIndexE + 1, endSkillIndexE).replaceAll("\\n", "\n");
-                        const descR = skillIndexR < 50 ? "null" : l10n.substring(skillIndexR + 1, endSkillIndexR).replaceAll("\\n", "\n");
-                        const descT = skillIndexT < 50 ? "null" : l10n.substring(skillIndexT + 1, endSkillIndexT).replaceAll("\\n", "\n");
+                        let descQ = skillIndexQ < 50 ? "null" : l10n.substring(skillIndexQ + 1, endSkillIndexQ).replaceAll("\\n", "\n");
+                        let descW = skillIndexW < 50 ? "null" : l10n.substring(skillIndexW + 1, endSkillIndexW).replaceAll("\\n", "\n");
+                        let descE = skillIndexE < 50 ? "null" : l10n.substring(skillIndexE + 1, endSkillIndexE).replaceAll("\\n", "\n");
+                        let descR = skillIndexR < 50 ? "null" : l10n.substring(skillIndexR + 1, endSkillIndexR).replaceAll("\\n", "\n");
+                        let descT = skillIndexT < 50 ? "null" : l10n.substring(skillIndexT + 1, endSkillIndexT).replaceAll("\\n", "\n");
+
+                        const reg = new RegExp(/{[0-9]+}/);
+                        const regTag = new RegExp(/\<(.*?)>/gi);
+
+                        while (regTag.test(descQ)) {
+                            descQ = descQ.replace(regTag, "");
+                        }
+                        while (reg.test(descQ)) {
+                            descQ = descQ.replace(reg, "(?)");
+                        }
+
+                        while (regTag.test(descW)) {
+                            descW = descW.replace(regTag, "");
+                        }
+                        while (reg.test(descW)) {
+                            descW = descW.replace(reg, "(?)");
+                        }
+
+                        while (regTag.test(descE)) {
+                            descE = descE.replace(regTag, "");
+                        }
+                        while (reg.test(descE)) {
+                            descE = descE.replace(reg, "(?)");
+                        }
+
+                        while (regTag.test(descR)) {
+                            descR = descR.replace(regTag, "");
+                        }
+                        while (reg.test(descR)) {
+                            descR = descR.replace(reg, "(?)");
+                        }
+
+                        while (regTag.test(descT)) {
+                            descT = descT.replace(regTag, "");
+                        }
+                        while (reg.test(descT)) {
+                            descT = descT.replace(reg, "(?)");
+                        }
 
                         const nameQ = skillIndexQ < 50 ? "null" : l10n.substring(skillIndexQName + 1, endSkillIndexQName);
                         const nameW = skillIndexW < 50 ? "null" : l10n.substring(skillIndexWName + 1, endSkillIndexWName);
@@ -346,6 +393,10 @@ async function updateMastery(l10n) {
                             code: mastery.code,
                             trait: SynAndItemPiece.data
                         });
+                        tacticalSkillData.push({
+                            code: mastery.code,
+                            data: SynAndItemPiece.data
+                        });
                     });
                     fs.writeFile('base/charData.json', JSON.stringify(charData), 'utf8', function (error) {
                         error ? console.log(error) : null;
@@ -370,6 +421,10 @@ async function updateMastery(l10n) {
                     fs.writeFile('parsed/skillDesc.json', JSON.stringify(skillDescData), 'utf8', function (error) {
                         error ? console.log(error) : null;
                         console.log('parsed/skillDesc updated')
+                    });
+                    fs.writeFile('base/tacticalSkillData.json', JSON.stringify(tacticalSkillData), 'utf8', function (error) {
+                        error ? console.log(error) : null;
+                        console.log('base/tacticalSkillData updated')
                     });
                 }
 
@@ -455,6 +510,46 @@ async function updateTraits(l10n) {
     });
 }
 
+async function updateTacticalSkills(l10n) {
+    let tacticalSkillData = [];
+
+    axios.get("https://open-api.bser.io/v2/data/TacticalSkillSetGroup", {
+        params: {},
+        headers: { 'x-api-key': API_KEY }
+    })
+        .then(function (response) {
+            if (response.data.code === 200) {
+                const tsData = response.data.data;
+                tsData.map((ts, p) => {
+                    if (ts.modeType === 7) { // 근발트 제거
+                        const TSCode = parseInt(ts.icon.substring(11, 18));
+
+                        const basicTS = "Skill/Group/Name/" + TSCode;
+                        const TSIndex = l10n.indexOf(basicTS) + basicTS.length;
+                        const endTSIndex = l10n.indexOf("\r", TSIndex);
+
+                        // 툴팁 추가 구현 필요
+
+                        const tsName1 = l10n.substring(TSIndex + 1, endTSIndex);
+
+                        tacticalSkillData.push({
+                            name: tsName1,
+                            group: ts.group
+                        });
+                    }
+                });
+
+                fs.writeFile('parsed/tacticalSkillData.json', JSON.stringify(tacticalSkillData), 'utf8', function (error) {
+                    error ? console.log(error) : null;
+                    console.log('parsed/tacticalSkillData updated');
+                });
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
 async function updateAll() {
     console.log("L10n 불러오는 중..");
     const l10n = await updateL10n();
@@ -464,10 +559,11 @@ async function updateAll() {
     await parseWeapon(l10n);
     fs.writeFile('parsed/itemData.json', JSON.stringify(itemData), 'utf8', function (error) {
         error ? console.log(error) : null;
-        console.log('parsed/noitem updated');
+        console.log('parsed/itemData updated');
     });
     await updateMastery(l10n);
     await updateTraits(l10n);
+    await updateTacticalSkills(l10n);
 }
 
 app.listen(SCHEDULE_PORT, () => {

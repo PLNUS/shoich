@@ -94,7 +94,7 @@ export default function TierItem({ char, position, tierGroup }: any) {
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.PR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.SR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{Math.floor(data.data?.avggrade! * 100) / 100}위</div>
-        <div className="w-[12%] px-2">
+        <div className="w-[12%] px-3">
           <p className={`rounded-xl text-center text-md font-mb text-white ` + data.color}>{data.tier === 0 ? 'OP' : (data.tier === 6 ? 'RIP' : data.tier)}</p>
         </div>
       </div>

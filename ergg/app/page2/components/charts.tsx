@@ -51,9 +51,9 @@ const radarOptions = {
 
 export function CharRadar({ average, target }: any) {
   const dataset = [ // 그래프 데이터셋 과장
-    (target[0] - 2000) / (average[0] - 2000) * 100,
+    (target[0]/2 - 1000) / (average[0]/2 - 1000) * 100,
     (5 + target[1]) / (5 + average[1]) * 100, // 픽률이 낮을때 더 과장되도록 변경해야함.
-    ((average[2]-3.2) < 0 ? 0 :  (average[2]-3.2)) / (target[2]-3.2) * 100,
+    ((average[2]-3) < 0 ? 0 :  (average[2]-3)) / (target[2]-3) * 100,
     ((target[3] / 5 - 3) < 0 ? 0 : (target[3] / 5 - 3)) / (average[3] / 5 - 3) * 100,
     (target[4] - 3) / (average[4] - 3) * 100,
     ((target[5] - 5) < 0 ? 0 : (target[5] - 5)) / (average[5] - 5) * 100,];

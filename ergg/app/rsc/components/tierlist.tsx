@@ -84,17 +84,6 @@ export default function TierList({ data }: any) {
             }} />
         </div>
       </div>
-      <TierHead />
-      <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
-        {charList.map((char, p) => (
-          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
-      </div>
-    </div>
-  )
-
-  function TierHead() {
-
-    return (
       <div className="flex flex-row relative min-w-full min-h-[40px] items-center rounded py-1 bg-neutral-700">
         <div className="w-[10%] text-center text-base border-r border-white text-white font-msb">순위</div>
         <div id="sort_by_abc" className="w-[30%] text-center border-r text-base border-white text-white font-msb">구분</div>
@@ -104,8 +93,12 @@ export default function TierList({ data }: any) {
         <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.ag} text="평순" />
         <HeadPart isLast={true} sortFunc={compareAndSort} sortBy={sortStandard.np} text="티어" />
       </div>
-    );
-  }
+      <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
+        {charList.map((char, p) => (
+          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
+      </div>
+    </div>
+  )
 
   function compareAndSort(newStandard: any) {
     if (sortStandard.current == newStandard) {

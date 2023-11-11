@@ -14,6 +14,10 @@ const gameSchema = new Schema({
         required: true,
         type: Number,
     },
+    date: {
+        required: true,
+        type: String,
+    },
     data: {
         required: true,
         type: Object,
@@ -53,16 +57,29 @@ const traitSchema = new Schema({
     }
 });
 
+const tsSchema = new Schema({
+    lastGameNum: {
+        required: true,
+        type: Number,
+    },
+    data: {
+        required: true,
+        type: Object,
+    }
+});
+
 const Synergy = mongoose.model('synergys', synergySchema);
 const Item = mongoose.model('items', itemSchema);
 const Game = mongoose.model('games', gameSchema);
 const Trait = mongoose.model('traits', traitSchema);
+const TacticalSkill = mongoose.model('tacticalskills', tsSchema);
 
 const CharMastery = require("./parsed/charMastery.json");
 const CharacterData = require("./base/charData.json");
 const SynergyData = require("./base/synergyData.json");
 const ItemData = require("./base/itemData.json");
 const TraitData = require("./base/traitData.json");
+const TSData = require("./base/tacticalSkillData.json");
 // const TraitList = require("./parsed/traitList.json");
 const ItemParsed = require("./parsed/itemData.json");
 
@@ -130,29 +147,12 @@ mongoose
         console.log(err);
     });
 
-app.get('/recent', function (req, res) {
-    Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
-        res.send(docs[0]);
-    })
-});
-
-app.post('/games', function (req, res) { // 순수하게 게임 데이터들만 보냄
-    console.log('games 요청 받음');
-    Game.find()
-        .sort({ _id: -1, }).then((docs) => {
-            let datalist = [];
-            docs.map((data, p) => {
-                datalist[p] = data.data;
-            });
-            res.json(datalist);
-        })
-});
-
 app.listen(SCHEDULE_PORT, () => {
-    // 날짜 저장 작성해야함
     Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
         UpdatedData = CharacterData;
         UpdatedSynergyData = SynergyData;
+        UpdatedTraitData = TraitData;
+        UpdatedTSData = TSData;
         UpdatedItemData = ItemData; // 초기화
         sendSyncRequests(docs[0].lastGameNum, 6);
     })
@@ -185,6 +185,7 @@ let UpdatedData = CharacterData;
 let UpdatedSynergyData = SynergyData;
 let UpdatedItemData = ItemData;
 let UpdatedTraitData = TraitData;
+let UpdatedTSData = TSData;
 let rankcount = 0;
 
 let lastOrdinaryGame = 0;
@@ -235,26 +236,45 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     if (repeatstart === parallels) {
         console.log("최종점: " + lastOrdinaryGame + ", 1분간 반복대기.");
         setTimeout(() => {
-            Game.deleteMany({}); // DeleteOne이 작동안함 확인 필요
-            Game.create({
-                lastGameNum: lastOrdinaryGame + 1,
-                data: UpdatedData
+            const today = new Date();
+            const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${today.getHours()+9}시 기준`
+
+            Game.deleteMany({}).then(() => {
+                Game.create({
+                    lastGameNum: lastOrdinaryGame + 1,
+                    date: formattedDate,
+                    data: UpdatedData
+                });
             });
-            Synergy.deleteMany({});
-            Synergy.create({
-                lastGameNum: lastOrdinaryGame + 1,
-                data: UpdatedSynergyData
+
+            Synergy.deleteMany({}).then(() => {
+                Synergy.create({
+                    lastGameNum: lastOrdinaryGame + 1,
+                    data: UpdatedSynergyData
+                });
             });
-            Item.deleteMany({});
-            Item.create({
-                lastGameNum: lastOrdinaryGame + 1,
-                data: UpdatedItemData
+
+            Item.deleteMany({}).then(() => {
+                Item.create({
+                    lastGameNum: lastOrdinaryGame + 1,
+                    data: UpdatedItemData
+                });
             });
-            Trait.deleteMany({});
-            Trait.create({
-                lastGameNum: lastOrdinaryGame + 1,
-                data: UpdatedTraitData
+
+            Trait.deleteMany({}).then(() => {
+                Trait.create({
+                    lastGameNum: lastOrdinaryGame + 1,
+                    data: UpdatedTraitData
+                });
             });
+
+            TacticalSkill.deleteMany({}).then(() => {
+                TacticalSkill.create({
+                    lastGameNum: lastOrdinaryGame + 1,
+                    data: UpdatedTSData
+                });
+            });
+
             console.log("종료.");
         }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
     }
@@ -398,9 +418,9 @@ async function UpdateFunc(response) {
                         if (coreIndex !== -1) {
                             user.traitFirstSub.map((sub, subp) => {
                                 const subIndex = UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.findIndex((e) => e[0] == sub);
-                                
+
                                 UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[3]++;
-                                if(subIndex !== -1) {
+                                if (subIndex !== -1) {
                                     UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][3]++;
 
                                     if (user.gameRank === 1) {
@@ -429,9 +449,9 @@ async function UpdateFunc(response) {
                             });
                             user.traitSecondSub.map((sub, subp) => {
                                 const subIndex = UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub.findIndex((e) => e[0] == sub);
-                                
+
                                 UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].core[3]++;
-                                if(subIndex !== -1) {
+                                if (subIndex !== -1) {
                                     UpdatedTraitData[user.characterNum - 1].trait[weaponNum][tierGroup][coreIndex].sub[subIndex][3]++;
 
                                     if (user.gameRank === 1) {
@@ -487,6 +507,39 @@ async function UpdateFunc(response) {
                     } catch (error) {
                         console.log("특성 부문 에러");
                         console.error(error);
+                    }
+
+                    // TODO 11/10 전술수킬 파싱
+                    try {
+                        const userTS = user.tacticalSkillGroup;
+                        const isExistTS = UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup].findIndex(e => e[0] === userTS);
+
+                        if (isExistTS === -1) {
+                            if (user.gameRank === 1) {
+                                if (user.mmrGain > 0) {
+                                    UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup].push([userTS, 1, 1, 1]);
+                                } else {
+                                    UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup].push([userTS, 1, 1, 1]);
+                                }
+                            } else {
+                                if (user.mmrGain > 0) {
+                                    UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup].push([userTS, 0, 1, 1]);
+                                } else {
+                                    UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup].push([userTS, 0, 0, 1]);
+                                }
+                            }
+                        } else {
+                            if (user.gameRank === 1) {
+                                UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup][isExistTS][1]++;
+                            }
+                            if (user.mmrGain > 0) {
+                                UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup][isExistTS][2]++;
+                            }
+                            UpdatedTSData[user.characterNum - 1].data[weaponNum][tierGroup][isExistTS][3]++;
+                        }
+                    } catch (e) {
+                        console.log("전술스킬 파싱 에러");
+                        console.log(e);
                     }
                 }
             });

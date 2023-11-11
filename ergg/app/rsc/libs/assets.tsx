@@ -126,10 +126,10 @@ export function getColor(tier: number) {
   switch (tier) {
     case 0: return `bg-zinc-700 border-zinc-700`
     case 1: return `bg-sky-500 border-sky-500`
-    case 2: return `bg-emerald-500 border-emerald-500`
+    case 2: return `bg-green-500 border-green-500`
     case 3: return `bg-amber-500 border-amber-500`
     case 4: return `bg-orange-500 border-orange-500`
-    case 5: return `bg-rose-500 border-rose-500`
+    case 5: return `bg-rose-600 border-rose-600`
     case 6: return `bg-red-900 border-red-900`
     default: return `bg-stone-100 border-stone-100`
   }

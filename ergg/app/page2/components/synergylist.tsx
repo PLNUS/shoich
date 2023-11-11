@@ -8,6 +8,8 @@ import ItemList from "./itemlist";
 import TraitLsit from "./traitlist";
 import { getTraitList } from "../libs/traitRefactor";
 import Image from "next/image";
+import { getTacticalSkillsList } from "../libs/tsRefactor";
+import TSList from "./tslsit";
 
 const sortByWR = (x: any, y: any) => {
     if (x.synergyWin !== y.synergyWin) return y.synergyWin - x.synergyWin;
@@ -37,7 +39,7 @@ interface Synergy {
     games: number;
 }
 
-export default function SynergyList({ synergy, item, trait }: any) {
+export default function SynergyList({ synergy, item, trait, ts }: any) {
 
     const [showUnstableSynWin, setShowUnstableSynWin] = useState(false);
     const [showUnstableSynSb, setShowUnstableSynSb] = useState(false);
@@ -45,6 +47,7 @@ export default function SynergyList({ synergy, item, trait }: any) {
     const [baseData, setBaseData] = useState<Array<any>>([]);
     const [itemData, setItemData] = useState<Array<any>>([]);
     const [traitData, setTraitData] = useState<Array<any>>([]);
+    const [tsData, setTsData] = useState<Array<any>>([]);
 
     useEffect(() => {
         const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
@@ -70,12 +73,19 @@ export default function SynergyList({ synergy, item, trait }: any) {
         } else {
             setTraitData(getTraitList(JSON.parse(sessionStorage.getItem("trait")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
         }
+
+        if (sessionStorage.getItem("ts") === null) {
+            sessionStorage.setItem("ts", JSON.stringify(ts));
+            setTsData(getTacticalSkillsList(ts, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+        } else {
+            setTsData(getTacticalSkillsList(JSON.parse(sessionStorage.getItem("ts")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+        }
     }, [])
 
     return (
         <div className="flex flex-row w-full h-full">
-            <div className="flex flex-col w-[385px] h-[616px] justify-between gap-y-2">
-                <div className="flex flex-col w-full h-auto border-neutral-300 border-2 rounded-md px-2">
+            <div className="flex flex-col w-[385px] h-[616px] gap-y-2">
+                <div className="flex flex-col w-full h-[196px] border-neutral-300 border-2 rounded-md px-2">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
                             순방하기 좋아요
@@ -129,7 +139,7 @@ export default function SynergyList({ synergy, item, trait }: any) {
                             : null))}
                     </div>
                 </div>
-                <div className="flex flex-col w-full h-auto border-neutral-300 border-2 rounded-md px-2">
+                <div className="flex flex-col w-full h-[196px] border-neutral-300 border-2 rounded-md px-2">
                     <div className="flex flex-row justify-between items-end">
                         <div className="text-2xl font-mr tracking-tighter p-2">
                             우승하기 좋아요
@@ -184,46 +194,7 @@ export default function SynergyList({ synergy, item, trait }: any) {
                             : null))}
                     </div>
                 </div>
-                <div className="flex flex-col w-full h-auto border-neutral-300 border-2 rounded-md px-2">
-                    <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
-                            자주 만나요
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full gap-x-2 h-full overflow-x-scroll overflow-y-hidden">
-                        {[...baseData].sort(sortByGames).map((item, p) => (
-                            <div key={p} className={`flex flex-col gap-y justify-start items-center min-w-[85px] h-full rounded-xl ${item.validitySb ? "bg-emerald-950" : "bg-slate-950"} p-2`}>
-                                <div className="flex items-end justify-end w-[65px] h-[65px] relative mt-0.5">
-                                <div className="absolute flex justify-end h-[65px] w-[65px]">
-                                        <div className="h-[65px] w-[65px] rounded-full bg-stone-300 overflow-hidden">
-                                            <Image
-                                                className="scale-95 -translate-y-1"
-                                                alt=""
-                                                quality={60}
-                                                width={65}
-                                                height={65}
-                                                src={`/characters/${item.code}.webp`} />
-                                        </div>
-                                    </div>
-                                    <div className="absolute flex justify-end h-[22px] w-[22px]">
-                                        <div className="relative h-[22px] w-[22px] rounded-full border-[2px] overflow-hidden border-slate-500 bg-slate-500 pt-1">
-                                            <Image
-                                                className="-translate-y-1"
-                                                alt=""
-                                                quality={20}
-                                                width={22}
-                                                height={22}
-                                                src={`/weapons/${item.weapon}.png`} />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="text-xs font-msb w-full text-white pt-2">
-                                    <span className={`text-sm font-msb`}>{item.games}</span> 게임
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <TSList data={tsData}/> 
             </div>
             <ItemList data={itemData} />
             <TraitLsit data={traitData} />

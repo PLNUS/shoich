@@ -25,7 +25,7 @@ export default function ItemList({ data }: any) {
     return (
         <div className="flex flex-col w-[444px] h-[616px] ml-4 border-neutral-300 border-2 rounded-md px-2">
             <span className="font-ml text-2xl pl-1 pt-2 pb-1">아이템 통계</span>
-            <div className="flex flex-row items-center w-full min-h-[45px] divide-x-2 divide-slate-800 pt-0.5">
+            <div className="flex flex-row items-center w-full min-h-[45px] divide-x divide-black pt-0.5">
                 <div className="flex flex-row w-[46%] pr-4 gap-x-2">
                     <ReactSelect
                         className="w-full"
@@ -59,8 +59,8 @@ export default function ItemList({ data }: any) {
             <div className="flex flex-col w-full h-full gap-y-2 py-2 overflow-hidden">
                 {data.sort(sortByGames).map((item: any, p: number) => (
                     item.itemtype === type && item.itemgrade === grade ?
-                        <div key={p} className={`flex flex-row items-center w-full min-h-[50px] divide-x-2 divide-slate-800
-                        ${grade === "Epic" ? "bg-[rgb(228,224,254)]" : "bg-[rgb(254,221,187)]"}
+                        <div key={p} className={`flex flex-row items-center w-full min-h-[50px] divide-x divide-black
+                        ${grade === "Epic" ? "bg-[rgb(228,224,254)] " : "bg-[rgb(254,221,187)] "}
                          rounded-md shadow-md`}>
                             <div className="flex flex-row w-[46%] items-center gap-x-2 py-2 pl-3">
                                 <div className={`flex justify-center w-[60px] h-[36px] py-1 ${getGradientByGrade(item.itemgrade)} rounded-md`}>
@@ -68,15 +68,15 @@ export default function ItemList({ data }: any) {
                                         quality={30}
                                         width={52} height={36} src={`/items/${item.code}.png`} ></Image>
                                 </div>
-                                <span className="text-xs font-msb text-slate-800 ">{getItemNameByCode(item.code)}</span>
+                                <span className="text-xs font-msb text-slate-800">{getItemNameByCode(item.code)}</span>
                             </div>
-                            <div className="w-[18%] text-xs text-center tracking-wide font-rb text-slate-800 pb-[1px]">
+                            <div className="w-[18%] text-xs text-center tracking-wide font-num py-0.5 text-black">
                                 {item.PR}%
                             </div>
-                            <div className="w-[18%] text-xs text-center tracking-wide font-rb text-slate-800 pb-[1px]">
+                            <div className="w-[18%] text-xs text-center tracking-wide font-num py-0.5 text-black">
                                 {item.synergyWin}%
                             </div>
-                            <div className="w-[18%] text-xs text-center tracking-wide font-rb text-slate-800 pb-[1px]">
+                            <div className="w-[18%] text-xs text-center tracking-wide font-num py-0.5 text-black">
                                 {item.synergySb}%
                             </div>
                         </div>

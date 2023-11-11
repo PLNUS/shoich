@@ -2,14 +2,10 @@ import mongoose from "mongoose";
 import { models } from "mongoose";
 import { Schema } from "mongoose";
 
-const gameSchema = new Schema({
+const tsSchema = new Schema({
     lastGameNum: {
         required: true,
         type: Number,
-    },
-    date: {
-        required: true,
-        type: String,
     },
     data: {
         required: true,
@@ -17,6 +13,6 @@ const gameSchema = new Schema({
     }
 });
 
-const Game = models?.game ||  mongoose.model('game', gameSchema);
+const TacticalSkill = models?.tacticalskills ||  mongoose.model('tacticalskills', tsSchema);
 
-export default Game;
+export default TacticalSkill;
