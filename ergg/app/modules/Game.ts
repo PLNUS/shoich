@@ -7,13 +7,9 @@ const gameSchema = new Schema({
         required: true,
         type: Number,
     },
-    versionMajor: {
+    date: {
         required: true,
-        type: Number,
-    },
-    versionMinor: {
-        required: true,
-        type: Number,
+        type: String,
     },
     data: {
         required: true,
@@ -21,6 +17,6 @@ const gameSchema = new Schema({
     }
 });
 
-const Game = models.game ||  mongoose.model('game', gameSchema);
+const Game = models?.game ||  mongoose.model('game', gameSchema);
 
 export default Game;

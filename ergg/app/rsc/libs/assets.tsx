@@ -124,13 +124,14 @@ export function updateStartDisable(endTierGroup:number) {
 
 export function getColor(tier: number) {
   switch (tier) {
-    case 0: return `bg-stone-500`
-    case 1: return `bg-sky-500`
-    case 2: return `bg-emerald-500`
-    case 3: return `bg-amber-500`
-    case 4: return `bg-orange-500`
-    case 5: return `bg-rose-500`
-    default: return `bg-stone-100`
+    case 0: return `bg-zinc-700 border-zinc-700`
+    case 1: return `bg-sky-500 border-sky-500`
+    case 2: return `bg-green-500 border-green-500`
+    case 3: return `bg-amber-500 border-amber-500`
+    case 4: return `bg-orange-500 border-orange-500`
+    case 5: return `bg-rose-600 border-rose-600`
+    case 6: return `bg-red-900 border-red-900`
+    default: return `bg-stone-100 border-stone-100`
   }
 }
 
@@ -161,6 +162,7 @@ interface Standard {
   pr : (x: Data, y: Data) => number,
   sr : (x: Data, y: Data) => number,
   np : (x: Data, y: Data) => number,
+  ag : (x: Data, y: Data) => number,
   current? : (x: Data, y: Data) => number,
 }
 
@@ -182,6 +184,11 @@ export const sortStandard:Standard = {
   },
   np : (x: Data, y: Data) => {
     if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
+    if (x.PR !== y.PR) return y.PR - x.PR;
+    return y.code - x.code;
+  },
+  ag : (x: Data, y: Data) => {
+    if (x.data!.avggrade !== y.data!.avggrade) return y.data!.avggrade - x.data!.avggrade;
     if (x.PR !== y.PR) return y.PR - x.PR;
     return y.code - x.code;
   }
