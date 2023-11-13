@@ -24,8 +24,8 @@ export default function TraitLsit({ data }: any) {
                             <Image
                                 alt={sub.sub!}
                                 quality={50}
-                                layout='fill'
-                                objectFit="cover"
+                                fill
+                                style={{objectFit:"cover"}}
                                 src={`/trait/${sub.sub?.replaceAll(" ", "")}.png`} />
                             {showTD === p + 1 ? <div className={`flex absolute justify-end bg-gray-300 opacity-95 shadow-xl w-[180px] h-auto z-50 rounded`
                                 + (tp === 2 ? " -translate-x-[92%] -translate-y-[80%] items-end " : " -translate-x-[92%] translate-y-[24px] ")}>
@@ -61,8 +61,8 @@ export default function TraitLsit({ data }: any) {
                                 <Image
                                     alt=""
                                     quality={100}
-                                    layout='fill'
-                                    objectFit="cover"
+                                    fill
+                                    style={{objectFit:"cover"}}
                                     src={`/trait/${trait.core?.replaceAll(" ", "")}.png`} />
                                 <div className={`flex flex-col absolute bg-gray-300 opacity-95 shadow-xl w-[370px] h-[110px] z-50 rounded 
                                     ${p === 0 ? "translate-x-[55px] translate-y-[50px] " : "translate-x-[55px] -translate-y-[82px] "}

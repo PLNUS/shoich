@@ -16,8 +16,8 @@ export default function TSList({ data }: any) {
                                 <Image
                                     alt=""
                                     quality={50}
-                                    layout='fill'
-                                    objectFit="cover"
+                                    fill
+                                    style={{objectFit:"cover"}}
                                     src={`/tacticalskills/${ts.group}.png`} />
                             </div>
                             <div className="w-full text-center font-mb tracking-tighter text-sm py-1">{ts.name}</div>

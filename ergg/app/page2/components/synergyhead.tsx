@@ -58,12 +58,13 @@ export default function SynergyHead() {
             className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(1)}
             onMouseOut={() => setShowTooltip(0)}>
-            <Image
-              className="rounded-lg"
-              alt=""
-              quality={100}
-              layout='fill'
-              src={`/skills/${head?.code}/q.png`} />
+            {head !== undefined ? (
+              <Image
+                className="rounded-lg"
+                alt=""
+                quality={100}
+                fill
+                src={`/skills/${head?.code}/q.png`} />) : null}
             <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">Q</div>
             <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[550px] h-auto z-50 rounded p-2 "
               + (showTooltip === 1 ? "visible" : "invisible")}>
@@ -77,12 +78,13 @@ export default function SynergyHead() {
             className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(2)}
             onMouseOut={() => setShowTooltip(0)}>
-            <Image
-              className="rounded-lg"
-              alt=""
-              quality={100}
-              layout='fill'
-              src={`/skills/${head?.code}/w.png`} />
+            {head !== undefined ? (
+              <Image
+                className="rounded-lg"
+                alt=""
+                quality={100}
+                fill
+                src={`/skills/${head?.code}/w.png`} />) : null}
             <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">W</div>
             <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[550px] h-auto z-50 rounded p-2 "
               + (showTooltip === 2 ? "visible" : "invisible")}>
@@ -95,12 +97,13 @@ export default function SynergyHead() {
           <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(3)}
             onMouseOut={() => setShowTooltip(0)}>
-            <Image
-              className="rounded-lg"
-              alt=""
-              quality={100}
-              layout='fill'
-              src={`/skills/${head?.code}/e.png`} />
+            {head !== undefined ? (
+              <Image
+                className="rounded-lg"
+                alt=""
+                quality={100}
+                fill
+                src={`/skills/${head?.code}/e.png`} />) : null}
             <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">E</div>
             <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[550px] h-auto z-50 rounded p-2 "
               + (showTooltip === 3 ? "visible" : "invisible")}>
@@ -113,12 +116,13 @@ export default function SynergyHead() {
           <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(4)}
             onMouseOut={() => setShowTooltip(0)}>
-            <Image
-              className="rounded-lg"
-              alt=""
-              quality={100}
-              layout='fill'
-              src={`/skills/${head?.code}/r.png`} />
+            {head !== undefined ? (
+              <Image
+                className="rounded-lg"
+                alt=""
+                quality={100}
+                fill
+                src={`/skills/${head?.code}/r.png`} />) : null}
             <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">R</div>
             <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[550px] h-auto z-50 rounded p-2 "
               + (showTooltip === 4 ? "visible" : "invisible")}>
@@ -131,12 +135,13 @@ export default function SynergyHead() {
           <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-lg"
             onMouseOver={() => setShowTooltip(5)}
             onMouseOut={() => setShowTooltip(0)}>
-            <Image
-              className="rounded-lg"
-              alt=""
-              quality={100}
-              layout='fill'
-              src={`/skills/${head?.code}/t.png`} />
+            {head !== undefined ? (
+              <Image
+                className="rounded-lg"
+                alt=""
+                quality={100}
+                fill
+                src={`/skills/${head?.code}/t.png`} />) : null}
             <div className="flex items-center justify-center rounded-ee-lg absolute text-[12px] font-mb text-white bg-gray-700 w-[20px] h-[20px]">T</div>
             <div className={"flex flex-col absolute text-sm font-ml translate-x-[97%] translate-y-[90%] bg-gray-300 opacity-95 shadow-xl w-[550px] h-auto z-50 rounded p-2 "
               + (showTooltip === 5 ? "visible" : "invisible")}>
@@ -175,8 +180,8 @@ export default function SynergyHead() {
                   className="scale-[107%]"
                   alt=""
                   quality={100}
-                  layout='fill'
-                  objectFit="cover"
+                  fill
+                  style={{objectFit:"cover"}}
                   src={`/characters/${head?.code}.webp`} />
               </div>
             </div>
@@ -193,7 +198,7 @@ export default function SynergyHead() {
           </span>
           <div className="flex flex-row text-xl font-ml tracking-tight gap-x-2">
             <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
-            <div className="flex flex-row items-center gap-x-[6px]">
+              <div className="flex flex-row items-center gap-x-[6px]">
                 <span className="text-base">픽률</span>
                 <span className="font-ml text-xs border border-white rounded mt-[1px] px-0.5">{head?.PRGrade}</span>
               </div>

@@ -84,8 +84,8 @@ export default function TierItem({ char, position, tierGroup }: any) {
                 className="rounded-full"
                 alt=""
                 quality={80}
-                layout='fill'
-                objectFit="cover"
+                fill
+                style={{objectFit:"cover"}}
                 src={`/characters/${data.code}.webp`} />
           </motion.div>
           <div className="font-mr w-[80%] border-r text-sm border-stone-400 pl-1">{data.weapon + " " + data.name}</div>
