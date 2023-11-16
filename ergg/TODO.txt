@@ -5,6 +5,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%
 
+https://cafe.naver.com/embestc/834831 === 스터터링 진단
+
 이리 개발자 비번
 samtau211@gmail.com
 Lucy_031415973
@@ -142,3 +144,7 @@ updateOne으로 서버에 Merge 하고있는데 data 안에 값이 추가되지 
 //몽고디비를 거치지 않고 서버내부에 데이터 저장하고 로드하는 식으로 변경해보기//
 
 이러면 revalidate도 설정할 필요가 업음
+
+지금 REVALIDATE 기준 이상함
+로딩화면 구현해야함 RSC->PAGE2 시
+첫화면 디자인 필요

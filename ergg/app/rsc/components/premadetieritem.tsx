@@ -6,14 +6,14 @@ import Link from "next/link";
 import { Data } from "../libs/refactor";
 import Image from "next/image";
 
-export default function TierItem({ char, position, tierGroup }: any) {
+export default function PremadeTierItem({ char, position, tierGroup, average }: any) {
   const [animate, setAnimate] = useState('hidden');
 
   const data: Data = char; // 받아온 값들
   const p = position; // 번호임 그냥
 
   return (
-    <motion.div className="tierlist_item_wrap"
+    <motion.div className="flex flex-row relative min-w-full min-h-[75px] items-center bg-zinc-200 rounded-xl py-2 overflow-hidden"
       whileTap={{ scale: 0.98 }}
     // onHoverStart={e => { setAnimate("visible") }}
     // onHoverEnd={e => { setAnimate("hidden") }}
@@ -70,8 +70,8 @@ export default function TierItem({ char, position, tierGroup }: any) {
         </div>
       </motion.div>
       <div className="flex flex-row items-center w-full h-full" onClick={() => setAnimate('visible')}>
-        <div className="w-[10%] text-center font-mb text-lg border-r border-stone-400">{p + 1}</div>
-        <div className="flex flex-row min-w-[30%] items-center text-md h-full gap-x-2 pl-3">
+        <div className="w-[12%] text-center font-mb text-lg border-r border-stone-400">{p + 1}</div>
+        <div className="flex flex-row min-w-[32%] items-center text-md h-full gap-x-2 pl-3">
           <motion.div
             variants={{
               hidden: { opacity: 1, x: "0" },
@@ -88,13 +88,21 @@ export default function TierItem({ char, position, tierGroup }: any) {
                 style={{objectFit:"cover"}}
                 src={`/characters/${data.code}.webp`} />
           </motion.div>
-          <div className="font-mr w-[80%] border-r text-sm border-stone-400 pl-1">{data.weapon + " " + data.name}</div>
+          <div className="font-mr w-[80%] border-r text-xs border-stone-400 pl-0.5">{data.weapon + " " + data.name}</div>
         </div>
-        <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.WR}%</div>
-        <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.PR}%</div>
-        <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.SR}%</div>
-        <div className="w-[12%] text-center border-r text-sm border-stone-400">{Math.floor(data.data?.avggrade! * 100) / 100}위</div>
-        <div className="w-[12%] px-3">
+        <div className="flex flex-col w-[14%] text-center border-r text-sm border-stone-400">
+          <span>{data.WR}%</span>
+          <span className={`text-xs font-num ${(data.WR - average[5] > 0) ? "text-rose-500" : "text-indigo-500"} `}>{(data.WR - average[5] > 0 ? "+" : "") + Math.floor((data.WR - average[5]) * 100) / 100}%</span>
+        </div>
+        <div className="flex flex-col w-[14%] text-center border-r text-sm border-stone-400">
+          <span>{data.PR}%</span>
+          <span className={`text-xs font-num ${(data.PR - average[1] > 0) ? "text-rose-500" : "text-indigo-500"} `}>{(data.PR - average[1] > 0 ? "+" : "") + Math.floor((data.PR - average[1]) * 100) / 100}%</span>
+        </div>
+        <div className="flex flex-col w-[14%] text-center border-r text-sm border-stone-400">
+          <span>{data.SR}%</span>
+          <span className={`text-xs font-num ${(data.SR - average[3] > 0) ? "text-rose-500" : "text-indigo-500"} `}>{(data.SR - average[3] > 0 ? "+" : "") + Math.floor((data.SR - average[3]) * 100) / 100}%</span>
+        </div>
+        <div className="w-[14%] px-3">
           <p className={`rounded-xl text-center text-md font-mb text-white ` + data.color}>{data.tier === 0 ? 'OP' : (data.tier === 6 ? 'RIP' : data.tier)}</p>
         </div>
       </div>

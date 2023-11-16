@@ -7,8 +7,10 @@ import ReactSelect from "react-select";
 import TierItem from "./tieritem";
 import { includesByCho } from "hangul-util";
 import HeadPart from "./headpart";
+import PremadeTierItem from "./premadetieritem";
+import PremadeHeadPart from "./premadeheadpart";
 
-export default function TierList({ data }: any) {
+export default function PremadeTierList({ data }: any) {
   const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== null ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
   // 지금 이 TierList Component 자체가 SSR로 한번 Generate 되어서 클라이언트로 내려오는데 그때 이 TierGroups 값이 [5,1] 이 됨 (typeof window 에 걸려서)
   // 이후 Hydrate 시 다른 TierGroups 값이 배정되면서 Hydration 에러가 발생하여 CSR로 전환, 이후 sessionStorage 에서 가져온 TierGroup 값으로 다시 렌더링
@@ -17,6 +19,8 @@ export default function TierList({ data }: any) {
   const tierGroups = useRef(existTg);
   const [charList, setCharList] = useState<Array<any>>(getListforTiergroup(data, tierGroups.current[0], tierGroups.current[1]).sort(sortStandard.np));
   const searchBase = useRef(charList);
+
+  const average = typeof window !== "undefined" && sessionStorage.getItem("average") !== null ? JSON.parse(sessionStorage.getItem("average")!) : {}; 
 
   useEffect(() => {
     sortStandard.current === undefined ? sortStandard.current = sortStandard.np : null;
@@ -84,17 +88,16 @@ export default function TierList({ data }: any) {
         </div>
       </div>
       <div className="flex flex-row relative min-w-full min-h-[40px] items-center rounded py-1 bg-neutral-700">
-        <div className="w-[10%] text-center text-base border-r border-white text-white font-msb">순위</div>
-        <div id="sort_by_abc" className="w-[30%] text-center border-r text-base border-white text-white font-msb">구분</div>
-        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.wr} sortCur={sortStandard.current} text="승률"/>
-        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.pr} sortCur={sortStandard.current} text="픽률" />
-        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.sr} sortCur={sortStandard.current} text="순방률" />
-        <HeadPart sortFunc={compareAndSort} sortBy={sortStandard.ag} sortCur={sortStandard.current} text="평순" />
-        <HeadPart isLast={true} sortFunc={compareAndSort} sortBy={sortStandard.np} sortCur={sortStandard.current} text="티어" />
+        <div className="w-[12%] text-center text-base border-r border-white text-white font-msb">순위</div>
+        <div id="sort_by_abc" className="w-[32%] text-center border-r text-base border-white text-white font-msb">구분</div>
+        <PremadeHeadPart sortFunc={compareAndSort} sortBy={sortStandard.wr} sortCur={sortStandard.current} text="승률"/>
+        <PremadeHeadPart sortFunc={compareAndSort} sortBy={sortStandard.pr} sortCur={sortStandard.current} text="픽률" />
+        <PremadeHeadPart sortFunc={compareAndSort} sortBy={sortStandard.sr} sortCur={sortStandard.current} text="순방률" />
+        <PremadeHeadPart isLast={true} sortFunc={compareAndSort} sortBy={sortStandard.np} sortCur={sortStandard.current} text="티어" />
       </div>
       <div className="flex flex-col h-full w-full gap-y-2 overflow-scroll scrollbar-hide">
         {charList.map((char, p) => (
-          <TierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
+          <PremadeTierItem average={average} key={p} char={char} position={p} tierGroup={tierGroups.current} />))}
       </div>
     </div>
   )

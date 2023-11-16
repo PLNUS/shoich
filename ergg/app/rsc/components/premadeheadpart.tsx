@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export default function HeadPart({ sortFunc, sortBy, sortCur, text, isLast }: any) {
+export default function PremadeHeadPart({ sortFunc, sortBy, sortCur, text, isLast }: any) {
   const [svgState, setSvgState] = useState(0);
 
   return (
     <div 
-      className={`w-[12%] ${!isLast ? "border-r" : ""} border-white px-3`}>
+      className={`min-w-[14%] ${!isLast ? "border-r" : ""} border-white px-3`}>
       <div
         className="flex flex-row rounded-xl justify-center items-center gap-x-1 hover:bg-neutral-500"
         onClick={() => {
@@ -14,7 +14,7 @@ export default function HeadPart({ sortFunc, sortBy, sortCur, text, isLast }: an
           }
           sortFunc(sortBy);
         }}>
-        <span className="text-sm text-white font-mr">{text}</span>
+        <span className="text-xs text-white font-mr">{text}</span>
         {svgState === 0 ? (<DownSVG />) : (<UpSVG />)}
       </div>
     </div>

@@ -82,6 +82,7 @@ function getWeaponNum(charCode:number, firstWeaponCode:number) {
 export function getItemList(data: Array<any>, charCode: number, weaponNum: number, startTierGroup: number, endTierGroup: number) {
     // charCode, weaponNum은 0일 수 없음.
     // tierGroup => 8 브   7 실 6 골 ~ 2 데 1 이
+    // console.log(data[charCode -1]);
     const sList: Array<any> = [];
     for (let i = 0; i <= (startTierGroup - endTierGroup); i++) {
         let isExist;

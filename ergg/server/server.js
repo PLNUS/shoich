@@ -24,6 +24,17 @@ const gameSchema = new Schema({
     }
 });
 
+const premadeSchema = new Schema({
+    lastGameNum: {
+        required: true,
+        type: Number,
+    },
+    data: {
+        required: true,
+        type: Object,
+    }
+});
+
 const synergySchema = new Schema({
     lastGameNum: {
         required: true,
@@ -71,11 +82,13 @@ const tsSchema = new Schema({
 const Synergy = mongoose.model('synergys', synergySchema);
 const Item = mongoose.model('items', itemSchema);
 const Game = mongoose.model('games', gameSchema);
+const PremadeGame = mongoose.model('premadegames', premadeSchema);
 const Trait = mongoose.model('traits', traitSchema);
 const TacticalSkill = mongoose.model('tacticalskills', tsSchema);
 
 const CharMastery = require("./parsed/charMastery.json");
 const CharacterData = require("./base/charData.json");
+const PremadeData = require("./base/premadeData.json");
 const SynergyData = require("./base/synergyData.json");
 const ItemData = require("./base/itemData.json");
 const TraitData = require("./base/traitData.json");
@@ -118,12 +131,18 @@ app.get('/', function (req, res) {
     res.send('hello world!!');
 });
 
-axios.get('https://open-api.bser.io/v1/rank/top/19/3', {
+axios.get('https://open-api.bser.io/v1/rank/top/20/3', {
     params: {},
     headers: { 'x-api-key': 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0' }
 }).then(function (response) {
     let eterCut = response.data.topRanks.find(e => e.rank === 200).mmr;
     let demiCut = response.data.topRanks.find(e => e.rank === 700).mmr;
+    if (eterCut < 6000) {
+        eterCut = 6000;
+    }
+    if (demiCut < 6000) {
+        demiCut = 6000;
+    }
     tierCut = [eterCut, demiCut];
     console.log(tierCut)
 }).catch(function (e) {
@@ -148,14 +167,15 @@ mongoose
     });
 
 app.listen(SCHEDULE_PORT, () => {
-    Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
-        UpdatedData = CharacterData;
-        UpdatedSynergyData = SynergyData;
-        UpdatedTraitData = TraitData;
-        UpdatedTSData = TSData;
-        UpdatedItemData = ItemData; // 초기화
-        sendSyncRequests(docs[0].lastGameNum, 6);
-    })
+    // Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
+    //     UpdatedData = CharacterData;
+    //     UpdatedSynergyData = SynergyData;
+    //     UpdatedTraitData = TraitData;
+    //     UpdatedTSData = TSData;
+    //     UpdatedItemData = ItemData; // 초기화
+    //     sendSyncRequests(docs[0].lastGameNum, 6);
+    // })
+    sendSyncRequests(30367458, 6);
 
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
@@ -182,6 +202,7 @@ function getWeaponNum(charCode, firstWeaponCode) {
 }
 
 let UpdatedData = CharacterData;
+let UpdatedPreMadeData = PremadeData;
 let UpdatedSynergyData = SynergyData;
 let UpdatedItemData = ItemData;
 let UpdatedTraitData = TraitData;
@@ -236,14 +257,27 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     if (repeatstart === parallels) {
         console.log("최종점: " + lastOrdinaryGame + ", 1분간 반복대기.");
         setTimeout(() => {
-            const today = new Date();
-            const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${today.getHours()+9}시 기준`
+            const curr = new Date();
+            const utc =
+                curr.getTime() +
+                (curr.getTimezoneOffset() * 60 * 1000);
+            const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+            const today = new Date(utc + (KR_TIME_DIFF));
+            const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${today.getHours()}시 기준`;
 
+            // 로컬에 저장하는것도 고려해보자.
             Game.deleteMany({}).then(() => {
                 Game.create({
                     lastGameNum: lastOrdinaryGame + 1,
                     date: formattedDate,
                     data: UpdatedData
+                });
+            });
+
+            PremadeGame.deleteMany({}).then(() => {
+                PremadeGame.create({
+                    lastGameNum: lastOrdinaryGame + 1,
+                    data: UpdatedPreMadeData
                 });
             });
 
@@ -280,13 +314,15 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     }
 }
 
+let a1= 0;
+let prea1=0;
+
 async function UpdateFunc(response) {
     let game = response.data.userGames;
-
     try {
         if (game[0].matchingMode === 3 && game[0].serverName === "Seoul") { // 랭겜, 서버 세팅
             game.map((user, p) => {
-                if (user.mmrBefore > 1000) { // 브론즈 이상 통계만 수집
+                if (user.mmrBefore >= 1000) { // 브론즈 이상 통계만 수집
                     let weaponNum = getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0]);
                     let tierGroup = getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1;
 
@@ -310,7 +346,7 @@ async function UpdateFunc(response) {
 
                         // 가독성 위해 if문 두번 씀 그냥
                         if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
-                            // 3. 평딜
+                            // 3. 평딜 << 여길 평딜을 구하지 말고 총합딜링을 구해야함.
                             let targetGameCount = UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1];
                             // 해당 구간(티어그룹별, 무기별) 판수 카운트
 
@@ -319,12 +355,45 @@ async function UpdateFunc(response) {
                             UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1]
                                 = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
 
-                            // 4. TK(팀 킬수)
+                            // 4. TK(팀 킬수) 여기도 위와 동일
                             let beforeAvgTK = UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1];
 
                             UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1]
                                 = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
                         }
+
+                        if (user.preMade !== 1) { // 사전큐 처리부분인데 여기 이상함
+                            UpdatedPreMadeData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1]++;
+
+                            if (user.escapeState === 3) {
+                                UpdatedPreMadeData[user.characterNum - 1].grades[weaponNum][tierGroup][8]++;
+                            }
+
+                            if (user.mmrGain > 0) {
+                                UpdatedPreMadeData[user.characterNum - 1].scores[weaponNum][tierGroup][0]++;
+                            }
+
+                            UpdatedPreMadeData[user.characterNum - 1].scores[weaponNum][tierGroup][1] += user.mmrGain;
+
+                            let targetPreGameCount = UpdatedPreMadeData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1];
+                            let beforePreAvgDeal = UpdatedPreMadeData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1];
+                            let beforePreAvgTK = UpdatedPreMadeData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1];
+
+                            UpdatedPreMadeData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1]
+                                = (beforePreAvgDeal * (targetPreGameCount - 1) + user.damageToPlayer) / targetPreGameCount;
+
+                            UpdatedPreMadeData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1]
+                                = (beforePreAvgTK * (targetPreGameCount - 1) + user.teamKill) / targetPreGameCount;
+                        }
+
+                        //if (user.characterNum === 68) { // 이건 잘되는데 이상하다 그죠?
+                        //    a1++;
+                        //    if(user.preMade !== 1) {
+                        //        prea1++;
+                        //    }
+                        //
+                        //    console.log(a1 + " / " + prea1);
+                        //}
                     } catch (e) {
                         console.log("등수 부문 처리오류");
                         console.log(e);
