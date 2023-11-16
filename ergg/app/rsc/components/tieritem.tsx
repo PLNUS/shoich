@@ -13,7 +13,7 @@ export default function TierItem({ char, position, tierGroup }: any) {
   const p = position; // 번호임 그냥
 
   return (
-    <motion.div className="tierlist_item_wrap"
+    <motion.div className="tierlist_item_wrap bg-zinc-200"
       whileTap={{ scale: 0.98 }}
     // onHoverStart={e => { setAnimate("visible") }}
     // onHoverEnd={e => { setAnimate("hidden") }}
@@ -90,8 +90,8 @@ export default function TierItem({ char, position, tierGroup }: any) {
           </motion.div>
           <div className="font-mr w-[80%] border-r text-sm border-stone-400 pl-1">{data.weapon + " " + data.name}</div>
         </div>
-        <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.WR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.PR}%</div>
+        <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.WR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{data.SR}%</div>
         <div className="w-[12%] text-center border-r text-sm border-stone-400">{Math.floor(data.data?.avggrade! * 100) / 100}위</div>
         <div className="w-[12%] px-3">

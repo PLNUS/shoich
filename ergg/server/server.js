@@ -131,7 +131,7 @@ app.get('/', function (req, res) {
     res.send('hello world!!');
 });
 
-axios.get('https://open-api.bser.io/v1/rank/top/20/3', {
+axios.get('https://open-api.bser.io/v1/rank/top/21/3', {
     params: {},
     headers: { 'x-api-key': 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0' }
 }).then(function (response) {
@@ -175,7 +175,7 @@ app.listen(SCHEDULE_PORT, () => {
     //     UpdatedItemData = ItemData; // 초기화
     //     sendSyncRequests(docs[0].lastGameNum, 6);
     // })
-    sendSyncRequests(30367458, 6);
+    sendSyncRequests(30357458, 6);
 
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });

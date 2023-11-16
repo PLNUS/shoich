@@ -14,7 +14,7 @@ export default function HeadPart({ sortFunc, sortBy, sortCur, text, isLast }: an
           }
           sortFunc(sortBy);
         }}>
-        <span className="text-sm text-white font-mr">{text}</span>
+        <span className="text-sm text-white font-ml">{text}</span>
         {svgState === 0 ? (<DownSVG />) : (<UpSVG />)}
       </div>
     </div>

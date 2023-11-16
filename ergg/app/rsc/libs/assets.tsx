@@ -166,6 +166,11 @@ interface Standard {
   current? : (x: Data, y: Data) => number,
 }
 
+export const sortByGap = (x: any, y: any) => {
+  if ((x.WRGap + x.SRGap) !== (y.WRGap + + y.SRGap)) return (y.WRGap + y.PR + y.SRGap) - (x.WRGap + x.PR + x.SRGap);
+  return y.code - x.code;
+}
+
 export const sortStandard:Standard = {
   wr : (x: Data, y: Data) => {
     if (x.WR !== y.WR) return y.WR - x.WR;
