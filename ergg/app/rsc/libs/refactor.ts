@@ -210,33 +210,29 @@ export function getGameCount(parsedData: Array<any>, code: number, weapon: numbe
 
 export function getAvgdeal(parsedData: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
   // 10/22 여기 수정해야함. 여러 티어그룹 - 각 등수별 평딜 구할 때 값이 이상함
-
+  // 여기 이상함 !!! 11/18
   // code, weapon 은 0일 수 없음
   let deal = 0;
-  let targetgrades = 0;
+  let targetgrades = getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, grade);
 
   if (starttiergroup > endtiergroup) {
     for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
       if (grade === 0) {
         parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1].map((avgdealByGrade: number, gp: number) => {
-          deal += avgdealByGrade * parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
-          targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
+          deal += avgdealByGrade;
         });
       } else {
-        deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1][grade - 1];
-        targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
+        deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
         // 여기
       }
     }
   } else if (starttiergroup === endtiergroup) {
     if (grade === 0) {
       parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - 1].map((avgdealByGrade: number, gp: number) => {
-        deal += avgdealByGrade * parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][gp];
-        targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][gp];
+        deal += avgdealByGrade;
       });
     } else {
-      deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - 1][grade - 1];
-      targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
+      deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
     }
   }
   return targetgrades !== 0 ? deal / targetgrades : 0;
@@ -245,29 +241,25 @@ export function getAvgdeal(parsedData: Array<any>, code: number, weapon: number,
 export function getAvgTK(parsedData: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
   // code, weapon 은 0일 수 없음
   let tk = 0;
-  let targetgrades = 0;
+  let targetgrades = getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, grade);
 
   if (starttiergroup > endtiergroup) {
     for (let i = 0; i <= (starttiergroup - endtiergroup); i++) {
       if (grade === 0) {
         parsedData[code - 1].tk[weapon - 1][starttiergroup - i - 1].map((tkByGrade: number, gp: number) => {
-          tk += tkByGrade * parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
-          targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][gp];
+          tk += tkByGrade;
         });
       } else {
-        tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - i - 1][grade - 1] * parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
-        targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - i - 1][grade - 1];
+        tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - i - 1][grade - 1];
       }
     }
   } else if (starttiergroup === endtiergroup) {
     if (grade === 0) {
       parsedData[code - 1].tk[weapon - 1][starttiergroup - 1].map((tkByGrade: number, gp: number) => {
-        tk += tkByGrade * parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][gp];
-        targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][gp];
+        tk += tkByGrade;
       });
     } else {
-      tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - 1][grade - 1] * parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
-      targetgrades += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
+      tk += parsedData[code - 1].tk[weapon - 1][starttiergroup - 1][grade - 1];
     }
   }
   return targetgrades !== 0 ? tk / targetgrades : 0;

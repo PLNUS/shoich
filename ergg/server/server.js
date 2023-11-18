@@ -175,7 +175,7 @@ app.listen(SCHEDULE_PORT, () => {
     //     UpdatedItemData = ItemData; // 초기화
     //     sendSyncRequests(docs[0].lastGameNum, 6);
     // })
-    sendSyncRequests(30357458, 6);
+    sendSyncRequests(30457458, 6);
 
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
@@ -346,20 +346,15 @@ async function UpdateFunc(response) {
 
                         // 가독성 위해 if문 두번 씀 그냥
                         if (user.escapeState === 0) { // 탈출시 이상한 데이터 return함. %% 평딜 평킬 구할때는 탈출인 판수 빼고 산출 %%
-                            // 3. 평딜 << 여길 평딜을 구하지 말고 총합딜링을 구해야함.
-                            let targetGameCount = UpdatedData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1];
+                            // 3. 평딜
                             // 해당 구간(티어그룹별, 무기별) 판수 카운트
 
-                            let beforeAvgDeal = UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1];
-
                             UpdatedData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1]
-                                = (beforeAvgDeal * (targetGameCount - 1) + user.damageToPlayer) / targetGameCount; // 평딜 구하는 수식
+                                += user.damageToPlayer; // 평딜 구하는 수식
 
                             // 4. TK(팀 킬수) 여기도 위와 동일
-                            let beforeAvgTK = UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1];
-
                             UpdatedData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1]
-                                = (beforeAvgTK * (targetGameCount - 1) + user.teamKill) / targetGameCount;
+                                += user.teamKill;
                         }
 
                         if (user.preMade !== 1) { // 사전큐 처리부분인데 여기 이상함
@@ -375,25 +370,12 @@ async function UpdateFunc(response) {
 
                             UpdatedPreMadeData[user.characterNum - 1].scores[weaponNum][tierGroup][1] += user.mmrGain;
 
-                            let targetPreGameCount = UpdatedPreMadeData[user.characterNum - 1].grades[weaponNum][tierGroup][user.gameRank - 1];
-                            let beforePreAvgDeal = UpdatedPreMadeData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1];
-                            let beforePreAvgTK = UpdatedPreMadeData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1];
-
                             UpdatedPreMadeData[user.characterNum - 1].avgdeal[weaponNum][tierGroup][user.gameRank - 1]
-                                = (beforePreAvgDeal * (targetPreGameCount - 1) + user.damageToPlayer) / targetPreGameCount;
+                                += user.damageToPlayer;
 
                             UpdatedPreMadeData[user.characterNum - 1].tk[weaponNum][tierGroup][user.gameRank - 1]
-                                = (beforePreAvgTK * (targetPreGameCount - 1) + user.teamKill) / targetPreGameCount;
+                                += user.teamKill;
                         }
-
-                        //if (user.characterNum === 68) { // 이건 잘되는데 이상하다 그죠?
-                        //    a1++;
-                        //    if(user.preMade !== 1) {
-                        //        prea1++;
-                        //    }
-                        //
-                        //    console.log(a1 + " / " + prea1);
-                        //}
                     } catch (e) {
                         console.log("등수 부문 처리오류");
                         console.log(e);

@@ -55,7 +55,7 @@ export default function TraitLsit({ data }: any) {
                     <div className="flex flex-row w-full h-[200px] border-neutral-300 border-2 rounded-md p-2 items-center"
                         key={p}>
                         <div className="flex flex-col min-w-[130px] gap-y-1 items-center p-1">
-                            <div className="relative w-[80px] h-[80px] rounded-full aspect-square"
+                            <div className="relative w-[75px] h-[75px] rounded-full aspect-square"
                                 onMouseOver={() => setShowTCD(p + 1)}
                                 onMouseOut={() => setShowTCD(0)}>
                                 <Image

@@ -1,5 +1,6 @@
 import CharMastery from "@/server/parsed/charMastery.json";
 import { getGameCount, getKoreanWeapon, getSbCount } from "./refactor";
+import { sortByGap } from "./assets";
 
 export function getPremadeList(premade: any, general: any, startTierGroup: number, endTierGroup: number) {
     let newList:Array<any> = [];
@@ -47,5 +48,5 @@ export function getPremadeList(premade: any, general: any, startTierGroup: numbe
         })
     });
 
-    return newList;
+    return newList.sort(sortByGap);
 }

@@ -400,31 +400,31 @@ async function updateMastery(l10n) {
                     });
                     fs.writeFile('base/charData.json', JSON.stringify(charData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('base/charData updated')
+                        console.log('base/charData ... 완료!')
                     });
                     fs.writeFile('base/synergyData.json', JSON.stringify(synData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('base/synergyData updated')
+                        console.log('base/synergyData ... 완료!')
                     });
                     fs.writeFile('base/itemData.json', JSON.stringify(itemData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('base/itemData updated')
+                        console.log('base/itemData ... 완료!')
                     });
                     fs.writeFile('base/traitData.json', JSON.stringify(traitData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('base/traitData updated')
+                        console.log('base/traitData ... 완료!')
                     });
                     fs.writeFile('parsed/charMastery.json', JSON.stringify(masteryList), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('parsed/mastery updated')
+                        console.log('parsed/mastery ... 완료!')
                     });
                     fs.writeFile('parsed/skillDesc.json', JSON.stringify(skillDescData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('parsed/skillDesc updated')
+                        console.log('parsed/skillDesc ... 완료!')
                     });
                     fs.writeFile('base/tacticalSkillData.json', JSON.stringify(tacticalSkillData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('base/tacticalSkillData updated')
+                        console.log('base/tacticalSkillData ... 완료!')
                     });
                 }
 
@@ -500,7 +500,7 @@ async function updateTraits(l10n) {
 
                     fs.writeFile('parsed/traitList.json', JSON.stringify(traitData), 'utf8', function (error) {
                         error ? console.log(error) : null;
-                        console.log('parsed/traitList updated')
+                        console.log('parsed/traitList ... 완료!')
                     });
                 }
                 resolve();
@@ -541,7 +541,7 @@ async function updateTacticalSkills(l10n) {
 
                 fs.writeFile('parsed/tacticalSkillData.json', JSON.stringify(tacticalSkillData), 'utf8', function (error) {
                     error ? console.log(error) : null;
-                    console.log('parsed/tacticalSkillData updated');
+                    console.log('parsed/tacticalSkillData ... 완료!');
                 });
             }
         })
@@ -559,7 +559,7 @@ async function updateAll() {
     await parseWeapon(l10n);
     fs.writeFile('parsed/itemData.json', JSON.stringify(itemData), 'utf8', function (error) {
         error ? console.log(error) : null;
-        console.log('parsed/itemData updated');
+        console.log('parsed/itemData ... 완료!');
     });
     await updateMastery(l10n);
     await updateTraits(l10n);

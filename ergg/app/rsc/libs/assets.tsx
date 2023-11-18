@@ -167,7 +167,7 @@ interface Standard {
 }
 
 export const sortByGap = (x: any, y: any) => {
-  if ((x.WRGap + x.SRGap) !== (y.WRGap + + y.SRGap)) return (y.WRGap + y.PR + y.SRGap) - (x.WRGap + x.PR + x.SRGap);
+  if ((x.WRGap + x.SRGap) !== (y.WRGap + y.SRGap)) return (y.WRGap + y.SRGap) - (x.WRGap + x.SRGap);
   return y.code - x.code;
 }
 

@@ -8,14 +8,29 @@ import Image from "next/image";
 
 
 export default function SynergyHead() {
-  'use client'
-
   const [head, setHead] = useState<Data>();
+  const [TGText, setTGText] = useState("");
+
+  function getTier(tier: number) {
+    switch (tier) {
+      case 1: return "이터니티";
+      case 2: return "데미갓";
+      case 3: return "미스릴";
+      case 4: return "다이아몬드";
+      case 5: return "플레티넘";
+      case 6: return "골드";
+      case 7: return "실버";
+      case 8: return "브론즈";
+      default: return "정보 없음";
+    }
+  }
 
   useEffect(() => {
     const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
     selected.data!.avggrade = Math.floor(selected.data!.avggrade * 100) / 100;
     setHead(selected);
+    const tg = JSON.parse(sessionStorage.getItem("tierGroup")!);
+    setTGText(getTier(tg[0]) + " 부터 " + getTier(tg[1]) + " 까지의 통계")
   }, [])
 
   return (
@@ -51,9 +66,8 @@ export default function SynergyHead() {
     const [showTooltip, setShowTooltip] = useState(0);
 
     return (<div className="flex flex-col w-auto h-full ml-4 rounded-lg gap-y-1 py-1">
-      <div className="text-lg font-num">스킬 설명 -</div>
-      <div className="flex flex-row w-full h-full">
-        <div className="flex items-center w-1/5 h-full">
+      <div className="flex flex-row w-full h-full items-center">
+        <div className="flex items-center w-[15%] h-full">
           <div
             className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(1)}
@@ -73,7 +87,7 @@ export default function SynergyHead() {
             </div>
           </div>
         </div>
-        <div className="flex items-center w-1/5 h-full">
+        <div className="flex items-center w-[15%] h-full">
           <div
             className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(2)}
@@ -93,7 +107,7 @@ export default function SynergyHead() {
             </div>
           </div>
         </div>
-        <div className="flex items-center w-1/5 h-full">
+        <div className="flex items-center w-[15%] h-full">
           <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(3)}
             onMouseOut={() => setShowTooltip(0)}>
@@ -112,7 +126,7 @@ export default function SynergyHead() {
             </div>
           </div>
         </div>
-        <div className="flex items-center w-1/5 h-full">
+        <div className="flex items-center w-[15%] h-full">
           <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-xl"
             onMouseOver={() => setShowTooltip(4)}
             onMouseOut={() => setShowTooltip(0)}>
@@ -131,7 +145,7 @@ export default function SynergyHead() {
             </div>
           </div>
         </div>
-        <div className="flex items-center w-1/5 h-full">
+        <div className="flex items-center w-[15%] h-full">
           <div className="flex items-end justify-end relative w-[50px] h-[50px] shadow-lg"
             onMouseOver={() => setShowTooltip(5)}
             onMouseOut={() => setShowTooltip(0)}>
@@ -148,6 +162,13 @@ export default function SynergyHead() {
               <div className="font-mb text-base">{head === undefined ? "" : SkillDesc[head!.code - 1].nameT}</div>
               <div>{head === undefined ? "" : SkillDesc[head!.code - 1].descT.toString()}</div>
             </div>
+          </div>
+        </div>
+        <div className="flex items-center w-[25%] h-[50px] px-2">
+          <div 
+          onClick={() => {window.history.back()}}
+          className="flex items-center justify-center w-full h-full rounded bg-slate-800 text-white text-sm transition ease-in-out hover:scale-105 duration-250">
+            티어표로<br />돌아가기
           </div>
         </div>
       </div>
@@ -171,20 +192,16 @@ export default function SynergyHead() {
 
   function CharIcon() {
     return (
-      <div className="flex flex-row w-full p-2 justify-between">
-        <div className="flex items-end justify-end w-[130px] h-[130px] relative mt-2 ml-2">
-          <div className="absolute flex aspect-square w-[130px]">
-            <div className={`charicon_dir bg-neutral-300 l${head?.color} border-[10px] pt-1`}>
-              <div className="relative w-full h-full"  >
-                <Image
-                  className="scale-[107%]"
-                  alt=""
-                  quality={100}
-                  fill
-                  style={{objectFit:"cover"}}
-                  src={`/characters/${head?.code}.webp`} />
-              </div>
-            </div>
+      <div className="flex flex-row w-full px-2">
+        <div className="flex items-end justify-end w-[150px] h-[150px] relative mt-3 ml-2">
+          <div className={`relative overflow-hidden rounded-full h-full aspect-square bg-neutral-300 l${head?.color} border-[10px] pt-1`}>
+            <Image
+              className="scale-[100%]"
+              alt=""
+              quality={100}
+              fill
+              style={{ objectFit: "cover" }}
+              src={`/characters/${head?.code}.webp`} />
           </div>
           <div className="absolute flex aspect-square w-[40px] -translate-y-2">
             <div className={`charicon_dir flex items-center justify-center ${head?.color}`}>
@@ -192,10 +209,15 @@ export default function SynergyHead() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-y-2">
-          <span className="text-[33px] font-rb py-4 tracking-tight">
+        <div className="flex flex-col gap-y-2.5 ml-4">
+          <span className="text-[33px] font-num pt-4 tracking-tight">
             {head?.weapon} {head?.name}
           </span>
+          <div
+            id="tiergroup"
+            className={`flex tracking-wide w-full h-[30px] items-center justify-center rounded bg-slate-800 text-white text-sm`}>
+            {TGText}
+          </div>
           <div className="flex flex-row text-xl font-ml tracking-tight gap-x-2">
             <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
               <div className="flex flex-row items-center gap-x-[6px]">
@@ -205,13 +227,13 @@ export default function SynergyHead() {
               <span className="font-msb">{head?.PR}%</span>
             </div>
             <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
-              <div className="flex flex-row items-center gap-x-2">
+              <div className="flex flex-row items-center gap-x-[6px]">
                 <span className="text-base">승률</span>
                 <span className="font-ml text-xs border border-white rounded mt-[1px] px-0.5">{head?.WRGrade}</span>
               </div>
               <span className="font-msb">{head?.WR}%</span>
             </div>
-            <div className={`flex flex-col w-[90px] items-center rounded ${head?.color} text-white py-1`}>
+            <div className={`flex flex-col w-[85px] items-center rounded ${head?.color} text-white py-1`}>
               <span className="text-base">평균 순위</span>
               <span className="font-msb">{head?.data?.avggrade}위</span>
             </div>
