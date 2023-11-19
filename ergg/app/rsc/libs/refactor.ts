@@ -210,7 +210,6 @@ export function getGameCount(parsedData: Array<any>, code: number, weapon: numbe
 
 export function getAvgdeal(parsedData: Array<any>, code: number, weapon: number, starttiergroup: number, endtiergroup: number, grade: number) {
   // 10/22 여기 수정해야함. 여러 티어그룹 - 각 등수별 평딜 구할 때 값이 이상함
-  // 여기 이상함 !!! 11/18
   // code, weapon 은 0일 수 없음
   let deal = 0;
   let targetgrades = getGameCount(parsedData, code, weapon, starttiergroup, endtiergroup, grade);
@@ -222,8 +221,7 @@ export function getAvgdeal(parsedData: Array<any>, code: number, weapon: number,
           deal += avgdealByGrade;
         });
       } else {
-        deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
-        // 여기
+        deal += parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - i - 1][grade - 1];
       }
     }
   } else if (starttiergroup === endtiergroup) {
@@ -232,7 +230,7 @@ export function getAvgdeal(parsedData: Array<any>, code: number, weapon: number,
         deal += avgdealByGrade;
       });
     } else {
-      deal += parsedData[code - 1].grades[weapon - 1][starttiergroup - 1][grade - 1];
+      deal += parsedData[code - 1].avgdeal[weapon - 1][starttiergroup - 1][grade - 1];
     }
   }
   return targetgrades !== 0 ? deal / targetgrades : 0;

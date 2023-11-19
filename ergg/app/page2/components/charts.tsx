@@ -50,13 +50,22 @@ const radarOptions = {
 }
 
 export function CharRadar({ average, target }: any) {
+  const exagger = [
+    (target[0] - average[0]*0.2 < 0 ? 0 : average[0]*0.2),
+    0,
+    (target[2] - average[2]*0.6 < 0 ? 0 : average[2]*0.6),
+    (target[3] - average[3]*0.4 < 0 ? 0 : average[3]*0.4),
+    (target[4] - average[4]*0.5 < 0 ? 0 : average[4]*0.5),    
+    target[5] > average[5] ? 1.2 : 1,
+  ]
+
   const dataset = [ // 그래프 데이터셋 과장
-    (target[0]/2 - 1000) / (average[0]/2 - 1000) * 100,
-    (5 + target[1]) / (5 + average[1]) * 100, // 픽률이 낮을때 더 과장되도록 변경해야함.
-    ((average[2]-3) < 0 ? 0 :  (average[2]-3)) / (target[2]-3) * 100,
-    ((target[3] / 5 - 3) < 0 ? 0 : (target[3] / 5 - 3)) / (average[3] / 5 - 3) * 100,
-    (target[4] - 3) / (average[4] - 3) * 100,
-    ((target[5] - 5) < 0 ? 0 : (target[5] - 5)) / (average[5] - 5) * 100,];
+    (target[0] - exagger[0]) / (average[0] -  exagger[0]) * 100,
+    (target[1]*1.5 + 2) / (average[1] + 3.5) * 100, // 픽률이 낮을때 더 과장되도록 변경해야함.
+    (average[2] - exagger[2]) / (target[2] - exagger[2]) * 100,
+    (target[3] - exagger[3]) / (average[3] - exagger[3]) * 100,
+    (target[4] - exagger[4]) / (average[4] - exagger[4]) * 100,
+    (target[5]*exagger[5]) / (average[5]) * 100,];
 
   const data = {
     labels: ['평딜', '픽률', '평순', '순방률', '평킬', '승률'],
@@ -111,8 +120,8 @@ export function CountPerGradeLine({ target, hasEscapeValue }: any) {
         }
       },
       y: {// 여기를 비율로 갈껀지 정수형으로 갈껀지 고민 퍼센티지로 가는게 나을듯 일부 / 전체 X 100 해서
-        min: (target !== undefined) ? Math.min(...target) - Math.min(...target)/100 : 0, // MI
-        max: (target !== undefined) ? Math.max(...target) + Math.max(...target)/100 : 0, // MAX
+        min: (target !== undefined) ? Math.min(...target) - Math.min(...target) / 100 : 0, // MI
+        max: (target !== undefined) ? Math.max(...target) + Math.max(...target) / 100 : 0, // MAX
         beginAtZero: false,
         grid: {
           display: false,
