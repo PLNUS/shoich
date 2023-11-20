@@ -1,9 +1,8 @@
-'use server'
-
 import TierList from "./rsc/components/tierlist";
 import { getTierList, getPremadeTierList } from "./rsc/libs/tierfetcher";
 
 export default async function Home() {
+  'use server'
   const tierlist: any = await getTierList(); // 전체 티어 Data
   const premadeTierList: any = await getPremadeTierList(); // 사전큐 티어 Data
 

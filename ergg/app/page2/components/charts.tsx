@@ -26,15 +26,13 @@ const radarOptions = {
       beginAtZero: true,
       pointLabels: {
         font: {
-          size: 12
+          size: 12,
+          family: "NIXGONM-Vb"
         },
         color: 'rgb(255, 255, 255)'
       },
       ticks: {
         display: false,
-        font: {
-          size: 11
-        },
         color: 'rgb(255, 255, 255)',
         backdropColor: "rgba(0,0,0,0)",
         stepSize: 50
@@ -49,32 +47,31 @@ const radarOptions = {
   }
 }
 
-function getRGB(tier: number) {
-  switch (tier) {
-    case 0: return "rgb(40,40,40)"
-    case 1: return "rgb(125,211,252)"
-    case 2: return "rgb(74,222,128)"
-    case 3: return "rgb(251,191,36)"
-    case 4: return "rgb(251,146,60)"
-    case 5: return "rgb(251,113,133)"
-    case 6: return "rgb(185,28,28)"
-    default: return "rgb(0,0,0)"
-  }
-}  
-function getRGBA(tier: number) {
-  switch (tier) {
-    case 0: return "rgba(40,40,40,0.3)"
-    case 1: return "rgba(56,149,248,0.3)"
-    case 2: return "rgba(74,222,128,0.2)"
-    case 3: return "rgba(251,191,36,0.2)"
-    case 4: return "rgba(251,146,60,0.2)"
-    case 5: return "rgba(251,113,133,0.2)"
-    case 6: return "rgba(185,28,28,0.2)"
-    default: return "rgba(0,0,0,0.2)"
-  }
-}  
-
 export function CharRadar({ average, target, tier }: any) {
+  function getRGB(tier: number) {
+    switch (tier) {
+      case 0: return "rgb(255,255,255)"
+      case 1: return "rgb(125,211,252)"
+      case 2: return "rgb(74,222,128)"
+      case 3: return "rgb(251,191,36)"
+      case 4: return "rgb(251,146,60)"
+      case 5: return "rgb(251,113,133)"
+      case 6: return "rgb(185,28,28)"
+      default: return "rgb(0,0,0)"
+    }
+  }  
+  function getRGBA(tier: number) {
+    switch (tier) {
+      case 0: return "rgba(255,255,255,0.3)"
+      case 1: return "rgba(56,149,248,0.3)"
+      case 2: return "rgba(74,222,128,0.2)"
+      case 3: return "rgba(251,191,36,0.2)"
+      case 4: return "rgba(251,146,60,0.2)"
+      case 5: return "rgba(251,113,133,0.2)"
+      case 6: return "rgba(185,28,28,0.2)"
+      default: return "rgba(0,0,0,0.2)"
+    }
+  }  
 
   const exagger = [
     (target[0] - average[0]*0.2 < 0 ? 0 : average[0]*0.2),
@@ -122,6 +119,32 @@ export function CharRadar({ average, target, tier }: any) {
 }
 
 export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
+
+  function getRGB(tier: number) {
+    switch (tier) {
+      case 0: return "rgb(40,40,40)"
+      case 1: return "rgb(14,165,233)"
+      case 2: return "rgb(34,197,94)"
+      case 3: return "rgb(234,179,8)"
+      case 4: return "rgb(249,115,22)"
+      case 5: return "rgb(244,63,94)"
+      case 6: return "rgb(185,28,28)"
+      default: return "rgb(0,0,0)"
+    }
+  }  
+  function getRGBA(tier: number) {
+    switch (tier) {
+      case 0: return "rgba(40,40,40,0.3)"
+      case 1: return "rgba(56,149,248,0.3)"
+      case 2: return "rgba(74,222,128,0.3)"
+      case 3: return "rgba(251,191,36,0.3)"
+      case 4: return "rgba(251,146,60,0.3)"
+      case 5: return "rgba(251,113,133,0.3)"
+      case 6: return "rgba(185,28,28,0.3)"
+      default: return "rgba(0,0,0,0.3)"
+    }
+  }  
+
   target?.shift();
   if (hasEscapeValue) { target?.pop(); }
   const GradeCountOptions = {
@@ -137,30 +160,32 @@ export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
         grid: {
           display: true,
           drawBorder: false,
-          color: "#555555",
+          color: "#DDDDDD",
         },
         ticks: {
-          color: '#FFFFFF',
+          color: '#000000',
           font: {
-            size: 10
+            size: 10,
+            family : "Pretendard-Bold"
           },
         }
       },
       y: {// 여기를 비율로 갈껀지 정수형으로 갈껀지 고민 퍼센티지로 가는게 나을듯 일부 / 전체 X 100 해서
-        min: (target !== undefined) ? Math.min(...target) - Math.min(...target) / 100 : 0, // MI
-        max: (target !== undefined) ? Math.max(...target) + Math.max(...target) / 100 : 0, // MAX
+        min: (target !== undefined) ? Math.floor(Math.min(...target) - Math.ceil(Math.min(...target) / 100)) : 0,
+        max: (target !== undefined) ? Math.floor(Math.max(...target) + Math.ceil(Math.max(...target) / 100)) : 0, // 최소 최댓값 보정
         beginAtZero: false,
         grid: {
           display: true,
           drawBorder: false,
-          color: '#555555',
+          color: '#DDDDDD',
         },
         ticks: {
           display: true,
           beginAtZero: false,
-          color: '#FFFFFF',
+          color: '#000000',
           font: {
-            size: 10
+            size: 10,
+            family : "Pretendard-Bold"
           },
         }
       }
@@ -175,7 +200,7 @@ export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
         fill: true,
         borderColor: getRGB(tier),
         backgroundColor: getRGBA(tier),
-        borderWidth: 2,
+        borderWidth: 3,
       }
     ],
   };

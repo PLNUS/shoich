@@ -48,8 +48,7 @@ export default function SynergyHead() {
   }, [])
 
   return (
-    head !== undefined ? (
-      <div className={`flex flex-row justify-between w-full h-auto shadow-xl ${getColor(head?.tier)} p-4 text-2xl font-mb mt-2`}>
+      <div className={`flex flex-row justify-between w-full h-auto shadow-xl ${getColor(head?.tier!)} p-4 text-2xl font-mb`}>
         <div className="flex flex-col w-[470px] h-full">
           <CharIcon />
           <SkillDetails />
@@ -58,24 +57,19 @@ export default function SynergyHead() {
         <div className="flex flex-col h-[236px] justify-between">
           <span className="text-2xl font-jl font-bold text-black pl-1">순위별 게임 수</span>
           <span className="text-base font-jl text-black pl-1 -mt-2">그래프 왼쪽이 높을수록 평균 순위가 높아요</span>
-          <div className="w-[320px] h-[175px] bg-zinc-800 rounded p-2">
+          <div className="w-[320px] h-[175px] border border-zinc-800 bg-white rounded p-2">
             <CountPerGradeLine tier={head?.tier} target={head?.data?.gamecountbygrade} hasEscapeValue={true} />
           </div>
         </div>
         <div className="flex flex-col h-[236px] justify-between">
           <span className="text-2xl font-jl font-bold text-black pl-1">순위별 평균 딜링</span>
           <span className="text-base font-jl text-black pl-1 -mt-2">중간이 솟아있으면 트럭 전복률이 높아요</span>
-          <div className="w-[320px] h-[175px] bg-zinc-800 rounded p-2">
-            <CountPerGradeLine tier={head?.tier} target={head?.data?.avgdealbygrade} hasEscapeValue={true} />
+          <div className="w-[320px] h-[175px] border border-zinc-800 bg-white rounded p-2">
+            <CountPerGradeLine tier={head?.tier} target={head?.data?.avgdealbygrade} />
           </div>
         </div>
       </div>
-    ) : (
-      <div>
-        엄..
-      </div>
     )
-  )
   // '평딜', '픽률', '평순', '순방률', '평킬', '승률' 순임
 
   function SkillDetails() {
@@ -184,7 +178,7 @@ export default function SynergyHead() {
           <div className="flex items-center w-[25%] h-full">
             <div
               onClick={() => { window.history.back() }}
-              className="flex items-center justify-center w-full h-full font-mr rounded-lg bg-zinc-800 text-white border-slate-800 border-0 text-sm transition ease-in-out hover:border-2 hover:scale-105 hover:text-black hover:font-msb hover:bg-slate-300 duration-200">
+              className="flex items-center justify-center w-full h-full font-mr rounded-lg bg-zinc-800 text-white border-slate-800 border-0 text-sm transition ease-in-out hover:scale-105 hover:text-black hover:font-msb hover:shadow hover:bg-white duration-130">
               티어표로<br />돌아가기
             </div>
           </div>
@@ -195,11 +189,9 @@ export default function SynergyHead() {
 
   function PowerHexagon() {
     return (
-      <div className="flex flex-col max-h-[236px] bg-zinc-800 rounded-lg">
-        <div className="flex flex-row p-1 justify-between items-end">
-          <span className="text-2xl text-white font-jl pl-2 pt-1">파워 헥사곤 _v1</span>
-        </div>
-        <div className="w-[192px] h-[192px] rounded-lg overflow-hidden p-3">
+      <div className="flex flex-col h-[236px] bg-zinc-800 rounded-lg p-2">
+        <span className="text-xl text-white font-jl pl-1 pb-2">파워 헥사곤 _v1</span>
+        <div className="aspect-square h-[184px] rounded-lg overflow-hidden">
           <CharRadar
             tier={head?.tier}
             average={typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem("average")!) : [0, 0, 0, 0, 0, 0]}
@@ -234,25 +226,25 @@ export default function SynergyHead() {
           </span>
           <div
             id="tiergroup"
-            className={`flex tracking-wide w-full h-[30px] items-center justify-center rounded ${head?.color} text-white text-sm`}>
+            className={`flex tracking-wide w-full h-[30px] items-center justify-center rounded bg-zinc-800 text-white text-sm`}>
             {TGText}
           </div>
           <div className="flex flex-row text-xl font-ml tracking-tight gap-x-2">
-            <div className={`flex flex-col w-1/3 items-center rounded ${head?.color} text-white py-1`}>
+            <div className={`flex flex-col w-1/3 items-center rounded bg-zinc-800 text-white py-1`}>
               <div className="flex flex-row items-center gap-x-[6px]">
                 <span className="text-base">픽률</span>
                 <span className="font-ml text-xs border border-white rounded mt-[1px] px-0.5">{head?.PRGrade}</span>
               </div>
               <span className="font-msb">{head?.PR}%</span>
             </div>
-            <div className={`flex flex-col w-1/3 items-center rounded ${head?.color} text-white py-1`}>
+            <div className={`flex flex-col w-1/3 items-center rounded bg-zinc-800 text-white py-1`}>
               <div className="flex flex-row items-center gap-x-[6px]">
                 <span className="text-base">승률</span>
                 <span className="font-ml text-xs border border-white rounded mt-[1px] px-0.5">{head?.WRGrade}</span>
               </div>
               <span className="font-msb">{head?.WR}%</span>
             </div>
-            <div className={`flex flex-col w-1/3 items-center rounded ${head?.color} text-white py-1`}>
+            <div className={`flex flex-col w-1/3 items-center rounded bg-zinc-800 text-white py-1`}>
               <span className="text-base">평균 순위</span>
               <span className="font-msb">{head?.data?.avggrade}위</span>
             </div>
