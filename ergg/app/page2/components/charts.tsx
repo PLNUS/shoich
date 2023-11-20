@@ -19,8 +19,16 @@ const radarOptions = {
       radius: 0, // 점 제거
     },
   },
+  animation: {
+    scale: {
+        duration:1000,
+        from:0,
+        easing:'easeOutQuart',
+    }
+  },
   scales: {
     r: {
+      
       min: 0, // MI
       max: 150, // MAX
       beginAtZero: true,
@@ -55,8 +63,8 @@ export function CharRadar({ average, target, tier }: any) {
       case 2: return "rgb(74,222,128)"
       case 3: return "rgb(251,191,36)"
       case 4: return "rgb(251,146,60)"
-      case 5: return "rgb(251,113,133)"
-      case 6: return "rgb(185,28,28)"
+      case 5: return "rgb(255,70,90)"
+      case 6: return "rgb(210,40,60)"
       default: return "rgb(0,0,0)"
     }
   }  
@@ -64,12 +72,12 @@ export function CharRadar({ average, target, tier }: any) {
     switch (tier) {
       case 0: return "rgba(255,255,255,0.3)"
       case 1: return "rgba(56,149,248,0.3)"
-      case 2: return "rgba(74,222,128,0.2)"
-      case 3: return "rgba(251,191,36,0.2)"
-      case 4: return "rgba(251,146,60,0.2)"
-      case 5: return "rgba(251,113,133,0.2)"
-      case 6: return "rgba(185,28,28,0.2)"
-      default: return "rgba(0,0,0,0.2)"
+      case 2: return "rgba(74,222,128,0.3)"
+      case 3: return "rgba(251,191,36,0.3)"
+      case 4: return "rgba(251,146,60,0.3)"
+      case 5: return "rgba(255,70,90,0.3)"
+      case 6: return "rgba(210,40,60,0.3)"
+      default: return "rgba(0,0,0,0.3)"
     }
   }  
 
@@ -106,6 +114,7 @@ export function CharRadar({ average, target, tier }: any) {
         backgroundColor: 'rgba(140, 140, 140, 0.6)',
         borderColor: 'rgb(140, 140, 140)',
         borderWidth: 3,
+        animation:false
       },
     ],
   };
@@ -155,6 +164,14 @@ export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
         radius: 0, // 점 제거
       },
     },
+    animation: {
+      y: {
+          duration:1000,
+          from:135,
+          to:undefined,
+          easing:'easeOutQuart',
+      }
+    },
     scales: {
       x: {
         grid: {
@@ -201,8 +218,10 @@ export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
         borderColor: getRGB(tier),
         backgroundColor: getRGBA(tier),
         borderWidth: 3,
+        tension: 0.2
       }
     ],
+    
   };
   return (
     <Line

@@ -8,7 +8,7 @@ import Image from "next/image";
 
 function getColor(tier: number) {
   switch (tier) {
-    case 0: return "bg-zinc-300 bg-opacity-50"
+    case 0: return "bg-zinc-300 bg-opacity-80"
     case 1: return "bg-sky-200 bg-opacity-70"
     case 2: return "bg-green-300 bg-opacity-40"
     case 3: return "bg-amber-500 bg-opacity-20"
@@ -19,9 +19,23 @@ function getColor(tier: number) {
   }
 }
 
+function getTextColor(tier:number) {
+  switch (tier) {
+    case 1: return "text-rose-400";
+    case 2: return "text-stone-300";
+    case 3: return "text-sky-200";
+    case 4: return "text-indigo-300";
+    case 5: return "text-emerald-300";
+    case 6: return "text-yellow-500";
+    case 7: return "text-zinc-400";
+    case 8: return "text-yellow-700";
+    default : return "";
+  }
+}
+
 export default function SynergyHead() {
   const [head, setHead] = useState<Data>();
-  const [TGText, setTGText] = useState("");
+  const [TGText, setTGText] = useState([0,0]);
 
   function getTier(tier: number) {
     switch (tier) {
@@ -43,7 +57,7 @@ export default function SynergyHead() {
       selected.data!.avggrade = Math.floor(selected.data!.avggrade * 100) / 100;
       setHead(selected);
       const tg = JSON.parse(sessionStorage.getItem("tierGroup")!);
-      setTGText(getTier(tg[0]) + " 부터 " + getTier(tg[1]) + " 까지의 통계");
+      setTGText(tg);
     }
   }, [])
 
@@ -226,8 +240,8 @@ export default function SynergyHead() {
           </span>
           <div
             id="tiergroup"
-            className={`flex tracking-wide w-full h-[30px] items-center justify-center rounded bg-zinc-800 text-white text-sm`}>
-            {TGText}
+            className={`flex tracking-wider w-full h-[30px] items-center justify-center rounded bg-zinc-800 text-white text-sm`}>
+            <span className={`${getTextColor(TGText[0])}`}>{getTier(TGText[0])}</span>&nbsp;부터&nbsp;<span className={`${getTextColor(TGText[1])}`}>{getTier(TGText[1])}</span>&nbsp;까지의 통계
           </div>
           <div className="flex flex-row text-xl font-ml tracking-tight gap-x-2">
             <div className={`flex flex-col w-1/3 items-center rounded bg-zinc-800 text-white py-1`}>
