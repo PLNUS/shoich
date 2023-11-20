@@ -52,7 +52,7 @@ export default function TraitLsit({ data }: any) {
         <div className="flex flex-col w-[555px] h-[640px] overflow-y-auto scrollbar-hide pl-4 gap-y-2">
             {data.sort(sortByPR).map((trait: Trait, p: number) => p < 3 ?
                 (
-                    <div className="flex flex-row w-full h-[200px] border-neutral-300 border-2 rounded-md p-2 items-center"
+                    <div className="flex flex-row w-full h-[200px] border-neutral-300 border rounded shadow-xl p-2 items-center"
                         key={p}>
                         <div className="flex flex-col min-w-[130px] gap-y-1 items-center p-1">
                             <div className="relative w-[75px] h-[75px] rounded-full aspect-square"

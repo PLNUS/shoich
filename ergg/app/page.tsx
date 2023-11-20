@@ -6,7 +6,7 @@ import { getTierList, getPremadeTierList } from "./rsc/libs/tierfetcher";
 export default async function Home() {
   const tierlist: any = await getTierList(); // 전체 티어 Data
   const premadeTierList: any = await getPremadeTierList(); // 사전큐 티어 Data
-  // console.log(premadeTierList.data[29].grades);
+
   return (
     <div className="flex flex-col w-full h-full items-center">
       <div
@@ -19,4 +19,3 @@ export default async function Home() {
     </div>
   )
 }
-

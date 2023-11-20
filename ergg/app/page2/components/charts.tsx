@@ -40,16 +40,42 @@ const radarOptions = {
         stepSize: 50
       },
       grid: {
-        color: 'rgb(150, 150, 150)'
+        color: 'rgb(200, 200, 200)'
       },
       angleLines: {
-        color: 'rgb(150, 150, 150)'
+        color: 'rgb(200, 200, 200)'
       }
     },
   }
 }
 
-export function CharRadar({ average, target }: any) {
+function getRGB(tier: number) {
+  switch (tier) {
+    case 0: return "rgb(40,40,40)"
+    case 1: return "rgb(125,211,252)"
+    case 2: return "rgb(74,222,128)"
+    case 3: return "rgb(251,191,36)"
+    case 4: return "rgb(251,146,60)"
+    case 5: return "rgb(251,113,133)"
+    case 6: return "rgb(185,28,28)"
+    default: return "rgb(0,0,0)"
+  }
+}  
+function getRGBA(tier: number) {
+  switch (tier) {
+    case 0: return "rgba(40,40,40,0.3)"
+    case 1: return "rgba(56,149,248,0.3)"
+    case 2: return "rgba(74,222,128,0.2)"
+    case 3: return "rgba(251,191,36,0.2)"
+    case 4: return "rgba(251,146,60,0.2)"
+    case 5: return "rgba(251,113,133,0.2)"
+    case 6: return "rgba(185,28,28,0.2)"
+    default: return "rgba(0,0,0,0.2)"
+  }
+}  
+
+export function CharRadar({ average, target, tier }: any) {
+
   const exagger = [
     (target[0] - average[0]*0.2 < 0 ? 0 : average[0]*0.2),
     0,
@@ -73,15 +99,15 @@ export function CharRadar({ average, target }: any) {
       {
         label: '타겟 실험체',
         data: dataset,
-        backgroundColor: 'rgba(21, 209, 124, 0.2)',
-        borderColor: 'rgb(21, 209, 124)',
+        backgroundColor: getRGBA(tier),
+        borderColor: getRGB(tier),
         borderWidth: 3,
       },
       {
         label: '티어 평균',
         data: [100, 100, 100, 100, 100, 100],
-        backgroundColor: 'rgba(160, 160, 160, 0.5)',
-        borderColor: 'rgb(160, 160, 160)',
+        backgroundColor: 'rgba(140, 140, 140, 0.6)',
+        borderColor: 'rgb(140, 140, 140)',
         borderWidth: 3,
       },
     ],
@@ -95,7 +121,7 @@ export function CharRadar({ average, target }: any) {
   )
 }
 
-export function CountPerGradeLine({ target, hasEscapeValue }: any) {
+export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
   target?.shift();
   if (hasEscapeValue) { target?.pop(); }
   const GradeCountOptions = {
@@ -109,11 +135,12 @@ export function CountPerGradeLine({ target, hasEscapeValue }: any) {
     scales: {
       x: {
         grid: {
-          display: false,
+          display: true,
           drawBorder: false,
+          color: "#555555",
         },
         ticks: {
-          color: 'rgb(200, 200, 200)',
+          color: '#FFFFFF',
           font: {
             size: 10
           },
@@ -124,14 +151,14 @@ export function CountPerGradeLine({ target, hasEscapeValue }: any) {
         max: (target !== undefined) ? Math.max(...target) + Math.max(...target) / 100 : 0, // MAX
         beginAtZero: false,
         grid: {
-          display: false,
+          display: true,
           drawBorder: false,
           color: '#555555',
         },
         ticks: {
           display: true,
           beginAtZero: false,
-          color: 'rgb(200, 200, 200)',
+          color: '#FFFFFF',
           font: {
             size: 10
           },
@@ -145,8 +172,9 @@ export function CountPerGradeLine({ target, hasEscapeValue }: any) {
       {
         label: 'Dataset 1',
         data: target,
-        borderColor: 'rgb(21, 209, 124)',
-        backgroundColor: 'rgba(21, 209, 124, 0.5)',
+        fill: true,
+        borderColor: getRGB(tier),
+        backgroundColor: getRGBA(tier),
         borderWidth: 2,
       }
     ],

@@ -14,6 +14,7 @@ const config: Config = {
         msb: ["Pretendard-Bold"],
         mr: ["Pretendard-Regular"],
         rb: ["TTTogether"],
+        jl: ["NIXGONM-Vb"],
         num: ["bitbit"]
       },
       backgroundImage: {
