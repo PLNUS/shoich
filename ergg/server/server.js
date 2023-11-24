@@ -175,7 +175,7 @@ app.listen(SCHEDULE_PORT, () => {
     //     UpdatedItemData = ItemData; // 초기화
     //     sendSyncRequests(docs[0].lastGameNum, 6);
     // })
-    sendSyncRequests(30457458, 6);
+    sendSyncRequests(30500000, 6);
 
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });

@@ -52,42 +52,45 @@ export default function SynergyList({ synergy, item, trait, ts }: any) {
     useEffect(() => {
         const selected: Data = JSON.parse(sessionStorage.getItem("char")!);
 
-        const tierGroup = JSON.parse(sessionStorage.getItem("tierGroup")!);
-        if (sessionStorage.getItem("synergy") === null) {
-            sessionStorage.setItem("synergy", JSON.stringify(synergy));
-            setBaseData(getBaseData(getSynergyList(synergy, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
-        } else {
-            setBaseData(getBaseData(getSynergyList(JSON.parse(sessionStorage.getItem("synergy")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
-        }
-
-        if (sessionStorage.getItem("item") === null) {
-            sessionStorage.setItem("item", JSON.stringify(item));
-            setItemData(getFormattedItem(getItemList(item, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
-        } else {
-            setItemData(getFormattedItem(getItemList(JSON.parse(sessionStorage.getItem("item")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
-        }
-
-        if (sessionStorage.getItem("trait") === null) {
-            sessionStorage.setItem("trait", JSON.stringify(trait));
-            setTraitData(getTraitList(trait, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
-        } else {
-            setTraitData(getTraitList(JSON.parse(sessionStorage.getItem("trait")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
-        }
-
-        if (sessionStorage.getItem("ts") === null) {
-            sessionStorage.setItem("ts", JSON.stringify(ts));
-            setTsData(getTacticalSkillsList(ts, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
-        } else {
-            setTsData(getTacticalSkillsList(JSON.parse(sessionStorage.getItem("ts")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+        if(selected !== undefined) {
+            const tierGroup = JSON.parse(sessionStorage.getItem("tierGroup")!);
+            if (sessionStorage.getItem("synergy") === null) {
+                sessionStorage.setItem("synergy", JSON.stringify(synergy));
+                setBaseData(getBaseData(getSynergyList(synergy, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
+            } else {
+                setBaseData(getBaseData(getSynergyList(JSON.parse(sessionStorage.getItem("synergy")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
+            }
+    
+            if (sessionStorage.getItem("item") === null) {
+                sessionStorage.setItem("item", JSON.stringify(item));
+                setItemData(getFormattedItem(getItemList(item, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
+            } else {
+                setItemData(getFormattedItem(getItemList(JSON.parse(sessionStorage.getItem("item")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1])));
+            }
+    
+            if (sessionStorage.getItem("trait") === null) {
+                sessionStorage.setItem("trait", JSON.stringify(trait));
+                setTraitData(getTraitList(trait, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+            } else {
+                setTraitData(getTraitList(JSON.parse(sessionStorage.getItem("trait")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+            }
+    
+            if (sessionStorage.getItem("ts") === null) {
+                sessionStorage.setItem("ts", JSON.stringify(ts));
+                setTsData(getTacticalSkillsList(ts, selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+            } else {
+                setTsData(getTacticalSkillsList(JSON.parse(sessionStorage.getItem("ts")!), selected.code, selected.weaponNum, tierGroup[0], tierGroup[1]));
+            }
         }
     }, [])
 
     return (
+
         <div className="flex flex-row w-full h-full">
             <div className="flex flex-col w-[385px] h-[616px] gap-y-2">
-                <div className="flex flex-col w-full h-[196px] border-neutral-300 border-2 rounded-md px-2">
+                <div className="flex flex-col w-full h-[196px] border-neutral-300 border rounded-md shadow-xl px-2">
                     <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
+                        <div className="text-2xl font-jl pl-1 tracking-tighter py-2">
                             순방하기 좋아요
                         </div>
                         <label className="flex flex-row items-center p-2">
@@ -139,9 +142,9 @@ export default function SynergyList({ synergy, item, trait, ts }: any) {
                             : null))}
                     </div>
                 </div>
-                <div className="flex flex-col w-full h-[196px] border-neutral-300 border-2 rounded-md px-2">
+                <div className="flex flex-col w-full h-[196px] border-neutral-300 border rounded-md shadow-xl px-2">
                     <div className="flex flex-row justify-between items-end">
-                        <div className="text-2xl font-mr tracking-tighter p-2">
+                        <div className="text-2xl font-jl pl-1 tracking-tighter py-2">
                             우승하기 좋아요
                         </div>
                         <label className="flex flex-row items-center p-2">

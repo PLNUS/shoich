@@ -1,6 +1,6 @@
 export async function getTierList() {  // 버전별로 각각 List 따로 병합하기..
   "use server"
-  const res = await fetch("https://bug-free-memory-j495xw4gprjcq575-3000.app.github.dev/api/tierfetcher", { next: { revalidate: 0 } });
+  const res = await fetch("http://localhost:8080/api/tierfetcher", { next: { revalidate: 1 } });
   // absolute URL needed
   
   if (!res.ok) {
@@ -13,7 +13,7 @@ export async function getTierList() {  // 버전별로 각각 List 따로 병합
 
 export async function getPremadeTierList() {  // 버전별로 각각 List 따로 병합하기..
   "use server"
-  const res = await fetch("https://bug-free-memory-j495xw4gprjcq575-3000.app.github.dev/api/premadefetcher", { next: { revalidate: 0 } });
+  const res = await fetch("http://localhost:8080/api/premadefetcher", { next: { revalidate: 1 } });
   // absolute URL needed
   
   if (!res.ok) {

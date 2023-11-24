@@ -23,8 +23,8 @@ export default function ItemList({ data }: any) {
     }
 
     return (
-        <div className="flex flex-col w-[444px] h-[616px] ml-4 border-neutral-300 border-2 rounded-md px-2">
-            <span className="font-ml text-2xl pl-1 pt-2 pb-1">아이템 통계</span>
+        <div className="flex flex-col w-[444px] h-[616px] ml-4 border-neutral-300 border rounded-md shadow-xl px-2">
+            <span className="font-jl text-2xl pl-1 pt-2 pb-1">아이템 통계</span>
             <div className="flex flex-row items-center w-full min-h-[45px] divide-x divide-black pt-0.5">
                 <div className="flex flex-row w-[46%] pr-4 gap-x-2">
                     <ReactSelect
@@ -60,7 +60,7 @@ export default function ItemList({ data }: any) {
                 {data.sort(sortByGames).map((item: any, p: number) => (
                     item.itemtype === type && item.itemgrade === grade ?
                         <div key={p} className={`flex flex-row items-center w-full min-h-[50px] divide-x divide-black
-                        ${grade === "Epic" ? "bg-[rgb(228,224,254)] " : "bg-[rgb(254,221,187)] "}
+                        ${grade === "Epic" ? "bg-[rgb(228,224,254)] " : "bg-[rgb(254,231,187)] "}
                          rounded-md shadow-md`}>
                             <div className="flex flex-row w-[46%] items-center gap-x-2 py-2 pl-3">
                                 <div className={`flex justify-center w-[60px] h-[36px] py-1 ${getGradientByGrade(item.itemgrade)} rounded-md`}>

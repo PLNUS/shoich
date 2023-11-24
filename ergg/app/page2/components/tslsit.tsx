@@ -4,8 +4,8 @@ import { TacticalSkill } from "../libs/tsRefactor";
 
 export default function TSList({ data }: any) {
     return (
-        <div className="flex flex-col w-full h-[208px] p-2 rounded border-2 border-stone-300">
-            <div className="w-full h-[40px] text-2xl font-mr pl-2">전술 스킬 통계</div>
+        <div className="flex flex-col w-full h-[208px] p-2 border-neutral-300 shadow-xl border rounded">
+            <div className="w-full h-[40px] text-2xl tracking-tighter font-jl pl-1">전술 스킬 통계</div>
             <div className="w-full min-h-[149px] gap-2 grid grid-cols-4 grid-rows-1">
                 {data.sort(sortByPR).map((ts: TacticalSkill, p: number) =>
                     p < 4 ? (
