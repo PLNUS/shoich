@@ -175,12 +175,47 @@ app.listen(SCHEDULE_PORT, () => {
     //     UpdatedItemData = ItemData; // 초기화
     //     sendSyncRequests(docs[0].lastGameNum, 6);
     // })
-    sendSyncRequests(30500000, 6);
-
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
+    sendSyncRequests(30930265, 6);
+    // getProgress(30930265)
 }) // 타입스크립트로 전환 해야함
 
+async function getProgress(gameCode) {
+    let loop = true;
+    let loopCount = 0;
+    let ep = 0;
+    while (loop) {
+        await getParseEndPoint(gameCode, loopCount).then((newLC) => {
+            if(newLC < 0) {
+                loop = false;
+                console.log((gameCode+newLC) + " 보다 안쪽입니다.");
+            } else {
+                loopCount = newLC;
+            }
+        });
+    }
+}
+
+function getParseEndPoint(gameCode, loopCount) {
+    return new Promise((resolve, rejects) => {
+        console.log(loopCount + " 회 반복");
+        axios.get('https://open-api.bser.io/v1/games/' + (gameCode + loopCount), {
+            params: {},
+            headers: { 'x-api-key': API_KEY }
+        })
+            .then(function (response) {
+                if (response.data.code === 200) {
+                    loopCount += 10000;
+                    resolve(loopCount);
+                } else {
+                    resolve(-1);
+                }
+            }).catch(function (error) {
+                rejects(error);
+            });
+    })
+}
 
 const API_KEY = 'i1C9XPLAWw44iInr1a8oA4KIZBDwpN8IaLzs9ba0';
 
@@ -314,8 +349,8 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
     }
 }
 
-let a1= 0;
-let prea1=0;
+let a1 = 0;
+let prea1 = 0;
 
 async function UpdateFunc(response) {
     let game = response.data.userGames;

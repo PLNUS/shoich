@@ -23,7 +23,7 @@ export default function ItemList({ data }: any) {
     }
 
     return (
-        <div className="flex flex-col w-[444px] h-[616px] ml-4 border-neutral-300 border rounded-md shadow-xl px-2">
+        <div className="flex flex-col w-[444px] h-[616px] ml-4 border-neutral-300 border rounded-md shadow-xl px-2 pb-2">
             <span className="font-jl text-2xl pl-1 pt-2 pb-1">아이템 통계</span>
             <div className="flex flex-row items-center w-full min-h-[45px] divide-x divide-black pt-0.5">
                 <div className="flex flex-row w-[46%] pr-4 gap-x-2">
@@ -56,7 +56,7 @@ export default function ItemList({ data }: any) {
                     순방률
                 </div>
             </div>
-            <div className="flex flex-col w-full h-full gap-y-2 py-2 overflow-hidden">
+            <div className="flex flex-col w-full h-full gap-y-2 py-2 overflow-y-scroll scrollbar-hide">
                 {data.sort(sortByGames).map((item: any, p: number) => (
                     item.itemtype === type && item.itemgrade === grade ?
                         <div key={p} className={`flex flex-row items-center w-full min-h-[50px] divide-x divide-black

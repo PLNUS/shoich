@@ -19,16 +19,15 @@ const radarOptions = {
       radius: 0, // 점 제거
     },
   },
-  animation: {
-    scale: {
-        duration:1000,
-        from:0,
-        easing:'easeOutQuart',
-    }
-  },
   scales: {
     r: {
-      
+      animations: {
+        scale: {
+            duration:1000,
+            from:0,
+            easing:'easeOutQuart',
+        }
+      },
       min: 0, // MI
       max: 150, // MAX
       beginAtZero: true,
@@ -114,7 +113,7 @@ export function CharRadar({ average, target, tier }: any) {
         backgroundColor: 'rgba(140, 140, 140, 0.6)',
         borderColor: 'rgb(140, 140, 140)',
         borderWidth: 3,
-        animation:false
+        // animations: false
       },
     ],
   };
@@ -164,14 +163,6 @@ export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
         radius: 0, // 점 제거
       },
     },
-    animation: {
-      y: {
-          duration:1000,
-          from:135,
-          to:undefined,
-          easing:'easeOutQuart',
-      }
-    },
     scales: {
       x: {
         grid: {
@@ -188,6 +179,14 @@ export function CountPerGradeLine({ target, hasEscapeValue, tier }: any) {
         }
       },
       y: {// 여기를 비율로 갈껀지 정수형으로 갈껀지 고민 퍼센티지로 가는게 나을듯 일부 / 전체 X 100 해서
+        animations: {
+          y: {
+              duration:1000,
+              from:135,
+              to:undefined,
+              easing:'easeOutQuart',
+          }
+        },
         min: (target !== undefined) ? Math.floor(Math.min(...target) - Math.ceil(Math.min(...target) / 100)) : 0,
         max: (target !== undefined) ? Math.floor(Math.max(...target) + Math.ceil(Math.max(...target) / 100)) : 0, // 최소 최댓값 보정
         beginAtZero: false,

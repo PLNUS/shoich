@@ -163,3 +163,7 @@ revalidation 주기 확인하기
 
 EB environment 하나 더 따서 node server 주기적으로 돌리기
 뭐 1시간마다 파싱해서 축적시키는 그런방법도 고려해보자
+
+source ~/.bash_profile
+
+revalidate 기준 설정 필요

@@ -1,6 +1,6 @@
 import PremadeGame from "@/app/modules/PremadeGame";
 import dbConnect from "@/app/modules/dbManager";
-
+export const dynamic = 'force-dynamic'
 export async function GET(request: Request) {  // 버전별로 각각 List 따로 병합하기..
     dbConnect();
     

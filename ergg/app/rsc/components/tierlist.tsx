@@ -106,12 +106,10 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
         </div>
       </div>
 
-      <div className="flex flex-col p-2 gap-y-2">
-        <div className="rounded p-2 gap-y-2">
-          <div className="w-full text-center text-2xl font-mb tracking-wider pb-1">사전 구성 통계 (Beta)</div>
-          <div className="w-full text-center text-xs font-msb">사전 구성 팀으로 게임 시 보통에 비해 승률, 순방률 변화폭이 큰 실험체 리스트</div>
-          <div className="w-full text-center text-xs font-msb">사전 구성된 표본 자체가 적기 때문에 신뢰도가 떨어질 수 있어요. (픽률 0.2% 이하 제외)</div>
-        </div>
+      <div className="flex flex-col px-2 gap-y-2">
+          <div className="w-full text-center text-2xl font-ml tracking-wider py-1.5">사전 구성 통계 (Beta)</div>
+          {/* <div className="w-full text-center text-xs font-msb">사전 구성 팀으로 게임 시 보통에 비해 승률, 순방률 변화폭이 큰 실험체 리스트</div>
+          <div className="w-full text-center text-xs font-msb">사전 구성된 표본 자체가 적기 때문에 신뢰도가 떨어질 수 있어요. (픽률 0.2% 이하 제외)</div> */}
           <div className="flex flex-row w-full text-center pb-2 shadow-xl">
             <div className="w-[12%] border-r border-black font-msb text-sm">순위</div>
             <div className="w-[35%] border-r border-black font-msb text-sm">실험체</div>
@@ -119,11 +117,15 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
             <div className="w-[19%] border-r border-black font-msb text-sm">승률</div>
             <div className="w-[19%] font-msb text-sm">순방률</div>
           </div>
-        <div className="flex flex-col w-[450px] h-[610px] overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
+        <div className="flex flex-col w-[450px] h-[500px] overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
           {preList.map((char, p) =>  p < 99 ? (
             <PremadeTierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />) : null)}
           {/* {preList.sort(sortByGap).map((char, p) =>  preList.length - p <= 5 ? (
             <PremadeTierItem key={p} char={char} gradient="from-stone-400 via-neutral-400 to-gray-400" position={p} tierGroup={tierGroups.current} />) : null)} */}
+        </div>
+        <div className="flex flex-col rounded border border-gray-400 shadow-lg w-[450px] h-[165px] p-2">
+            <div>전체 실험체 통계</div>
+            <div className="grid grid-rows-2 grid-cols-3"></div>
         </div>
       </div>
     </div>

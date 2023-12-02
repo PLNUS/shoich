@@ -1,7 +1,7 @@
 import Synergy from "../../modules/Synergy";
 import dbConnect from "../../modules/dbManager";
 import SynergyData from "../../../server/base/synergyData.json";
-
+export const dynamic = 'force-dynamic'
 export async function GET() {
     dbConnect();
     const synergys = Synergy;

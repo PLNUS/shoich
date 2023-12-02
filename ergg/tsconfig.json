@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "server/server.js", "app/page1/games.js", "server/ertool.js"],
-  "exclude": ["node_modules", "/app/rsc/components/*.tsx", "/app/page2/components/*.tsx"] // 빌드시 컴포넌트 파이들 제외하고싶은데;
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", "app/rsc/components/*.tsx", "app/page2/components/*.tsx", "api/**/*.ts"] // 빌드시 컴포넌트 파이들 제외하고싶은데;
 }
