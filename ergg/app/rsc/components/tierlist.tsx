@@ -11,7 +11,7 @@ import PremadeTierItem from "./premadetieritem";
 import { getPremadeList } from "../libs/prerefactor";
 
 export default function TierList({ data, premadedata }: any) {
-const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== null ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
+  const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGroup") !== null ? JSON.parse(sessionStorage.getItem("tierGroup")!) : [5, 1];
   // 지금 이 TierList Component 자체가 SSR로 한번 Generate 되어서 클라이언트로 내려오는데 그때 이 tierGroups.current 값이 [5,1] 이 됨 (typeof window 에 걸려서)
   // 이후 Hydrate 시 다른 tierGroups.current 값이 배정되면서 Hydration 에러가 발생하여 CSR로 전환, 이후 sessionStorage 에서 가져온 TierGroup 값으로 다시 렌더링
   // 에러긴 하지만 결과적으로는 원하는 기능(초기 데이터 더미이더라도 보이기, 이후 정식 데이터로 업데이트) 구현됨.
@@ -20,13 +20,21 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
   const [charList, setCharList] = useState<Array<Data>>(getListforTiergroup(data, tierGroups.current[0], tierGroups.current[1]).sort(sortStandard.np));
   const [preList, setPreList] = useState<Array<any>>(getPremadeList(premadedata, data, tierGroups.current[0], tierGroups.current[1]));
   const searchBase = useRef(charList);
+  const [displayAvg, setDisplayAvg] = useState({
+    avgDeal: "추산 중",
+    avgPR: "추산 중",
+    avgGrade: "추산 중",
+    avgSR: "추산 중",
+    avgTK: "추산 중",
+    avgWR: "추산 중",
+  });
 
   useEffect(() => {
     sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
     sortStandard.current === undefined ? sortStandard.current = sortStandard.np : null;
     updateEndDisable(tierGroups.current[0]);
     updateStartDisable(tierGroups.current[1]);
-    setAverage();
+    setAverage(charList);
   }, [])
 
   return (
@@ -44,12 +52,12 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
                 const newList = getListforTiergroup(data, e!.value!, tierGroups.current[1]).sort(sortStandard.current);
                 const newPreList = getPremadeList(premadedata, data, e!.value!, tierGroups.current[1]);
                 setCharList(newList);
+                setAverage(newList);
                 setPreList(newPreList);
                 searchBase.current = newList;
                 tierGroups.current[0] = e!.value!;
                 updateEndDisable(tierGroups.current[0]);
                 sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
-                setAverage()
               }} />
             <div className="text-base font-msb ml-2">
               부터
@@ -62,16 +70,16 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
               options={endOptions}
               styles={scrollbarStyles}
               defaultValue={endOptions[8 - tierGroups.current[1]]}
-              onChange={(e) => { 
+              onChange={(e) => {
                 const newList = getListforTiergroup(data, tierGroups.current[0], e!.value!).sort(sortStandard.current);
                 const newPreList = getPremadeList(premadedata, data, tierGroups.current[0], e!.value!);
                 setCharList(newList);
+                setAverage(newList);
                 setPreList(newPreList);
                 searchBase.current = newList;
                 tierGroups.current[1] = e!.value!;
                 updateStartDisable(tierGroups.current[1]); // 유효하지 않은 티어그룹 Disable(from 다이아 to 브론즈)
                 sessionStorage.setItem("tierGroup", JSON.stringify(tierGroups.current));
-                setAverage();
               }} />
             <div className="text-base font-msb ml-2">
               까지
@@ -107,25 +115,74 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
       </div>
 
       <div className="flex flex-col px-2 gap-y-2">
-          <div className="w-full text-center text-2xl font-ml tracking-wider py-1.5">사전 구성 통계 (Beta)</div>
-          {/* <div className="w-full text-center text-xs font-msb">사전 구성 팀으로 게임 시 보통에 비해 승률, 순방률 변화폭이 큰 실험체 리스트</div>
+        <div className="w-full text-center text-2xl font-ml tracking-wider py-1.5">사전 구성 통계 (Beta)</div>
+        {/* <div className="w-full text-center text-xs font-msb">사전 구성 팀으로 게임 시 보통에 비해 승률, 순방률 변화폭이 큰 실험체 리스트</div>
           <div className="w-full text-center text-xs font-msb">사전 구성된 표본 자체가 적기 때문에 신뢰도가 떨어질 수 있어요. (픽률 0.2% 이하 제외)</div> */}
-          <div className="flex flex-row w-full text-center pb-2 shadow-xl">
-            <div className="w-[12%] border-r border-black font-msb text-sm">순위</div>
-            <div className="w-[35%] border-r border-black font-msb text-sm">실험체</div>
-            <div className="w-[15%] border-r border-black font-msb text-sm">픽률</div>
-            <div className="w-[19%] border-r border-black font-msb text-sm">승률</div>
-            <div className="w-[19%] font-msb text-sm">순방률</div>
-          </div>
+        <div className="flex flex-row w-full text-center pb-2 shadow-xl">
+          <div className="w-[12%] border-r border-black font-msb text-sm">순위</div>
+          <div className="w-[35%] border-r border-black font-msb text-sm">실험체</div>
+          <div className="w-[15%] border-r border-black font-msb text-sm">픽률</div>
+          <div className="w-[19%] border-r border-black font-msb text-sm">승률</div>
+          <div className="w-[19%] font-msb text-sm">순방률</div>
+        </div>
         <div className="flex flex-col w-[450px] h-[500px] overflow-x-hidden overflow-y-auto scrollbar-hide gap-y-2">
-          {preList.map((char, p) =>  p < 99 ? (
+          {preList.map((char, p) => p < 99 ? (
             <PremadeTierItem key={p} char={char} position={p} tierGroup={tierGroups.current} />) : null)}
           {/* {preList.sort(sortByGap).map((char, p) =>  preList.length - p <= 5 ? (
             <PremadeTierItem key={p} char={char} gradient="from-stone-400 via-neutral-400 to-gray-400" position={p} tierGroup={tierGroups.current} />) : null)} */}
         </div>
-        <div className="flex flex-col rounded border border-gray-400 shadow-lg w-[450px] h-[165px] p-2">
-            <div>전체 실험체 통계</div>
-            <div className="grid grid-rows-2 grid-cols-3"></div>
+        <div className="flex flex-col rounded border border-gray-400 shadow-lg w-[450px] h-[165px] pt-2 px-2">
+          <span className="text-lg font-jl pl-1 pb-1 border-b border-gray-400 mx-1">전체 실험체 통계</span>
+            <div className="grid grid-rows-2 grid-cols-3 w-full h-full gap-2 px-1 py-2">
+            <div className="flex flex-col rounded justify-center items-center">
+              <div className="text-base">
+                평균 픽률
+              </div>
+              <div className="font-num text-sm">
+                {displayAvg.avgPR}%
+              </div>
+            </div>
+            <div className="flex flex-col rounded justify-center items-center">
+              <div className="text-base">
+                평균 승률
+              </div>
+              <div className="font-num text-sm">
+                {displayAvg.avgWR}%
+              </div>
+            </div>
+            <div className="flex flex-col rounded justify-center items-center">
+              <div className="text-base">
+                평균 순방률
+              </div>
+              <div className="font-num text-sm">
+                {displayAvg.avgSR}%
+              </div>
+            </div>
+            <div className="flex flex-col rounded justify-center items-center">
+              <div className="text-base">
+                평균 딜량
+              </div>
+              <div className="font-num text-sm">
+                {displayAvg.avgDeal}
+              </div>
+            </div>
+            <div className="flex flex-col rounded justify-center items-center">
+              <div className="text-base">
+                평균 TK
+              </div>
+              <div className="font-num text-sm">
+                {displayAvg.avgTK}
+              </div>
+            </div>
+            <div className="flex flex-col rounded justify-center items-center">
+              <div className="text-base">
+                평균 순위
+              </div>
+              <div className="font-num text-sm">
+                {displayAvg.avgGrade}위
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -142,7 +199,7 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
     }
   }
 
-  function setAverage() {
+  function setAverage(newList:any) {
     // '평딜', '픽률', '평순', '순방률', '평킬', '승률' 순임
     let entireAvgDeal = 0;
     let entireAvgGrade = 0;
@@ -152,7 +209,7 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
     let entireWR = 0;
 
     let counts = 0;
-    charList.map((char: Data, p: number) => {
+    newList.map((char: Data, p: number) => {
       entireAvgDeal += char.data?.avgdealbygrade[0]!;
       entireAvgGrade += char.data?.avggrade!;
       entireTK += char.data?.tkbygrade[0]!;
@@ -163,7 +220,23 @@ const existTg = typeof window !== "undefined" && sessionStorage.getItem("tierGro
       counts++;
     });
 
-    typeof window !== 'undefined' ? sessionStorage.setItem("average", JSON.stringify([entireAvgDeal / counts, entirePR / counts, entireAvgGrade / counts, entireSB / counts, entireTK / counts, entireWR / counts])) : null;
+    const avgDeal = entireAvgDeal / counts;
+    const avgPR = entirePR / counts;
+    const avgGrade = entireAvgGrade / counts;
+    const avgSR = entireSB / counts;
+    const avgTK = entireTK / counts;
+    const avgWR = entireWR / counts;
+    setDisplayAvg({
+      avgDeal: (Math.floor(avgDeal * 100) / 100).toString(),
+      avgPR: (Math.floor(avgPR* 100) / 100).toString(),
+      avgGrade: (Math.floor(avgGrade* 100) / 100).toString(),
+      avgSR: (Math.floor(avgSR* 100) / 100).toString(),
+      avgTK: (Math.floor(avgTK* 100) / 100).toString(),
+      avgWR: (Math.floor(avgWR* 100) / 100).toString(),
+    })
+    console.log(displayAvg);
+
+    typeof window !== 'undefined' ? sessionStorage.setItem("average", JSON.stringify([avgDeal, avgPR, avgGrade, avgSR, avgTK, avgWR])) : null;
   }
 }
 

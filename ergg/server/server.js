@@ -167,24 +167,22 @@ mongoose
     });
 
 app.listen(SCHEDULE_PORT, () => {
-    // Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
-    //     UpdatedData = CharacterData;
-    //     UpdatedSynergyData = SynergyData;
-    //     UpdatedTraitData = TraitData;
-    //     UpdatedTSData = TSData;
-    //     UpdatedItemData = ItemData; // 초기화
-    //     sendSyncRequests(docs[0].lastGameNum, 6);
-    // })
+    Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
+        UpdatedData = CharacterData;
+        UpdatedSynergyData = SynergyData;
+        UpdatedTraitData = TraitData;
+        UpdatedTSData = TSData;
+        UpdatedItemData = ItemData; // 초기화
+        sendSyncRequests(docs[0].lastGameNum, 6);
+    })
     //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
-    sendSyncRequests(30930265, 6);
     // getProgress(30930265)
 }) // 타입스크립트로 전환 해야함
 
 async function getProgress(gameCode) {
     let loop = true;
     let loopCount = 0;
-    let ep = 0;
     while (loop) {
         await getParseEndPoint(gameCode, loopCount).then((newLC) => {
             if(newLC < 0) {
