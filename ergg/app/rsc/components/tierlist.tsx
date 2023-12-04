@@ -51,7 +51,15 @@ export default function TierList({ data, premadedata }: any) {
               onChange={(e) => { // .sort(sortStandard[1])
                 const newList = getListforTiergroup(data, e!.value!, tierGroups.current[1]).sort(sortStandard.current);
                 const newPreList = getPremadeList(premadedata, data, e!.value!, tierGroups.current[1]);
-                setCharList(newList);
+
+                const searchValue = (document.getElementById("searcher") as HTMLInputElement)!.value;
+                if(searchValue !== "") { // 검색중인 항목 적용
+                  const newSearchList = newList.filter((element) => includesByCho(searchValue.replace(" ", ""), element.weapon + element.name));
+                  setCharList(newSearchList);
+                } else {
+                  setCharList(newList);
+                }
+
                 setAverage(newList);
                 setPreList(newPreList);
                 searchBase.current = newList;
@@ -73,7 +81,15 @@ export default function TierList({ data, premadedata }: any) {
               onChange={(e) => {
                 const newList = getListforTiergroup(data, tierGroups.current[0], e!.value!).sort(sortStandard.current);
                 const newPreList = getPremadeList(premadedata, data, tierGroups.current[0], e!.value!);
-                setCharList(newList);
+
+                const searchValue = (document.getElementById("searcher") as HTMLInputElement)!.value;
+                if(searchValue !== "") { // 검색중인 항목 적용
+                  const newSearchList = newList.filter((element) => includesByCho(searchValue.replace(" ", ""), element.weapon + element.name));
+                  setCharList(newSearchList);
+                } else {
+                  setCharList(newList);
+                }
+
                 setAverage(newList);
                 setPreList(newPreList);
                 searchBase.current = newList;
@@ -87,6 +103,7 @@ export default function TierList({ data, premadedata }: any) {
           </div>
           <div className="flex items-center w-[150px] h-full border-b border-slate-500 ml-2">
             <input
+              id="searcher"
               className="appearance-none bg-transparent text-right border-none w-full h-full text-gray-700 mr-2 text-sm leading-tight focus:outline-none"
               type="text"
               placeholder="실험체 검색(초성) >>"
@@ -132,7 +149,7 @@ export default function TierList({ data, premadedata }: any) {
             <PremadeTierItem key={p} char={char} gradient="from-stone-400 via-neutral-400 to-gray-400" position={p} tierGroup={tierGroups.current} />) : null)} */}
         </div>
         <div className="flex flex-col rounded border border-gray-400 shadow-lg w-[450px] h-[165px] pt-2 px-2">
-          <span className="text-lg font-jl pl-1 pb-1 border-b border-gray-400 mx-1">전체 실험체 통계</span>
+          <span className="text-lg font-jl pl-1 pb-1 border-b border-gray-400 mx-1">전체 실험체 통계 (산술평균)</span>
             <div className="grid grid-rows-2 grid-cols-3 w-full h-full gap-2 px-1 py-2">
             <div className="flex flex-col rounded justify-center items-center">
               <div className="text-base">

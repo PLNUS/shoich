@@ -102,7 +102,7 @@ export const endOptions = [
   },
 ];
 
-export function updateEndDisable(startTierGroup:number) {
+export function updateEndDisable(startTierGroup: number) {
   endOptions.map((options, p) => {
     if (options.value > startTierGroup) {
       endOptions[p].isDisabled = true;
@@ -112,7 +112,7 @@ export function updateEndDisable(startTierGroup:number) {
   });
 }
 
-export function updateStartDisable(endTierGroup:number) {
+export function updateStartDisable(endTierGroup: number) {
   startOptions.map((options, p) => {
     if (options.value < endTierGroup) {
       startOptions[p].isDisabled = true;
@@ -158,41 +158,43 @@ export const scrollbarStyles = {
 };
 
 interface Standard {
-  wr : (x: Data, y: Data) => number,
-  pr : (x: Data, y: Data) => number,
-  sr : (x: Data, y: Data) => number,
-  np : (x: Data, y: Data) => number,
-  ag : (x: Data, y: Data) => number,
-  current? : (x: Data, y: Data) => number,
+  wr: (x: Data, y: Data) => number,
+  pr: (x: Data, y: Data) => number,
+  sr: (x: Data, y: Data) => number,
+  np: (x: Data, y: Data) => number,
+  ag: (x: Data, y: Data) => number,
+  current?: (x: Data, y: Data) => number,
 }
 
 export const sortByGap = (x: any, y: any) => {
-  if ((x.WRGap + x.SRGap) !== (y.WRGap + y.SRGap)) return (y.WRGap + y.SRGap) - (x.WRGap + x.SRGap);
+  if (((x.WR - x.general.WR) + (x.SR - x.general.SR)) !== ((y.WR - y.general.WR) + (y.SR - y.general.SR))) {
+    return ((y.WR - y.general.WR) + (y.SR - y.general.SR)) - ((x.WR - x.general.WR) + (x.SR - x.general.SR));
+  }
   return y.code - x.code;
 }
 
-export const sortStandard:Standard = {
-  wr : (x: Data, y: Data) => {
+export const sortStandard: Standard = {
+  wr: (x: Data, y: Data) => {
     if (x.WR !== y.WR) return y.WR - x.WR;
     if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
     return y.code - x.code;
   },
-  pr : (x: Data, y: Data) => {
+  pr: (x: Data, y: Data) => {
     if (x.PR !== y.PR) return y.PR - x.PR;
     if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
     return y.code - x.code;
   },
-  sr : (x: Data, y: Data) => {
+  sr: (x: Data, y: Data) => {
     if (x.SR !== y.SR) return y.SR - x.SR;
     if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
     return y.code - x.code;
   },
-  np : (x: Data, y: Data) => {
+  np: (x: Data, y: Data) => {
     if (x.nadjapoint !== y.nadjapoint) return y.nadjapoint - x.nadjapoint;
     if (x.PR !== y.PR) return y.PR - x.PR;
     return y.code - x.code;
   },
-  ag : (x: Data, y: Data) => {
+  ag: (x: Data, y: Data) => {
     if (x.data!.avggrade !== y.data!.avggrade) return y.data!.avggrade - x.data!.avggrade;
     if (x.PR !== y.PR) return y.PR - x.PR;
     return y.code - x.code;
