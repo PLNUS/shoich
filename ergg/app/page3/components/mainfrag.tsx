@@ -23,7 +23,6 @@ export default function MainFrag(props: any) {
 
     useEffect(() => {
         setBase(JSON.parse(sessionStorage.getItem("preChar")!));
-        console.log(base?.AvgGrade);
     }, []);
 
     return (

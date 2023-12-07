@@ -167,15 +167,14 @@ mongoose
     });
 
 app.listen(SCHEDULE_PORT, () => {
-    sendSyncRequests(31000000, 6);
-    // Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
-    //     UpdatedData = CharacterData;
-    //     UpdatedSynergyData = SynergyData;
-    //     UpdatedTraitData = TraitData;
-    //     UpdatedTSData = TSData;
-    //     UpdatedItemData = ItemData; // 초기화
-    //     sendSyncRequests(docs[0].lastGameNum, 6);
-    // })
+    Game.find().sort({ _id: -1 }).limit(1).then((docs) => {
+        UpdatedData = CharacterData;
+        UpdatedSynergyData = SynergyData;
+        UpdatedTraitData = TraitData;
+        UpdatedTSData = TSData;
+        UpdatedItemData = ItemData; // 초기화
+        sendSyncRequests(docs[0].lastGameNum, 6);
+    })
     // //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
     // getProgress(30930265)
@@ -289,7 +288,7 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
         i += parallels;
     }
     if (repeatstart === parallels) {
-        console.log("최종점: " + lastOrdinaryGame + ", 1분간 반복대기.");
+        console.log("최종점: " + lastOrdinaryGame + ", 0.33분간 반복대기.");
         setTimeout(() => {
             const curr = new Date();
             const utc =
@@ -344,12 +343,9 @@ async function parseAsync(startpoint, parallels, repeatstart) { // 이 함수는
             });
 
             console.log("종료.");
-        }, 60000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 2분 대기
+        }, 20000); // 병렬로 진행중인 함수들이 안끝났을수도 있어서 n분 대기
     }
 }
-
-let a1 = 0;
-let prea1 = 0;
 
 async function UpdateFunc(response) {
     let game = response.data.userGames;

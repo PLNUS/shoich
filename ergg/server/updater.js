@@ -448,6 +448,10 @@ async function updateL10n() {
                     params: {},
                 })
                     .then(function (response) {
+                        fs.writeFile('l10n/l10n.txt', response.data, 'utf8', function (error) {
+                            error ? console.log(error) : null;
+                            console.log('l10n/l10n.txt 작성 완료.')
+                        });
                         resolve(response.data);
                     })
                     .catch(function (error) {
