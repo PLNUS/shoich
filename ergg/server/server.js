@@ -173,7 +173,8 @@ app.listen(SCHEDULE_PORT, () => {
         UpdatedTraitData = TraitData;
         UpdatedTSData = TSData;
         UpdatedItemData = ItemData; // 초기화
-        sendSyncRequests(docs[0].lastGameNum, 6);
+        sendSyncRequests(31200000, 6);
+        // docs[0].lastGameNum
     })
     // //매 n초마다 수행!
     schedule.scheduleJob('10 41 * * * *', function () { });
@@ -185,9 +186,9 @@ async function getProgress(gameCode) {
     let loopCount = 0;
     while (loop) {
         await getParseEndPoint(gameCode, loopCount).then((newLC) => {
-            if(newLC < 0) {
+            if (newLC < 0) {
                 loop = false;
-                console.log((gameCode+newLC) + " 보다 안쪽입니다.");
+                console.log((gameCode + newLC) + " 보다 안쪽입니다.");
             } else {
                 loopCount = newLC;
             }

@@ -170,3 +170,9 @@ page3 만들기
 source ~/.bash_profile
 
 revalidate 기준 설정 필요
+
+page2로 새 탭에서 열기 했을때 고장남
+
+https://www.youtube.com/shorts/yE-xk2oJoe0
+https://www.youtube.com/watch?v=tjcXUc1FuF4
+https://www.youtube.com/watch?v=eA7ucLT26Mg

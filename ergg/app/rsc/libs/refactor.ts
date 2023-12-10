@@ -66,7 +66,7 @@ export function getKoreanWeapon(weapon: string) { // 영문 무기이름 들어�
 export function getCharTier(np: number) {
   if (np >= 270) {
     return 0;
-  } else if (np >= 200) {
+  } else if (np >= 190) {
     return 1;
   } else if (np >= 150) {
     return 2;
