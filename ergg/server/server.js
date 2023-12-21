@@ -173,7 +173,7 @@ app.listen(SCHEDULE_PORT, () => {
         UpdatedTraitData = TraitData;
         UpdatedTSData = TSData;
         UpdatedItemData = ItemData; // 초기화
-        sendSyncRequests(31200000, 6);
+        sendSyncRequests(docs[0].lastGameNum, 6);
         // docs[0].lastGameNum
     })
     // //매 n초마다 수행!
@@ -246,6 +246,10 @@ let rankcount = 0;
 let lastOrdinaryGame = 0;
 let errorCount = 0;
 
+sendSyncRequests
+
+
+/** 동기적으로 반복되는 파싱 요청을 parallels 만큼 병렬로 동시실행하는 함수 **/
 function sendSyncRequests(startpoint, parallels) { // 병렬 실행화. 비동기 함수를 병렬로 임의만큼 동시호출하여 스피드업
     console.log(startpoint + " 부터 파싱 시작");
     for (let repeatstart = 1; repeatstart <= parallels; repeatstart++) {
@@ -355,6 +359,9 @@ async function UpdateFunc(response) {
             game.map((user, p) => {
                 if (user.mmrBefore >= 1000) { // 브론즈 이상 통계만 수집
                     let weaponNum = getWeaponNum(user.characterNum - 1, user.equipFirstItemForLog[0][0]);
+                    if(user.characterNum === 27) { // 알렉스 1번무기에 통합..
+                        weaponNum = 0;
+                    }
                     let tierGroup = getTierGroup(user.mmrBefore, tierCut[0], tierCut[1]) - 1;
 
                     // 이하 각 유저에 대해 수집하는 지표들

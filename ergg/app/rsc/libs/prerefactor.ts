@@ -47,7 +47,7 @@ export function getPremadeList(premade: any, general: any, startTierGroup: numbe
                     newList.push({
                         code: data.code,
                         name: data.name,
-                        weapon: getKoreanWeapon(weapon.toString()),
+                        weapon: (data.code === 27 ? "통합" : getKoreanWeapon(weapon.toString())), // 알렉스 통합 처리
                         WR: WR,
                         SR: SR,
                         PR: PR,

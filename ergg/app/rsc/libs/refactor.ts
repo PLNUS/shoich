@@ -363,7 +363,7 @@ export function getListforTiergroup(parsedData: Array<any>, startTierGroup: numb
         let newData: Data = {
           code: char.code,
           name: char.name,
-          weapon: getKoreanWeapon(weapon.toString()),
+          weapon: (char.code === 27 ? "통합" : getKoreanWeapon(weapon.toString())),
           weaponNum: wcode, // 0~3임
 
           WR: properties.gamecountbygrade[0] === 0 ? 0 :

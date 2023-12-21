@@ -91,7 +91,9 @@ export function getItemList(data: Array<any>, charCode: number, weaponNum: numbe
             isExist = (e:any) => e[0] === sData[0] && e[1] === sData[1] && e[2] === sData[2];
             index = sList.findIndex(isExist);
 
-            if(sData[1] !== 0 || getWeaponNum(charCode - 1, sData[0]) === weaponNum) {
+            // 방어구이거나 알렉스가 아닐 때 본인 마스터리에 맞는 무기일 경우(권아야로 우승하고 돌소끼는 표본 배제)
+            // 알렉스 무기 통계는 들고 우승한 무기 기준으로 추산되기 때문에 지니고 있는 무기는 반영되지 않아 정확하지 않음
+            if(sData[1] !== 0 || (charCode === 27 ? true : (getWeaponNum(charCode - 1, sData[0]) === weaponNum))) {
                 if (index === -1) {
                     sList.push(sData);
                 } else {
@@ -99,7 +101,7 @@ export function getItemList(data: Array<any>, charCode: number, weaponNum: numbe
                     sList[index][4] += sData[4];
                     sList[index][5] += sData[5];
                 }
-            } // 시발 권아야로 우승하고 돌소끼는 년들 평균 배제
+            }
         });
     }
     //자꾸 resume(rerender) 됐을때 값이 변함 시발 이거 왜이럼? 그냥 데이터 가공을 서버사이드에서 하고 갈무리된걸 SSR 렌더링시 가져오는게 나을듯 수정 ㄱ
