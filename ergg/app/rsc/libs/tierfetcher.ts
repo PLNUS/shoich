@@ -1,7 +1,5 @@
 export const getTierList = async () => {
-  const res = await fetch("http://localhost:8080/api/tierfetcher", {
-    cache : 'no-store'
-  });
+  const res = await fetch("http://localhost:8080/api/tierfetcher", { next: { revalidate: 300 } });
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
     return {};
@@ -10,9 +8,7 @@ export const getTierList = async () => {
 };
 
 export const getPremadeTierList = async () => {
-  const res = await fetch("http://localhost:8080/api/premadefetcher", {
-    cache : 'no-store'
-  });
+  const res = await fetch("http://localhost:8080/api/premadefetcher", { next: { revalidate: 300 } });
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
     return {};
